@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NJ State Council Hub (Demo)</title>
+<style>
+:root{
+  --bg:#f4f6f9;--surface:#ffffff;--ink:#14213d;--muted:#566175;--line:#dfe4ec;
+  --navy:#0b2a55;--navy2:#16407d;--gold:#f2b705;--on-navy:#ffffff;
+  --news:#1d4ed8;--news-bg:#e8effd;--event:#12703a;--event-bg:#e4f4ea;
+  --alert:#b42318;--alert-bg:#fdebe9;--ann:#8a5a00;--ann-bg:#fff3d6;
+  --chip:#eef1f6;--shadow:0 1px 2px rgba(10,30,60,.06),0 4px 14px rgba(10,30,60,.05);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1424;--surface:#142039;--ink:#e8edf7;--muted:#9aa7bf;--line:#26344f;
+    --navy:#0a1d3d;--navy2:#1c4a8f;--on-navy:#ffffff;
+    --news:#8fb2ff;--news-bg:#1a2c52;--event:#7fd6a2;--event-bg:#14332a;
+    --alert:#ff9a90;--alert-bg:#3a1a1a;--ann:#f5cf6b;--ann-bg:#3a2f12;
+    --chip:#1b2a47;--shadow:none;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1424;--surface:#142039;--ink:#e8edf7;--muted:#9aa7bf;--line:#26344f;
+  --navy:#0a1d3d;--navy2:#1c4a8f;--on-navy:#ffffff;
+  --news:#8fb2ff;--news-bg:#1a2c52;--event:#7fd6a2;--event-bg:#14332a;
+  --alert:#ff9a90;--alert-bg:#3a1a1a;--ann:#f5cf6b;--ann-bg:#3a2f12;
+  --chip:#1b2a47;--shadow:none;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--news)}
+button{font:inherit;cursor:pointer}
+.demo-strip{background:var(--gold);color:#3d2d00;text-align:center;font-size:13px;font-weight:600;padding:6px 12px}
+header.top{background:var(--navy);color:var(--on-navy)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:12px;padding:14px 0 8px}
+.mark{width:42px;height:42px;border-radius:10px;background:var(--gold);color:#3d2d00;display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:.5px;flex:none}
+.brand h1{font-size:18px;line-height:1.2;margin:0}
+.brand p{margin:0;font-size:13px;opacity:.8}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;color:var(--on-navy);opacity:.75;padding:10px 14px;border-bottom:3px solid transparent;white-space:nowrap;font-weight:600;font-size:15px}
+nav.tabs button[aria-current="true"]{opacity:1;border-bottom-color:var(--gold)}
+main{padding:20px 0 48px}
+.pausebar{background:var(--alert-bg);color:var(--alert);border:1px solid var(--alert);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-weight:600}
+.alertbar{background:var(--alert-bg);border:1px solid var(--alert);color:var(--ink);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.alertbar b{color:var(--alert)}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:16px;padding:22px;margin-bottom:18px}
+.hero h2{margin:0 0 6px;font-size:24px;line-height:1.2}
+.hero p{margin:0;opacity:.88;max-width:62ch}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.stat{background:rgba(255,255,255,.12);border-radius:10px;padding:8px 14px}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:12px;opacity:.85}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 10px;font-size:16px}
+.filters{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{background:var(--chip);border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:999px;font-size:14px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+input[type=search],input[type=text],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
+textarea{min-height:90px;resize:vertical}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px;color:var(--muted)}
+.post{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;gap:14px;box-shadow:var(--shadow)}
+.post .datebox{flex:none;width:54px;text-align:center;border-radius:10px;padding:6px 0;background:var(--chip);align-self:flex-start}
+.datebox .m{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.datebox .d{font-size:22px;font-weight:800;line-height:1.1}
+.post h4{margin:2px 0 4px;font-size:17px;line-height:1.3}
+.post p{margin:0 0 8px;color:var(--muted);font-size:15px}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px}
+.badge{padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px}
+.t-news{background:var(--news-bg);color:var(--news)}
+.t-event{background:var(--event-bg);color:var(--event)}
+.t-alert{background:var(--alert-bg);color:var(--alert)}
+.t-announcement{background:var(--ann-bg);color:var(--ann)}
+.loc{background:var(--navy);color:#fff}
+.src{color:var(--muted);border:1px dashed var(--line);background:transparent;font-weight:600}
+.sample{color:var(--muted);font-weight:600}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+.upc{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.upc:first-of-type{border-top:0}
+.upc .datebox{width:46px;padding:4px 0}
+.upc .t{font-weight:600;font-size:14px;line-height:1.3}
+.upc .s{font-size:12px;color:var(--muted)}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700}
+.btn.gold{background:var(--gold);color:#3d2d00}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--alert);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.locals{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.lcard h4{margin:0;font-size:18px}
+.lcard .area{color:var(--muted);font-size:14px;margin-bottom:8px}
+.lcard .next{font-size:14px;margin:8px 0}
+.note{background:var(--ann-bg);color:var(--ann);border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:14px}
+.kill{border:2px solid var(--alert);background:var(--alert-bg)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.seg button{background:var(--surface);color:var(--ink);border:0;padding:8px 14px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.officers{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.officer{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface)}
+.officer b{display:block}
+.officer span{color:var(--muted);font-size:14px}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:#14213d;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:50;max-width:90vw;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.hidden{display:none!important}
+.checks{display:flex;flex-wrap:wrap;gap:6px}
+.checks label{display:inline-flex;align-items:center;gap:6px;margin:0;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-weight:600;color:var(--ink);background:var(--chip)}
+.checks input{width:auto}
+</style>
+</head>
+<body>
+<div class="demo-strip">DEMO PROTOTYPE | Sample content only | Not an official ATU site</div>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark">ATU</div>
+      <div>
+        <h1>New Jersey State Council Hub</h1>
+        <p>One place for news, events, and notices from all nine locals</p>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Main"></nav>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<footer>Prototype by Futreeng for discussion. Each local keeps its own site and way of working. Sample posts are labeled and do not reflect real announcements.</footer>
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+
+var LOCALS = [
+  {id:"540",name:"Local 540",area:"Trenton",site:""},
+  {id:"819",name:"Local 819",area:"Newark",site:"https://www.atulocal819.org/"},
+  {id:"820",name:"Local 820",area:"Meadowlands",site:""},
+  {id:"821",name:"Local 821",area:"Greenville",site:""},
+  {id:"822",name:"Local 822",area:"Paterson",site:""},
+  {id:"823",name:"Local 823",area:"Ironbound",site:""},
+  {id:"824",name:"Local 824",area:"Howell",site:""},
+  {id:"825",name:"Local 825",area:"Oradell",site:"https://www.atu825.com/"},
+  {id:"880",name:"Local 880",area:"Camden",site:""}
+];
+var TYPES = [
+  {id:"alert",label:"Notification"},
+  {id:"announcement",label:"Announcement"},
+  {id:"news",label:"News"},
+  {id:"event",label:"Event"}
+];
+var TODAY = "2026-10-14";
+
+function lname(id){ if(id==="council") return "State Council"; return "Local "+id; }
+function tlabel(id){ for(var i=0;i<TYPES.length;i++){ if(TYPES[i].id===id) return TYPES[i].label; } return id; }
+
+var posts = [
+  {id:1,local:"council",type:"alert",title:"Sample notification: statewide service advisory",body:"This is how an urgent notice from the council would appear to every member at once, with a matching text or email alert if members opt in.",date:"2026-10-14",src:"Posted on hub",sample:true,status:"published"},
+  {id:2,local:"council",type:"event",title:"State Council meeting (sample)",body:"Monthly council meeting with delegates from all nine locals. Agenda posted here before the meeting, minutes after approval.",date:"2026-10-12",eventDate:"2026-10-28",time:"10:00 AM",src:"Posted on hub",sample:true,status:"published"},
+  {id:3,local:"council",type:"news",title:"Sample: legislative update from Trenton",body:"A short summary of what moved in the statehouse this week and what it means for members. Written once by the council, seen by every local.",date:"2026-10-11",src:"Email to council",sample:true,status:"published"},
+  {id:4,local:"819",type:"event",title:"Union Meeting",body:"Two sessions so members on every shift can attend. Date and times taken from Local 819's own website.",date:"2026-10-10",eventDate:"2026-10-20",time:"10 AM and 7 PM",src:"Synced from local site",sample:false,status:"published"},
+  {id:5,local:"819",type:"event",title:"Union Meeting",body:"Date and times taken from Local 819's own website.",date:"2026-10-10",eventDate:"2026-11-17",time:"10 AM and 7 PM",src:"Synced from local site",sample:false,status:"published"},
+  {id:6,local:"819",type:"event",title:"Union Meeting",body:"Date and times taken from Local 819's own website.",date:"2026-10-10",eventDate:"2026-12-15",time:"10 AM and 7 PM",src:"Synced from local site",sample:false,status:"published"},
+  {id:7,local:"820",type:"announcement",title:"Sample: winter pick information posted",body:"Members are directed to the local's office and bulletin boards for pick details. The hub points them to the right place.",date:"2026-10-13",src:"Flyer photo",sample:true,status:"published"},
+  {id:8,local:"821",type:"news",title:"Sample: steward appreciation lunch",body:"A recap with photos from a local event, shared so other locals can see what is working.",date:"2026-10-09",src:"Facebook page",sample:true,status:"published"},
+  {id:9,local:"822",type:"event",title:"Membership meeting (sample)",body:"Regular membership meeting. Agenda to follow.",date:"2026-10-08",eventDate:"2026-11-05",time:"7:00 PM",src:"Email to council",sample:true,status:"published"},
+  {id:10,local:"823",type:"alert",title:"Sample notification: office hours change",body:"A short-notice change that members need to see right away, not buried in a group text.",date:"2026-10-13",src:"Group text",sample:true,status:"published"},
+  {id:11,local:"824",type:"announcement",title:"Sample: retiree breakfast",body:"Retirees and active members are welcome. RSVP through the local.",date:"2026-10-07",eventDate:"2026-11-08",time:"9:00 AM",src:"Flyer photo",sample:true,status:"published"},
+  {id:12,local:"825",type:"event",title:"Safety committee meeting (sample)",body:"Open to members with safety concerns to raise.",date:"2026-10-06",eventDate:"2026-11-12",time:"6:00 PM",src:"Synced from local site",sample:true,status:"published"},
+  {id:13,local:"880",type:"news",title:"Sample: holiday food drive kicks off",body:"Collection points and drop-off dates for members and families.",date:"2026-10-05",src:"Facebook page",sample:true,status:"published"},
+  {id:14,local:"540",type:"event",title:"Membership meeting (sample)",body:"Regular local meeting for Trenton members.",date:"2026-10-04",eventDate:"2026-10-27",time:"6:30 PM",src:"Email to council",sample:true,status:"published"},
+  {id:15,local:"council",type:"event",title:"Steward training session (sample)",body:"Training open to stewards from every local. Registration handled through each local, as today.",date:"2026-10-03",eventDate:"2026-11-19",time:"9:00 AM",src:"Posted on hub",sample:true,status:"published"},
+  {id:16,local:"822",type:"news",title:"Sample: member spotlight",body:"Submitted by the local secretary and waiting for council approval.",date:"2026-10-14",src:"Posted on hub",sample:true,status:"pending"},
+  {id:17,local:"880",type:"event",title:"Sample: Camden holiday gathering",body:"Submitted by the local secretary and waiting for council approval.",date:"2026-10-14",eventDate:"2026-12-10",time:"6:00 PM",src:"Posted on hub",sample:true,status:"pending"}
+];
+var nextId = 100;
+
+var state = {view:"home",local:"all",type:"all",q:"",paused:false,pausedLocals:{},role:"secretary"};
+
+var app = document.getElementById("app");
+var tabsEl = document.getElementById("tabs");
+var toastEl = document.getElementById("toast");
+var toastTimer = null;
+
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.add("hidden"); },3200);
+}
+var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var MONFULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function parts(iso){ var p = iso.split("-"); return {y:+p[0],m:+p[1]-1,d:+p[2]}; }
+
+function isVisible(p){
+  return p.status==="published" && !state.paused && !state.pausedLocals[p.local];
+}
+function dateBox(iso){
+  var p = parts(iso);
+  return '<div class="datebox"><div class="m">'+MON[p.m]+'</div><div class="d">'+p.d+'</div></div>';
+}
+
+function postHTML(p){
+  var shown = p.type==="event" && p.eventDate ? p.eventDate : p.date;
+  var when = p.type==="event" && p.time ? ' <span class="sample">| '+esc(p.time)+'</span>' : "";
+  return '<article class="post">'+dateBox(shown)+
+    '<div style="min-width:0"><div class="meta" style="margin-bottom:4px">'+
+    '<span class="badge loc">'+esc(lname(p.local))+'</span>'+
+    '<span class="badge t-'+esc(p.type)+'">'+esc(tlabel(p.type))+'</span>'+when+'</div>'+
+    '<h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
+    '<div class="meta"><span class="badge src">Arrived via: '+esc(p.src)+'</span>'+
+    (p.sample?'<span class="sample">Sample content</span>':'<span class="sample">From the local\'s own site</span>')+
+    '</div></div></article>';
+}
+
+function filtered(){
+  var q = state.q.trim().toLowerCase();
+  return posts.filter(function(p){
+    if(!isVisible(p)) return false;
+    if(state.local!=="all" && p.local!==state.local) return false;
+    if(state.type!=="all" && p.type!==state.type) return false;
+    if(q && (p.title+" "+p.body+" "+lname(p.local)).toLowerCase().indexOf(q)<0) return false;
+    return true;
+  }).sort(function(a,b){ return a.date<b.date?1:(a.date>b.date?-1:b.id-a.id); });
+}
+function upcoming(localFilter){
+  return posts.filter(function(p){
+    return isVisible(p) && p.eventDate && p.eventDate>=TODAY && (!localFilter || localFilter==="all" || p.local===localFilter);
+  }).sort(function(a,b){ return a.eventDate<b.eventDate?-1:1; });
+}
+
+function chipRow(kind,items,current){
+  return '<div class="chips" role="group" aria-label="Filter by '+kind+'">'+items.map(function(it){
+    return '<button class="chip" data-kind="'+kind+'" data-val="'+esc(it.id)+'" aria-pressed="'+(current===it.id)+'">'+esc(it.label)+'</button>';
+  }).join("")+'</div>';
+}
+
+function renderTabs(){
+  var tabs = [["home","Home"],["calendar","Calendar"],["locals","Locals"],["council","Council & Take Action"],["admin","Admin Demo"]];
+  tabsEl.innerHTML = tabs.map(function(t){
+    return '<button data-view="'+t[0]+'" aria-current="'+(state.view===t[0])+'">'+t[1]+'</button>';
+  }).join("");
+}
+
+function pauseBars(){
+  var h = "";
+  if(state.paused){
+    h += '<div class="pausebar" role="alert">Publishing is paused by the council. Public updates are hidden until it is resumed.</div>';
+  }
+  return h;
+}
+
+function viewHome(){
+  var vis = posts.filter(isVisible);
+  var evs = upcoming("all");
+  var alerts = vis.filter(function(p){return p.type==="alert";}).sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,2);
+  var h = pauseBars();
+  alerts.forEach(function(a){
+    h += '<div class="alertbar" role="alert"><div><b>'+esc(tlabel("alert"))+' | '+esc(lname(a.local))+':</b> '+esc(a.title)+'</div></div>';
+  });
+  h += '<section class="hero"><h2>Everything happening across the nine locals, in one place.</h2>'+
+    '<p>Each local keeps running its own way. This hub gathers their news, events, notifications, and announcements so members and leaders can find them in one feed.</p>'+
+    '<div class="stats"><div class="stat"><b>9</b><span>locals connected</span></div>'+
+    '<div class="stat"><b>'+vis.length+'</b><span>updates visible</span></div>'+
+    '<div class="stat"><b>'+evs.length+'</b><span>upcoming events</span></div></div></section>';
+  h += '<div class="grid"><section><div class="filters">'+
+    '<input type="search" id="q" placeholder="Search all updates" value="'+esc(state.q)+'" aria-label="Search updates">'+
+    chipRow("local",[{id:"all",label:"All locals"},{id:"council",label:"State Council"}].concat(LOCALS.map(function(l){return {id:l.id,label:l.name};})),state.local)+
+    chipRow("type",[{id:"all",label:"All types"}].concat(TYPES),state.type)+
+    '</div><div id="feed"></div></section>'+
+    '<aside><div class="card"><h3>Coming up</h3>'+
+    (evs.length?evs.slice(0,6).map(function(e){
+      return '<div class="upc">'+dateBox(e.eventDate)+'<div><div class="t">'+esc(e.title)+'</div><div class="s">'+esc(lname(e.local))+(e.time?' | '+esc(e.time):'')+'</div></div></div>';
+    }).join(""):'<div class="s">Nothing scheduled.</div>')+
+    '</div>'+
+    '<div class="card" style="margin-top:14px"><h3>Get notified</h3>'+
+    '<p style="margin:0 0 8px;color:var(--muted);font-size:14px">Pick the locals and channels you want. Demo only, nothing is stored.</p>'+
+    '<div class="checks">'+['Council','819','822','880'].map(function(x){return '<label><input type="checkbox" checked> '+esc(x)+'</label>';}).join("")+'</div>'+
+    '<div class="checks" style="margin-top:8px"><label><input type="checkbox" checked> Text</label><label><input type="checkbox"> Email</label><label><input type="checkbox"> App</label></div>'+
+    '<div style="margin-top:12px"><button class="btn gold" id="notifyBtn">Save preferences</button></div></div></aside></div>';
+  app.innerHTML = h;
+  renderFeed();
+}
+function renderFeed(){
+  var feed = document.getElementById("feed");
+  if(!feed) return;
+  var list = filtered();
+  if(!list.length){
+    feed.innerHTML = '<div class="empty">'+(state.paused?'Public updates are paused.':'No updates match these filters.')+'</div>';
+    return;
+  }
+  feed.innerHTML = list.map(postHTML).join("");
+}
+
+function viewCalendar(){
+  var evs = upcoming(state.local);
+  var h = pauseBars()+'<div class="filters">'+
+    chipRow("local",[{id:"all",label:"All locals"},{id:"council",label:"State Council"}].concat(LOCALS.map(function(l){return {id:l.id,label:l.name};})),state.local)+'</div>';
+  if(!evs.length){ h += '<div class="empty">No upcoming events.</div>'; }
+  var lastKey = "";
+  evs.forEach(function(e){
+    var p = parts(e.eventDate), key = p.y+"-"+p.m;
+    if(key!==lastKey){ h += '<h3 style="margin:18px 0 8px">'+MONFULL[p.m]+' '+p.y+'</h3>'; lastKey = key; }
+    h += postHTML(e);
+  });
+  app.innerHTML = h;
+}
+
+function viewLocals(){
+  var h = pauseBars()+'<div class="note"><b>Joining works the way it does today.</b> New members still sign up through their own local. The hub does not change onboarding, it only makes each local\'s news and events easier to find.</div><div class="locals">';
+  LOCALS.forEach(function(l){
+    var all = posts.filter(function(p){return p.local===l.id && isVisible(p);});
+    var nx = upcoming(l.id)[0];
+    h += '<div class="card lcard"><h4>'+esc(l.name)+'</h4><div class="area">'+esc(l.area)+'</div>'+
+      '<div class="meta"><span class="badge loc">'+all.length+' updates</span></div>'+
+      '<div class="next">'+(nx?'Next: <b>'+esc(nx.title)+'</b>, '+MON[parts(nx.eventDate).m]+' '+parts(nx.eventDate).d:'No upcoming events')+'</div>'+
+      '<div class="row"><button class="btn sm" data-open="'+esc(l.id)+'">See updates</button>'+
+      (l.site?'<a class="btn sm ghost" style="text-decoration:none;display:inline-block" href="'+esc(l.site)+'" target="_blank" rel="noopener">Local\'s own site</a>':'<span class="sample">Own site: to be confirmed</span>')+
+      '</div></div>';
+  });
+  h += '</div>';
+  app.innerHTML = h;
+}
+
+function viewCouncil(){
+  var h = pauseBars()+'<div class="two"><section class="card"><h3>State Council leadership</h3>'+
+    '<p style="color:var(--muted);margin-top:0;font-size:14px">Names per the ATU International conferences and councils page. Remaining officers are placeholders for the demo.</p>'+
+    '<div class="officers">'+
+    '<div class="officer"><b>Orlando Riley</b><span>Chairman (Local 819)</span></div>'+
+    '<div class="officer"><b>Geraldo Arroyo</b><span>Vice President (Local 822)</span></div>'+
+    '<div class="officer"><b>Placeholder</b><span>Recording Secretary</span></div>'+
+    '<div class="officer"><b>Placeholder</b><span>Treasurer</span></div></div>'+
+    '<h3 style="margin-top:20px">Take Action</h3>'+
+    '<div class="officers"><div class="officer"><b>Legislative alerts</b><span>Sample: contact your representative about transit funding.</span></div>'+
+    '<div class="officer"><b>Contract updates</b><span>Sample: status posts from the bargaining committee.</span></div>'+
+    '<div class="officer"><b>Know your rights</b><span>Sample: links to resources and steward contacts.</span></div></div></section>'+
+    '<section class="card"><h3>Member Voice</h3>'+
+    '<p style="color:var(--muted);margin-top:0;font-size:14px">A simple way for members to ask a question or send a suggestion to the right local. Demo only. Do not enter real personal or grievance details.</p>'+
+    '<label for="mvLocal">Send to</label><select id="mvLocal"><option>State Council</option>'+LOCALS.map(function(l){return '<option>'+esc(l.name)+'</option>';}).join("")+'</select>'+
+    '<label for="mvMsg">Message</label><textarea id="mvMsg" placeholder="Type a sample message"></textarea>'+
+    '<div style="margin-top:12px"><button class="btn" id="mvSend">Send (demo)</button></div></section></div>';
+  app.innerHTML = h;
+}
+
+function viewAdmin(){
+  var pend = posts.filter(function(p){return p.status==="pending";});
+  var pub = posts.filter(function(p){return p.status==="published";}).sort(function(a,b){return b.id-a.id;});
+  var h = '<div class="note"><b>Human approval and an emergency off switch are built in, not optional.</b> Nothing a local posts goes public until the council approves it, and the council can pause everything or a single local in one click.</div>'+
+    '<div class="seg" role="group" aria-label="Demo role"><button data-role="secretary" aria-pressed="'+(state.role==="secretary")+'">Local secretary</button><button data-role="council" aria-pressed="'+(state.role==="council")+'">Council admin</button></div>';
+  if(state.role==="secretary"){
+    h += '<div class="two"><section class="card"><h3>Post an update</h3>'+
+      '<label for="fLocal">Your local</label><select id="fLocal">'+LOCALS.map(function(l){return '<option value="'+l.id+'">'+esc(l.name)+' ('+esc(l.area)+')</option>';}).join("")+'</select>'+
+      '<label for="fType">Type</label><select id="fType">'+TYPES.map(function(t){return '<option value="'+t.id+'">'+esc(t.label)+'</option>';}).join("")+'</select>'+
+      '<div id="evFields" class="hidden"><label for="fDate">Event date</label><input type="date" id="fDate" value="2026-11-20"><label for="fTime">Time</label><input type="text" id="fTime" placeholder="7:00 PM"></div>'+
+      '<label for="fTitle">Title</label><input type="text" id="fTitle" maxlength="90" placeholder="Short headline">'+
+      '<label for="fBody">Details</label><textarea id="fBody" maxlength="500" placeholder="What members need to know"></textarea>'+
+      '<label for="fSrc">How you normally share this</label><select id="fSrc"><option>Posted on hub</option><option>Flyer photo</option><option>Facebook page</option><option>Group text</option><option>Email to council</option></select>'+
+      '<div style="margin-top:12px"><button class="btn gold" id="submitPost">Submit for approval</button></div></section>'+
+      '<section class="card"><h3>How it works</h3><p style="color:var(--muted);margin-top:0">A secretary posts in a couple of minutes. The update goes to the council queue, not the public feed. In the full build, a flyer photo could be turned into a draft automatically, and a person still reviews it before it publishes.</p>'+
+      '<p style="color:var(--muted)">Switch to <b>Council admin</b> above to approve what you submit.</p>'+
+      '<div class="meta"><span class="badge src">'+pend.length+' waiting for approval</span></div></section></div>';
+  } else {
+    h += '<section class="card kill" style="margin-bottom:18px"><h3>Emergency controls</h3>'+
+      '<div class="row"><button class="btn danger" id="pauseAll">'+(state.paused?'Resume all public updates':'Pause ALL public updates')+'</button>'+
+      '<span class="sample">'+(state.paused?'Everything is currently hidden from the public.':'Hides every post and blocks publishing instantly.')+'</span></div>'+
+      '<p style="margin:14px 0 6px;font-size:14px;color:var(--muted)">Pause one local only:</p><div class="chips" style="flex-wrap:wrap">'+
+      ['council'].concat(LOCALS.map(function(l){return l.id;})).map(function(id){
+        return '<button class="chip" data-pause="'+id+'" aria-pressed="'+(!!state.pausedLocals[id])+'">'+esc(lname(id))+(state.pausedLocals[id]?' (paused)':'')+'</button>';
+      }).join("")+'</div></section>'+
+      '<div class="two"><section class="card"><h3>Approval queue ('+pend.length+')</h3>'+
+      (pend.length?pend.map(function(p){
+        return '<div class="post" style="box-shadow:none;margin-bottom:8px"><div style="min-width:0;flex:1"><div class="meta" style="margin-bottom:4px"><span class="badge loc">'+esc(lname(p.local))+'</span><span class="badge t-'+esc(p.type)+'">'+esc(tlabel(p.type))+'</span></div><h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
+          '<div class="row"><button class="btn sm" data-approve="'+p.id+'">Approve and publish</button><button class="btn sm ghost" data-reject="'+p.id+'">Reject</button></div></div></div>';
+      }).join(""):'<div class="empty">Queue is empty.</div>')+'</section>'+
+      '<section class="card"><h3>Published posts</h3>'+
+      pub.slice(0,10).map(function(p){
+        return '<div class="upc"><div style="flex:1;min-width:0"><div class="t">'+esc(p.title)+'</div><div class="s">'+esc(lname(p.local))+' | '+esc(tlabel(p.type))+'</div></div><button class="btn sm ghost" data-unpub="'+p.id+'">Unpublish</button></div>';
+      }).join("")+'</section></div>';
+  }
+  app.innerHTML = h;
+  var ft = document.getElementById("fType");
+  if(ft){ ft.addEventListener("change",function(){
+    document.getElementById("evFields").classList.toggle("hidden",ft.value!=="event");
+  }); }
+}
+
+function render(){
+  renderTabs();
+  if(state.view==="home") viewHome();
+  else if(state.view==="calendar") viewCalendar();
+  else if(state.view==="locals") viewLocals();
+  else if(state.view==="council") viewCouncil();
+  else viewAdmin();
+}
+function findPost(id){ for(var i=0;i<posts.length;i++){ if(posts[i].id===+id) return posts[i]; } return null; }
+
+document.addEventListener("click",function(e){
+  var t = e.target.closest("button");
+  if(!t) return;
+  if(t.dataset.view){ state.view = t.dataset.view; render(); window.scrollTo(0,0); return; }
+  if(t.dataset.kind){
+    state[t.dataset.kind] = t.dataset.val;
+    if(state.view==="home"){ viewHome(); } else { render(); }
+    return;
+  }
+  if(t.dataset.open){ state.local = t.dataset.open; state.type="all"; state.q=""; state.view="home"; render(); window.scrollTo(0,0); return; }
+  if(t.id==="notifyBtn"){ toast("Demo only. Preferences are not saved."); return; }
+  if(t.id==="mvSend"){ toast("Demo only. Nothing was sent or stored."); return; }
+  if(t.dataset.role){ state.role = t.dataset.role; render(); return; }
+  if(t.id==="submitPost"){
+    var title = document.getElementById("fTitle").value.trim();
+    var body = document.getElementById("fBody").value.trim();
+    if(!title){ toast("Add a title first."); return; }
+    var type = document.getElementById("fType").value;
+    var np = {id:nextId++,local:document.getElementById("fLocal").value,type:type,title:title,body:body||"No details provided.",date:TODAY,src:document.getElementById("fSrc").value,sample:true,status:"pending"};
+    if(type==="event"){ np.eventDate = document.getElementById("fDate").value||"2026-11-20"; np.time = document.getElementById("fTime").value.trim(); }
+    posts.push(np);
+    toast("Submitted. It is waiting in the council approval queue.");
+    render();
+    return;
+  }
+  if(t.id==="pauseAll"){ state.paused = !state.paused; toast(state.paused?"All public updates paused.":"Public updates resumed."); render(); return; }
+  if(t.dataset.pause){ var k=t.dataset.pause; state.pausedLocals[k] = !state.pausedLocals[k]; toast(lname(k)+(state.pausedLocals[k]?" paused.":" resumed.")); render(); return; }
+  if(t.dataset.approve){ var p=findPost(t.dataset.approve); if(p){ p.status="published"; toast("Approved. It is now live on the hub."); render(); } return; }
+  if(t.dataset.reject){ var r=findPost(t.dataset.reject); if(r){ posts.splice(posts.indexOf(r),1); toast("Rejected and removed."); render(); } return; }
+  if(t.dataset.unpub){ var u=findPost(t.dataset.unpub); if(u){ u.status="pending"; toast("Unpublished and moved back to the queue."); render(); } return; }
+});
+document.addEventListener("input",function(e){
+  if(e.target.id==="q"){ state.q = e.target.value; renderFeed(); }
+});
+
+render();
+})();
+</script>
+</body>
+</html>
