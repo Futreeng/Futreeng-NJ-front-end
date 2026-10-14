@@ -154,6 +154,20 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40p
 .callink:hover{text-decoration:underline}
 .cal.compact{margin-top:4px}
 .cal.compact .callink{border:0;padding:0;font-size:12px;background:none}
+.demobox{background:var(--ann-bg);color:var(--ann);border:1px dashed var(--ann);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:6px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.modalwrap{position:fixed;inset:0;background:rgba(6,14,30,.6);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+.modal{background:var(--surface);color:var(--ink);border-radius:16px;padding:20px;width:100%;max-width:760px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.modal h3{margin:0 0 10px;font-size:20px}
+.modal h5{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.previews{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.previews{grid-template-columns:1fr}}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:16px 12px}
+.bubble{background:#e9e9eb;color:#111;border-radius:18px 18px 18px 4px;padding:10px 14px;font-size:15px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;max-width:92%}
+.email{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+.ehead{background:var(--chip);padding:10px 12px;display:grid;gap:2px;overflow-wrap:anywhere}
+.ehead span{color:var(--muted);display:inline-block;min-width:58px}
+.ebody{padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}
 .log{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto;font-size:14px}
 .log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 .log li:first-child{border-top:0}
@@ -188,6 +202,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40p
 <main class="wrap" id="app"></main>
 <footer>Prototype by Futreeng for discussion. Each local keeps its own site and way of working. Sample posts are labeled and do not reflect real announcements.</footer>
 <div id="toast" class="toast hidden" role="status"></div>
+<div id="modal" class="modalwrap hidden"></div>
 
 <script>
 (function(){
@@ -281,7 +296,8 @@ var state = {
   form:{local:"540",type:"news",date:"2026-11-20",time:"",title:"",body:"",src:"Posted on hub"},
   mv:{to:"State Council",msg:""},
   read:{},bellOpen:false,
-  mlocal:"all",mq:"",openMtg:{}
+  mlocal:"all",mq:"",openMtg:{},
+  alert:{headline:"",message:"",audience:"all"}
 };
 
 // Activity log: every submit, approve, reject, unpublish, pause, resume, alert and check.
@@ -561,6 +577,78 @@ function viewCouncil(){
   app.innerHTML = h;
 }
 
+// Urgent alert: compose, preview as text and email, then an explicit confirm publishes it.
+function audienceLabel(a){
+  if(a==="all") return "All members, all nine locals";
+  for(var i=0;i<LOCALS.length;i++){ if(LOCALS[i].id===a) return "Members of "+LOCALS[i].name+" ("+LOCALS[i].area+")"; }
+  return "";
+}
+function alertBlocked(a){
+  var loc = a==="all"?"council":a;
+  if(state.paused) return "Publishing is paused for everyone. Resume public updates before sending an alert.";
+  if(state.pausedLocals[loc]) return lname(loc)+" is paused. Resume it before sending this alert.";
+  return "";
+}
+function alertFormHTML(){
+  var a = state.alert;
+  return '<section class="card" style="margin-bottom:18px" id="alertCard"><h3>Send an urgent alert</h3>'+
+    '<div class="demobox"><b>Demo:</b> nothing real is sent. No text message or email leaves this page. Confirming only posts the alert on this demo hub.</div>'+
+    '<label for="aHead">Headline</label><input type="text" id="aHead" data-bind="alert.headline" maxlength="90" placeholder="Short and clear, for example: Service change tonight" value="'+esc(a.headline)+'">'+
+    '<label for="aMsg">Message</label><textarea id="aMsg" data-bind="alert.message" maxlength="300" placeholder="What members need to know and do">'+esc(a.message)+'</textarea>'+
+    '<label for="aAud">Audience</label><select id="aAud" data-bind="alert.audience">'+
+    ['all'].concat(LOCALS.map(function(l){return l.id;})).map(function(id){ return '<option value="'+id+'"'+(a.audience===id?' selected':'')+'>'+esc(audienceLabel(id))+'</option>'; }).join("")+'</select>'+
+    '<div class="row" style="margin-top:12px"><button class="btn danger" id="alertPreview">Preview alert</button><span class="sample">You will see exactly what members get before anything is published.</span></div></section>';
+}
+var modalEl = null, modalReturn = null, pendingAlert = null;
+function smsParts(n){ return n<=160?1:Math.ceil(n/153); }
+function openAlertPreview(){
+  var a = state.alert, head = a.headline.trim(), msg = a.message.trim();
+  if(!head || !msg){ toast("Add a headline and a message first."); return; }
+  pendingAlert = {headline:head,message:msg,audience:a.audience};
+  var sms = "ATU NJ State Council URGENT: "+head+"\n"+msg+"\nReply STOP to opt out.";
+  var blocked = alertBlocked(a.audience);
+  modalReturn = document.activeElement;
+  modalEl.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">'+
+    '<h3 id="mTitle">Preview urgent alert</h3>'+
+    '<div class="demobox"><b>Demo only.</b> Confirm and send posts this alert on the demo hub. No text message or email is actually sent.</div>'+
+    '<p class="sample" style="margin:0 0 12px">Audience: <b style="color:var(--ink)">'+esc(audienceLabel(a.audience))+'</b>, members who opted in.</p>'+
+    '<div class="previews"><div><h5>Text message</h5><div class="phone"><div class="bubble">'+esc(sms)+'</div>'+
+    '<div class="sample" style="font-size:12px;margin-top:6px">'+sms.length+' characters, '+smsParts(sms.length)+' text'+(smsParts(sms.length)>1?'s':'')+'</div></div></div>'+
+    '<div><h5>Email</h5><div class="email"><div class="ehead"><div><span>From:</span> NJ State Council Hub (demo address)</div>'+
+    '<div><span>To:</span> '+esc(audienceLabel(a.audience))+'</div><div><span>Subject:</span> <b>URGENT: '+esc(head)+'</b></div></div>'+
+    '<div class="ebody"><p style="margin-top:0">'+esc(msg)+'</p><p class="sample" style="font-size:12px;margin:0">You receive this because you opted in to urgent alerts. Manage preferences on the hub.</p></div></div></div></div>'+
+    (blocked?'<div class="pausebar" style="margin:14px 0 0" role="alert">'+esc(blocked)+'</div>':'')+
+    '<div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn ghost" id="alertCancel">Cancel, send nothing</button>'+
+    '<button class="btn danger" id="alertConfirm"'+(blocked?' disabled':'')+'>Confirm and send</button></div></div>';
+  modalEl.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  document.getElementById("alertCancel").focus();
+}
+function closeModal(){
+  modalEl.classList.add("hidden");
+  modalEl.innerHTML = "";
+  document.body.style.overflow = "";
+  pendingAlert = null;
+  var back = document.getElementById("alertPreview") || modalReturn;
+  if(back && back.focus) back.focus({preventScroll:true});
+}
+function doAlert(np,who){
+  posts.push(np);
+  logEvent(who||"Council admin","sent urgent alert "+quote(np.title)+" to "+(np.audience==="all"?"all members":"members of "+lname(np.audience))+". Demo: no text or email was sent.");
+}
+function confirmAlert(){
+  if(!pendingAlert) return;
+  var a = pendingAlert, blocked = alertBlocked(a.audience);
+  if(blocked){ toast(blocked); return; }
+  var np = {id:newId(),local:a.audience==="all"?"council":a.audience,type:"alert",title:a.headline,body:a.message,date:TODAY,
+    src:"Council urgent alert",sample:true,status:"published",audience:a.audience};
+  doAlert(np);
+  state.alert = {headline:"",message:"",audience:a.audience};
+  closeModal();
+  render();
+  toast("Alert posted on the hub. Demo: no text or email was sent.");
+}
+
 function viewAdmin(){
   var pend = posts.filter(function(p){return p.status==="pending";});
   var pub = posts.filter(function(p){return p.status==="published";}).sort(function(a,b){return b.id-a.id;});
@@ -587,6 +675,7 @@ function viewAdmin(){
       ['council'].concat(LOCALS.map(function(l){return l.id;})).map(function(id){
         return '<button class="chip" data-pause="'+id+'" aria-pressed="'+(!!state.pausedLocals[id])+'">'+esc(lname(id))+(state.pausedLocals[id]?' (paused)':'')+'</button>';
       }).join("")+'</div></section>'+
+      alertFormHTML()+
       '<div class="two"><section class="card"><h3>Approval queue ('+pend.length+')</h3>'+
       (pend.length?pend.map(function(p){
         return '<div class="post" style="box-shadow:none;margin-bottom:8px"><div style="min-width:0;flex:1"><div class="meta" style="margin-bottom:4px"><span class="badge loc">'+esc(lname(p.local))+'</span><span class="badge t-'+esc(p.type)+'">'+esc(tlabel(p.type))+'</span></div><h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
@@ -609,6 +698,7 @@ function viewAdmin(){
 var bellBtn = document.getElementById("bellBtn");
 var bellPanel = document.getElementById("bellPanel");
 var bellCount = document.getElementById("bellCount");
+modalEl = document.getElementById("modal");
 function notifItems(){
   return posts.filter(function(p){ return isVisible(p) && (p.type==="alert" || p.type==="announcement"); })
     .sort(function(a,b){ if(a.type!==b.type) return a.type==="alert"?-1:1; return a.date<b.date?1:(a.date>b.date?-1:b.id-a.id); });
@@ -646,6 +736,18 @@ document.addEventListener("click",function(e){
   if(state.bellOpen && !e.target.closest(".bellwrap")) closeBell();
 },true);
 document.addEventListener("keydown",function(e){
+  if(modalEl && !modalEl.classList.contains("hidden")){
+    if(e.key==="Escape"){ e.preventDefault(); document.getElementById("alertCancel").click(); return; }
+    if(e.key==="Tab"){
+      // Keep focus inside the preview dialog.
+      var f = Array.prototype.filter.call(modalEl.querySelectorAll("button"),function(b){ return !b.disabled; });
+      if(!f.length) return;
+      var first = f[0], last = f[f.length-1];
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+    }
+    return;
+  }
   if(e.key==="Escape" && state.bellOpen){ closeBell(); bellBtn.focus(); }
 });
 
@@ -712,6 +814,9 @@ function doPauseLocal(id,on,who){
 document.addEventListener("click",function(e){
   var t = e.target.closest("button");
   if(!t) return;
+  if(t.id==="alertPreview"){ openAlertPreview(); return; }
+  if(t.id==="alertCancel"){ closeModal(); logEvent("Council admin","canceled an alert preview. Nothing was sent."); render(); toast("Canceled. Nothing was sent."); return; }
+  if(t.id==="alertConfirm"){ confirmAlert(); return; }
   if(t.id==="bellBtn"){ state.bellOpen = !state.bellOpen; renderBell(); return; }
   if(t.id==="markAllRead"){ notifItems().forEach(function(p){ state.read[p.id] = true; }); renderBell(); return; }
   if(t.dataset.read){ state.read[t.dataset.read] = true; renderBell(); return; }
