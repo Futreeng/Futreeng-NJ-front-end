@@ -149,6 +149,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40p
 .mtgbody p{margin:0 0 6px}
 .agenda{margin:0;padding-left:20px}
 @media (max-width:560px){.mtgbody{padding-left:16px}}
+.cal{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.callink{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--news);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--surface)}
+.callink:hover{text-decoration:underline}
+.cal.compact{margin-top:4px}
+.cal.compact .callink{border:0;padding:0;font-size:12px;background:none}
 .log{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto;font-size:14px}
 .log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 .log li:first-child{border-top:0}
@@ -315,6 +320,51 @@ function dateBox(iso){
   return '<div class="datebox"><div class="m">'+MON[p.m]+'</div><div class="d">'+p.d+'</div></div>';
 }
 
+// "Add to calendar" uses a Google Calendar template link. Nothing is downloaded.
+// Times like "7:00 PM" or "10 AM and 7 PM" become one link per session; with no
+// readable time the event is added as all day. End times are an estimate (one hour).
+var ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
+function two(n){ return (n<10?"0":"")+n; }
+function parseTimes(str){
+  var out = [], re = /(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s*m\b\.?/gi, m;
+  while((m = re.exec(String(str||"")))){
+    var h = +m[1], mi = m[2]?+m[2]:0;
+    if(h<1 || h>12 || mi>59) continue;
+    var pm = m[3].toLowerCase()==="p";
+    out.push({h:(h%12)+(pm?12:0),mi:mi,label:h+(mi?":"+two(mi):"")+(pm?" PM":" AM")});
+  }
+  return out;
+}
+function addDays(iso,n){ var p = parts(iso); return new Date(Date.UTC(p.y,p.m,p.d+n)).toISOString().slice(0,10); }
+function gcalUrl(title,iso,t,details){
+  var ymd = function(s){ return s.replace(/-/g,""); }, dates;
+  if(t){
+    var eh = t.h+1, eIso = iso;
+    if(eh>=24){ eh -= 24; eIso = addDays(iso,1); }
+    dates = ymd(iso)+"T"+two(t.h)+two(t.mi)+"00/"+ymd(eIso)+"T"+two(eh)+two(t.mi)+"00";
+  } else {
+    dates = ymd(iso)+"/"+ymd(addDays(iso,1));
+  }
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(title)+
+    "&dates="+dates+"&details="+encodeURIComponent(details)+"&ctz=America%2FNew_York";
+}
+function calLinks(o,compact){
+  if(!ISO_RE.test(o.date||"")) return "";
+  var times = parseTimes(o.time);
+  var title = o.title+" ("+lname(o.local)+")";
+  var details = (o.body?o.body+"\n\n":"")+
+    (o.sample?"Sample content from the NJ State Council Hub demo. ":"Listed on the NJ State Council Hub demo. ")+
+    (times.length?"End time is an estimate.":(o.time?"Time: "+o.time:""));
+  var links = times.length>1
+    ? times.map(function(t){ return [gcalUrl(title,o.date,t,details),"Add "+t.label+" session"]; })
+    : [[gcalUrl(title,o.date,times[0],details),compact?"Add to calendar":"Add to Google Calendar"]];
+  return '<div class="cal'+(compact?' compact':'')+'">'+links.map(function(l){
+    return '<a class="callink" href="'+esc(l[0])+'" target="_blank" rel="noopener">'+
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>'+
+      esc(l[1])+'</a>';
+  }).join("")+'</div>';
+}
+
 function postHTML(p){
   var shown = p.type==="event" && p.eventDate ? p.eventDate : p.date;
   var when = p.type==="event" && p.time ? ' <span class="sample">| '+esc(p.time)+'</span>' : "";
@@ -325,7 +375,8 @@ function postHTML(p){
     '<h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
     '<div class="meta"><span class="badge src">Arrived via: '+esc(p.src)+'</span>'+
     (p.sample?'<span class="sample">Sample content</span>':'<span class="sample">From the local\'s own site</span>')+
-    '</div></div></article>';
+    '</div>'+(p.eventDate?calLinks({title:p.title,local:p.local,date:p.eventDate,time:p.time,body:p.body,sample:p.sample}):'')+
+    '</div></article>';
 }
 
 function filtered(){
@@ -385,7 +436,8 @@ function viewHome(){
     '</div><div id="feed"></div></section>'+
     '<aside><div class="card"><h3>Coming up</h3>'+
     (evs.length?evs.slice(0,6).map(function(e){
-      return '<div class="upc">'+dateBox(e.eventDate)+'<div><div class="t">'+esc(e.title)+'</div><div class="s">'+esc(lname(e.local))+(e.time?' | '+esc(e.time):'')+'</div></div></div>';
+      return '<div class="upc">'+dateBox(e.eventDate)+'<div><div class="t">'+esc(e.title)+'</div><div class="s">'+esc(lname(e.local))+(e.time?' | '+esc(e.time):'')+'</div>'+
+        calLinks({title:e.title,local:e.local,date:e.eventDate,time:e.time,body:e.body,sample:e.sample},true)+'</div></div>';
     }).join(""):'<div class="s">Nothing scheduled.</div>')+
     '</div>'+
     '<div class="card" style="margin-top:14px"><h3>Get notified</h3>'+
@@ -448,7 +500,9 @@ function meetingHTML(m){
     '<div class="meta"><span class="sample">'+(m.sample?'Sample content':'From Local 819\'s own site')+'</span></div></div>'+
     '<span class="chev" aria-hidden="true"></span></summary>'+
     '<div class="mtgbody">'+(m.note?'<p class="sample" style="margin-top:0">'+esc(m.note)+'</p>':'')+
-    '<h5>Agenda</h5>'+agenda+'<h5>Minutes</h5>'+minutes+'</div></details>';
+    '<h5>Agenda</h5>'+agenda+'<h5>Minutes</h5>'+minutes+
+    (st.id==="upcoming"?calLinks({title:m.title,local:m.local,date:m.date,time:m.time,body:m.note||"",sample:m.sample}):'')+
+    '</div></details>';
 }
 function renderMeetingList(){
   var box = document.getElementById("mtgList");
