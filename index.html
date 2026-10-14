@@ -168,6 +168,20 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40p
 .ehead{background:var(--chip);padding:10px 12px;display:grid;gap:2px;overflow-wrap:anywhere}
 .ehead span{color:var(--muted);display:inline-block;min-width:58px}
 .ebody{padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.feedtbl{width:100%;border-collapse:collapse;font-size:14px}
+.feedtbl th,.feedtbl td{text-align:left;padding:10px 8px;border-top:1px solid var(--line);vertical-align:middle}
+.feedtbl thead th{border-top:0;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.feedtbl tbody th{font-weight:700}
+.feedtbl td:last-child{text-align:right;white-space:nowrap}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:760px){
+  .feedtbl thead{display:none}
+  .feedtbl tr{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
+  .feedtbl th,.feedtbl td{display:block;border:0;padding:1px 0;grid-column:1 / -1}
+  .feedtbl tbody th{grid-column:1;grid-row:1}
+  .feedtbl td:last-child{grid-column:2;grid-row:1}
+  .feedtbl td[data-h]::before{content:attr(data-h) ": ";font-size:12px;font-weight:700;color:var(--muted)}
+}
 .log{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto;font-size:14px}
 .log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 .log li:first-child{border-top:0}
@@ -284,6 +298,54 @@ var meetings = [
 function meetingStatus(m){
   if(m.date>=TODAY) return {id:"upcoming",label:"Upcoming",cls:"t-event"};
   return m.minutesApproved?{id:"approved",label:"Minutes approved",cls:"t-news"}:{id:"pending",label:"Minutes pending",cls:"t-announcement"};
+}
+
+// How each local shares news today. Only the two local websites are known; the rest are
+// sample channels to be confirmed with each local.
+var CHANNELS = {
+  website:{src:"Synced from local site",hub:"Checks the local's own site for new posts"},
+  flyer:{src:"Flyer photo",hub:"Secretary snaps the flyer; it becomes a draft"},
+  facebook:{src:"Facebook page",hub:"Picks up new public posts from the page"},
+  text:{src:"Group text",hub:"Secretary forwards the text to the hub"},
+  email:{src:"Email to council",hub:"Emails to a hub inbox become drafts"}
+};
+var FEEDS = {
+  "540":{ch:"email",how:"Email to the council"},
+  "819":{ch:"website",how:"Own website (Webflow)",known:true},
+  "820":{ch:"flyer",how:"Flyers on bulletin boards"},
+  "821":{ch:"facebook",how:"Facebook page"},
+  "822":{ch:"email",how:"Email to the council"},
+  "823":{ch:"text",how:"Group texts"},
+  "824":{ch:"flyer",how:"Flyers on bulletin boards"},
+  "825":{ch:"website",how:"Own website",known:true},
+  "880":{ch:"facebook",how:"Facebook page"}
+};
+var PULLS = [
+  {type:"news",title:"Sample: bulletin board update from {area}",body:"A notice picked up from the way this local already shares news. Waiting for council review."},
+  {type:"event",title:"Sample: {area} members' family day",body:"Family day for members and their families. Picked up by a simulated check.",eventDate:"2026-11-21",time:"11:00 AM"},
+  {type:"announcement",title:"Sample: {area} union office holiday hours",body:"Holiday hours for the union office. Picked up by a simulated check."}
+];
+var checks = {};
+function localById(id){ for(var i=0;i<LOCALS.length;i++){ if(LOCALS[i].id===id) return LOCALS[i]; } return null; }
+// Simulates pulling one new item. It always lands in the approval queue, never straight to the public feed.
+function simulatePull(localId){
+  var c = checks[localId] || (checks[localId] = {n:0,last:""});
+  var tpl = PULLS[c.n], l = localById(localId);
+  c.last = stamp();
+  if(!tpl || !l) return null;
+  c.n++;
+  var np = {id:newId(),local:localId,type:tpl.type,title:tpl.title.replace("{area}",l.area),body:tpl.body,date:TODAY,
+    src:CHANNELS[FEEDS[localId].ch].src,sample:true,status:"pending"};
+  if(tpl.eventDate){ np.eventDate = tpl.eventDate; np.time = tpl.time; }
+  return np;
+}
+function doCheck(localId,np,who){
+  if(np){
+    posts.push(np);
+    logEvent(who||"Hub sync (simulated)","checked "+lname(localId)+": 1 new item, "+quote(np.title)+", sent to the approval queue. Not public.");
+  } else {
+    logEvent(who||"Hub sync (simulated)","checked "+lname(localId)+": no new items.");
+  }
 }
 
 // Ids are time based so posts created by different live viewers never collide.
@@ -649,6 +711,20 @@ function confirmAlert(){
   toast("Alert posted on the hub. Demo: no text or email was sent.");
 }
 
+function feedsHTML(){
+  return '<section class="card" style="margin-top:18px" id="feedsCard"><h3>How each local feeds the hub</h3>'+
+    '<p style="color:var(--muted);margin-top:0;font-size:14px">Each local keeps sharing the way it does today. The hub picks it up and puts it in the approval queue above. Nothing pulled in goes public until the council approves it. Channels marked sample are to be confirmed with each local.</p>'+
+    '<table class="feedtbl"><thead><tr><th scope="col">Local</th><th scope="col">How they share today</th><th scope="col">What the hub does</th><th scope="col">Last check</th><th scope="col"><span class="sr">Action</span></th></tr></thead><tbody>'+
+    LOCALS.map(function(l){
+      var f = FEEDS[l.id], c = checks[l.id];
+      return '<tr><th scope="row">'+esc(l.name)+' <span class="sample" style="font-weight:600">'+esc(l.area)+'</span></th>'+
+        '<td data-h="How they share today">'+esc(f.how)+(f.known?'':' <span class="sample">(sample)</span>')+'</td>'+
+        '<td data-h="What the hub does">'+esc(CHANNELS[f.ch].hub)+'</td>'+
+        '<td data-h="Last check">'+(c?esc(c.last):'<span class="sample">Not checked yet</span>')+'</td>'+
+        '<td><button class="btn sm ghost" data-check="'+l.id+'">Check for updates</button></td></tr>';
+    }).join("")+'</tbody></table></section>';
+}
+
 function viewAdmin(){
   var pend = posts.filter(function(p){return p.status==="pending";});
   var pub = posts.filter(function(p){return p.status==="published";}).sort(function(a,b){return b.id-a.id;});
@@ -678,13 +754,16 @@ function viewAdmin(){
       alertFormHTML()+
       '<div class="two"><section class="card"><h3>Approval queue ('+pend.length+')</h3>'+
       (pend.length?pend.map(function(p){
-        return '<div class="post" style="box-shadow:none;margin-bottom:8px"><div style="min-width:0;flex:1"><div class="meta" style="margin-bottom:4px"><span class="badge loc">'+esc(lname(p.local))+'</span><span class="badge t-'+esc(p.type)+'">'+esc(tlabel(p.type))+'</span></div><h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
+        return '<div class="post" style="box-shadow:none;margin-bottom:8px"><div style="min-width:0;flex:1"><div class="meta" style="margin-bottom:4px"><span class="badge loc">'+esc(lname(p.local))+'</span><span class="badge t-'+esc(p.type)+'">'+esc(tlabel(p.type))+'</span>'+
+          (p.eventDate?'<span class="sample">| '+esc(p.eventDate)+(p.time?' '+esc(p.time):'')+'</span>':'')+'</div><h4>'+esc(p.title)+'</h4><p>'+esc(p.body)+'</p>'+
+          '<div class="meta" style="margin-bottom:8px"><span class="badge src">Arrived via: '+esc(p.src)+'</span></div>'+
           '<div class="row"><button class="btn sm" data-approve="'+p.id+'">Approve and publish</button><button class="btn sm ghost" data-reject="'+p.id+'">Reject</button></div></div></div>';
       }).join(""):'<div class="empty">Queue is empty.</div>')+'</section>'+
       '<section class="card"><h3>Published posts</h3>'+
       pub.slice(0,10).map(function(p){
         return '<div class="upc"><div style="flex:1;min-width:0"><div class="t">'+esc(p.title)+'</div><div class="s">'+esc(lname(p.local))+' | '+esc(tlabel(p.type))+'</div></div><button class="btn sm ghost" data-unpub="'+p.id+'">Unpublish</button></div>';
       }).join("")+'</section></div>'+
+      feedsHTML()+
       '<section class="card" style="margin-top:18px" id="activityLog"><h3>Activity log</h3>'+
       '<p style="color:var(--muted);margin-top:0;font-size:14px">Every submit, approval, rejection, unpublish, pause, resume, alert and update check, newest first. Resets on reload in this demo.</p>'+
       (activity.length?'<ol class="log">'+activity.map(function(a){
@@ -814,6 +893,13 @@ function doPauseLocal(id,on,who){
 document.addEventListener("click",function(e){
   var t = e.target.closest("button");
   if(!t) return;
+  if(t.dataset.check){
+    var cl = t.dataset.check, pulled = simulatePull(cl);
+    doCheck(cl,pulled);
+    render();
+    toast(pulled?"Found 1 new item from "+lname(cl)+". It is in the approval queue, not public.":"No new items from "+lname(cl)+".");
+    return;
+  }
   if(t.id==="alertPreview"){ openAlertPreview(); return; }
   if(t.id==="alertCancel"){ closeModal(); logEvent("Council admin","canceled an alert preview. Nothing was sent."); render(); toast("Canceled. Nothing was sent."); return; }
   if(t.id==="alertConfirm"){ confirmAlert(); return; }
