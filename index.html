@@ -118,6 +118,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 16px 40p
 .checks{display:flex;flex-wrap:wrap;gap:6px}
 .checks label{display:inline-flex;align-items:center;gap:6px;margin:0;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-weight:600;color:var(--ink);background:var(--chip)}
 .checks input{width:auto}
+.log{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto;font-size:14px}
+.log li{display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.log time{flex:none;width:170px;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.log li{flex-direction:column;gap:0}.log time{width:auto}}
 </style>
 </head>
 <body>
@@ -160,6 +165,8 @@ var TYPES = [
   {id:"event",label:"Event"}
 ];
 var TODAY = "2026-10-14";
+var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var MONFULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 function lname(id){ if(id==="council") return "State Council"; return "Local "+id; }
 function tlabel(id){ for(var i=0;i<TYPES.length;i++){ if(TYPES[i].id===id) return TYPES[i].label; } return id; }
@@ -183,9 +190,25 @@ var posts = [
   {id:16,local:"822",type:"news",title:"Sample: member spotlight",body:"Submitted by the local secretary and waiting for council approval.",date:"2026-10-14",src:"Posted on hub",sample:true,status:"pending"},
   {id:17,local:"880",type:"event",title:"Sample: Camden holiday gathering",body:"Submitted by the local secretary and waiting for council approval.",date:"2026-10-14",eventDate:"2026-12-10",time:"6:00 PM",src:"Posted on hub",sample:true,status:"pending"}
 ];
-var nextId = 100;
+// Ids are time based so posts created by different live viewers never collide.
+var lastId = 0;
+function newId(){ var id = Date.now()*1000+Math.floor(Math.random()*1000); if(id<=lastId) id = lastId+1; lastId = id; return id; }
+var SOURCES = ["Posted on hub","Flyer photo","Facebook page","Group text","Email to council","Synced from local site","Council urgent alert"];
 
-var state = {view:"home",local:"all",type:"all",q:"",paused:false,pausedLocals:{},role:"secretary"};
+var state = {
+  view:"home",local:"all",type:"all",q:"",paused:false,pausedLocals:{},role:"secretary",
+  form:{local:"540",type:"news",date:"2026-11-20",time:"",title:"",body:"",src:"Posted on hub"},
+  mv:{to:"State Council",msg:""}
+};
+
+// Activity log: every submit, approve, reject, unpublish, pause, resume, alert and check.
+var activity = [];
+function stamp(){
+  var d = new Date(), h = d.getHours(), ap = h<12?"AM":"PM";
+  function two(n){ return (n<10?"0":"")+n; }
+  return MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear()+" "+((h%12)||12)+":"+two(d.getMinutes())+":"+two(d.getSeconds())+" "+ap;
+}
+function logEvent(who,what){ activity.unshift({ts:stamp(),who:who,what:what}); if(activity.length>200) activity.pop(); }
 
 var app = document.getElementById("app");
 var tabsEl = document.getElementById("tabs");
@@ -203,8 +226,6 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ toastEl.classList.add("hidden"); },3200);
 }
-var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-var MONFULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 function parts(iso){ var p = iso.split("-"); return {y:+p[0],m:+p[1]-1,d:+p[2]}; }
 
 function isVisible(p){
@@ -351,8 +372,8 @@ function viewCouncil(){
     '<div class="officer"><b>Know your rights</b><span>Sample: links to resources and steward contacts.</span></div></div></section>'+
     '<section class="card"><h3>Member Voice</h3>'+
     '<p style="color:var(--muted);margin-top:0;font-size:14px">A simple way for members to ask a question or send a suggestion to the right local. Demo only. Do not enter real personal or grievance details.</p>'+
-    '<label for="mvLocal">Send to</label><select id="mvLocal"><option>State Council</option>'+LOCALS.map(function(l){return '<option>'+esc(l.name)+'</option>';}).join("")+'</select>'+
-    '<label for="mvMsg">Message</label><textarea id="mvMsg" placeholder="Type a sample message"></textarea>'+
+    '<label for="mvLocal">Send to</label><select id="mvLocal" data-bind="mv.to">'+["State Council"].concat(LOCALS.map(function(l){return l.name;})).map(function(n){return '<option'+(state.mv.to===n?' selected':'')+'>'+esc(n)+'</option>';}).join("")+'</select>'+
+    '<label for="mvMsg">Message</label><textarea id="mvMsg" data-bind="mv.msg" placeholder="Type a sample message">'+esc(state.mv.msg)+'</textarea>'+
     '<div style="margin-top:12px"><button class="btn" id="mvSend">Send (demo)</button></div></section></div>';
   app.innerHTML = h;
 }
@@ -363,13 +384,14 @@ function viewAdmin(){
   var h = '<div class="note"><b>Human approval and an emergency off switch are built in, not optional.</b> Nothing a local posts goes public until the council approves it, and the council can pause everything or a single local in one click.</div>'+
     '<div class="seg" role="group" aria-label="Demo role"><button data-role="secretary" aria-pressed="'+(state.role==="secretary")+'">Local secretary</button><button data-role="council" aria-pressed="'+(state.role==="council")+'">Council admin</button></div>';
   if(state.role==="secretary"){
+    var f = state.form;
     h += '<div class="two"><section class="card"><h3>Post an update</h3>'+
-      '<label for="fLocal">Your local</label><select id="fLocal">'+LOCALS.map(function(l){return '<option value="'+l.id+'">'+esc(l.name)+' ('+esc(l.area)+')</option>';}).join("")+'</select>'+
-      '<label for="fType">Type</label><select id="fType">'+TYPES.map(function(t){return '<option value="'+t.id+'">'+esc(t.label)+'</option>';}).join("")+'</select>'+
-      '<div id="evFields" class="hidden"><label for="fDate">Event date</label><input type="date" id="fDate" value="2026-11-20"><label for="fTime">Time</label><input type="text" id="fTime" placeholder="7:00 PM"></div>'+
-      '<label for="fTitle">Title</label><input type="text" id="fTitle" maxlength="90" placeholder="Short headline">'+
-      '<label for="fBody">Details</label><textarea id="fBody" maxlength="500" placeholder="What members need to know"></textarea>'+
-      '<label for="fSrc">How you normally share this</label><select id="fSrc"><option>Posted on hub</option><option>Flyer photo</option><option>Facebook page</option><option>Group text</option><option>Email to council</option></select>'+
+      '<label for="fLocal">Your local</label><select id="fLocal" data-bind="form.local">'+LOCALS.map(function(l){return '<option value="'+l.id+'"'+(f.local===l.id?' selected':'')+'>'+esc(l.name)+' ('+esc(l.area)+')</option>';}).join("")+'</select>'+
+      '<label for="fType">Type</label><select id="fType" data-bind="form.type">'+TYPES.map(function(t){return '<option value="'+t.id+'"'+(f.type===t.id?' selected':'')+'>'+esc(t.label)+'</option>';}).join("")+'</select>'+
+      '<div id="evFields"'+(f.type==="event"?'':' class="hidden"')+'><label for="fDate">Event date</label><input type="date" id="fDate" data-bind="form.date" value="'+esc(f.date)+'"><label for="fTime">Time</label><input type="text" id="fTime" data-bind="form.time" maxlength="40" placeholder="7:00 PM" value="'+esc(f.time)+'"></div>'+
+      '<label for="fTitle">Title</label><input type="text" id="fTitle" data-bind="form.title" maxlength="90" placeholder="Short headline" value="'+esc(f.title)+'">'+
+      '<label for="fBody">Details</label><textarea id="fBody" data-bind="form.body" maxlength="500" placeholder="What members need to know">'+esc(f.body)+'</textarea>'+
+      '<label for="fSrc">How you normally share this</label><select id="fSrc" data-bind="form.src">'+SOURCES.slice(0,5).map(function(s){return '<option'+(f.src===s?' selected':'')+'>'+esc(s)+'</option>';}).join("")+'</select>'+
       '<div style="margin-top:12px"><button class="btn gold" id="submitPost">Submit for approval</button></div></section>'+
       '<section class="card"><h3>How it works</h3><p style="color:var(--muted);margin-top:0">A secretary posts in a couple of minutes. The update goes to the council queue, not the public feed. In the full build, a flyer photo could be turned into a draft automatically, and a person still reviews it before it publishes.</p>'+
       '<p style="color:var(--muted)">Switch to <b>Council admin</b> above to approve what you submit.</p>'+
@@ -390,24 +412,73 @@ function viewAdmin(){
       '<section class="card"><h3>Published posts</h3>'+
       pub.slice(0,10).map(function(p){
         return '<div class="upc"><div style="flex:1;min-width:0"><div class="t">'+esc(p.title)+'</div><div class="s">'+esc(lname(p.local))+' | '+esc(tlabel(p.type))+'</div></div><button class="btn sm ghost" data-unpub="'+p.id+'">Unpublish</button></div>';
-      }).join("")+'</section></div>';
+      }).join("")+'</section></div>'+
+      '<section class="card" style="margin-top:18px" id="activityLog"><h3>Activity log</h3>'+
+      '<p style="color:var(--muted);margin-top:0;font-size:14px">Every submit, approval, rejection, unpublish, pause, resume, alert and update check, newest first. Resets on reload in this demo.</p>'+
+      (activity.length?'<ol class="log">'+activity.map(function(a){
+        return '<li><time>'+esc(a.ts)+'</time><span><b>'+esc(a.who)+'</b> '+esc(a.what)+'</span></li>';
+      }).join("")+'</ol>':'<div class="empty">No activity yet.</div>')+'</section>';
   }
   app.innerHTML = h;
-  var ft = document.getElementById("fType");
-  if(ft){ ft.addEventListener("change",function(){
-    document.getElementById("evFields").classList.toggle("hidden",ft.value!=="event");
-  }); }
 }
 
+// Re-rendering replaces the DOM, so keep keyboard focus and the caret where they were.
 function render(){
+  var ae = document.activeElement, fid = ae && ae.id, s = null, en = null;
+  try{ s = ae.selectionStart; en = ae.selectionEnd; }catch(x){}
   renderTabs();
   if(state.view==="home") viewHome();
   else if(state.view==="calendar") viewCalendar();
   else if(state.view==="locals") viewLocals();
   else if(state.view==="council") viewCouncil();
   else viewAdmin();
+  if(fid){
+    var el = document.getElementById(fid);
+    if(el && el!==document.activeElement){
+      el.focus({preventScroll:true});
+      try{ if(s!=null) el.setSelectionRange(s,en); }catch(x){}
+    }
+  }
 }
-function findPost(id){ for(var i=0;i<posts.length;i++){ if(posts[i].id===+id) return posts[i]; } return null; }
+function findPost(id){ for(var i=0;i<posts.length;i++){ if(String(posts[i].id)===String(id)) return posts[i]; } return null; }
+function quote(s){ return '"'+s+'"'; }
+
+// Every change to shared demo state goes through one of these functions, so each one is logged.
+// "who" names the actor shown in the activity log.
+function doSubmit(np,who){
+  posts.push(np);
+  logEvent(who||(lname(np.local)+" secretary"),"submitted "+quote(np.title)+" for approval.");
+}
+function doApprove(id,who){
+  var p = findPost(id); if(!p || p.status!=="pending") return false;
+  p.status = "published";
+  logEvent(who||"Council admin","approved and published "+quote(p.title)+" ("+lname(p.local)+").");
+  return true;
+}
+function doReject(id,who){
+  var p = findPost(id); if(!p || p.status!=="pending") return false;
+  posts.splice(posts.indexOf(p),1);
+  logEvent(who||"Council admin","rejected and removed "+quote(p.title)+" ("+lname(p.local)+").");
+  return true;
+}
+function doUnpublish(id,who){
+  var p = findPost(id); if(!p || p.status!=="published") return false;
+  p.status = "pending";
+  logEvent(who||"Council admin","unpublished "+quote(p.title)+" and moved it back to the queue.");
+  return true;
+}
+function doPauseAll(on,who){
+  if(state.paused===on) return false;
+  state.paused = on;
+  logEvent(who||"Council admin",on?"paused ALL public updates.":"resumed all public updates.");
+  return true;
+}
+function doPauseLocal(id,on,who){
+  if(!!state.pausedLocals[id]===on) return false;
+  state.pausedLocals[id] = on;
+  logEvent(who||"Council admin",(on?"paused ":"resumed ")+lname(id)+".");
+  return true;
+}
 
 document.addEventListener("click",function(e){
   var t = e.target.closest("button");
@@ -420,29 +491,38 @@ document.addEventListener("click",function(e){
   }
   if(t.dataset.open){ state.local = t.dataset.open; state.type="all"; state.q=""; state.view="home"; render(); window.scrollTo(0,0); return; }
   if(t.id==="notifyBtn"){ toast("Demo only. Preferences are not saved."); return; }
-  if(t.id==="mvSend"){ toast("Demo only. Nothing was sent or stored."); return; }
+  if(t.id==="mvSend"){ state.mv.msg = ""; render(); toast("Demo only. Nothing was sent or stored."); return; }
   if(t.dataset.role){ state.role = t.dataset.role; render(); return; }
   if(t.id==="submitPost"){
-    var title = document.getElementById("fTitle").value.trim();
-    var body = document.getElementById("fBody").value.trim();
+    var f = state.form, title = f.title.trim(), body = f.body.trim();
     if(!title){ toast("Add a title first."); return; }
-    var type = document.getElementById("fType").value;
-    var np = {id:nextId++,local:document.getElementById("fLocal").value,type:type,title:title,body:body||"No details provided.",date:TODAY,src:document.getElementById("fSrc").value,sample:true,status:"pending"};
-    if(type==="event"){ np.eventDate = document.getElementById("fDate").value||"2026-11-20"; np.time = document.getElementById("fTime").value.trim(); }
-    posts.push(np);
+    var np = {id:newId(),local:f.local,type:f.type,title:title,body:body||"No details provided.",date:TODAY,src:f.src,sample:true,status:"pending"};
+    if(f.type==="event"){ np.eventDate = f.date||"2026-11-20"; np.time = f.time.trim(); }
+    doSubmit(np);
+    state.form = {local:f.local,type:"news",date:"2026-11-20",time:"",title:"",body:"",src:f.src};
     toast("Submitted. It is waiting in the council approval queue.");
     render();
     return;
   }
-  if(t.id==="pauseAll"){ state.paused = !state.paused; toast(state.paused?"All public updates paused.":"Public updates resumed."); render(); return; }
-  if(t.dataset.pause){ var k=t.dataset.pause; state.pausedLocals[k] = !state.pausedLocals[k]; toast(lname(k)+(state.pausedLocals[k]?" paused.":" resumed.")); render(); return; }
-  if(t.dataset.approve){ var p=findPost(t.dataset.approve); if(p){ p.status="published"; toast("Approved. It is now live on the hub."); render(); } return; }
-  if(t.dataset.reject){ var r=findPost(t.dataset.reject); if(r){ posts.splice(posts.indexOf(r),1); toast("Rejected and removed."); render(); } return; }
-  if(t.dataset.unpub){ var u=findPost(t.dataset.unpub); if(u){ u.status="pending"; toast("Unpublished and moved back to the queue."); render(); } return; }
+  if(t.id==="pauseAll"){ doPauseAll(!state.paused); toast(state.paused?"All public updates paused.":"Public updates resumed."); render(); return; }
+  if(t.dataset.pause){ var k=t.dataset.pause; doPauseLocal(k,!state.pausedLocals[k]); toast(lname(k)+(state.pausedLocals[k]?" paused.":" resumed.")); render(); return; }
+  if(t.dataset.approve){ if(doApprove(t.dataset.approve)){ toast(state.paused?"Approved. It will show once publishing is resumed.":"Approved. It is now live on the hub."); render(); } return; }
+  if(t.dataset.reject){ if(doReject(t.dataset.reject)){ toast("Rejected and removed."); render(); } return; }
+  if(t.dataset.unpub){ if(doUnpublish(t.dataset.unpub)){ toast("Unpublished and moved back to the queue."); render(); } return; }
 });
-document.addEventListener("input",function(e){
-  if(e.target.id==="q"){ state.q = e.target.value; renderFeed(); }
-});
+function onField(e){
+  var t = e.target;
+  if(t.id==="q"){ state.q = t.value; renderFeed(); return; }
+  if(t.dataset && t.dataset.bind){
+    var path = t.dataset.bind.split(".");
+    state[path[0]][path[1]] = t.value;
+    if(t.id==="fType"){ var ev = document.getElementById("evFields"); if(ev) ev.classList.toggle("hidden",t.value!=="event"); }
+  }
+}
+document.addEventListener("input",onField);
+document.addEventListener("change",onField);
+
+logEvent("Hub","demo session started. This log resets on reload.");
 
 render();
 })();
