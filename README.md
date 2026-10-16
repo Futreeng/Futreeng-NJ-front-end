@@ -1,32 +1,41 @@
-# NJ State Council Hub (Demo)
+# NJ State Council Hub
 
-Front-end prototype for a pitch to the ATU New Jersey State Council. It gathers news, events, notifications, and announcements from the nine NJ locals into one place, while each local keeps its own way of working. Member onboarding is unchanged.
+**Production build planning (Phase 0) complete.**
 
-Status: demo only. All posts are sample content except Local 819's three meeting dates, which come from its public website. Not an official ATU site.
+Front-end prototype (`index.html`) was approved by ATU New Jersey State Council. Phase 0 planning documents are below. Phase 1 development (real Next.js/Supabase build) begins when approved.
 
-## Run it
+## Phase 0 Planning Documentation
 
-It is one self-contained file. Open `index.html` in a browser, or serve the folder:
+- **[PHASE_0.md](docs/PHASE_0.md)**: Completion summary, task list for Phase 1.
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: System diagrams, data flow, trust boundaries, tech stack.
+- **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: Security requirements, attack scenarios, verification tests (all 18 threats).
+- **[OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md)**: 5 questions to ask now, 12 questions for later. Phase 0 defaults stated.
+- **[CONTENT_RULES.md](docs/CONTENT_RULES.md)**: Sample labeling, allowed names (Riley, Arroyo only), tone, demo strip lifecycle.
+- **[DATA_INVENTORY.md](docs/DATA_INVENTORY.md)**: Every personal data field, retention, deletion, compliance, New Jersey privacy law questions.
+- **[RUNBOOK.md](docs/RUNBOOK.md)**: Deployment, rollback, kill-switch drill procedure, incident response.
+- **[LESSONS.md](docs/LESSONS.md)**: Bug and lesson log (active Phase 1 onward).
+- **[DECISIONS/](docs/DECISIONS/)**: Architecture decision records (ADRs).
 
-    python3 -m http.server 8000
+## Mandatory Gate
 
-## Where to edit
+Nothing publishes without council approval. Alerts require an explicit preview and confirm step. Emergency off-switch (pause all, pause one local, unpublish one post) is non-negotiable and tested before every phase launch.
 
-- Colors and spacing: CSS variables at the top of `index.html`
-- Locals and post types: `LOCALS` and `TYPES` near the top of the script
-- Sample posts: the `posts` array
-- State resets on reload by design (no database yet)
+## Status
 
-## Mandatory gate
+- Phase 0: Complete (documentation ready).
+- Phase 1 (Core): Database, auth, approval gate, public pages. Waiting for approval to start.
+- Contact: Haron (relays to Orlando Riley).
 
-Human approval before anything publishes, and an emergency off switch (pause all, pause one local, unpublish one post), are required in every version of this build. Do not remove them.
+## Run the Demo
 
-## Next steps once approved
+The demo is in `index.html`. Open in a browser or serve:
 
-Database, logins and roles (local secretary, council admin), real approval workflow, notification delivery, and syncing from each local's existing site.
+```bash
+python3 -m http.server 8000
+```
 
-## Open items
+Then visit http://localhost:8000. State resets on reload (no database yet).
 
-- Confirm current council officers and mailing address
-- Confirm which locals have their own websites
-- Replace sample content with real content only after council approval
+---
+
+For production build details and Phase 1 timeline, see `docs/PHASE_0.md`.
