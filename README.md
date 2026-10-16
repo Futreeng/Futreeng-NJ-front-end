@@ -2,13 +2,13 @@
 
 **Production build planning (Phase 0) complete.**
 
-Front-end prototype (`index.html`) was approved by ATU New Jersey State Council. Phase 0 planning documents are below. Phase 1 development (real Next.js/Supabase build) begins when approved.
+Front-end prototype (index.html) was shown to the ATU New Jersey State Council. It has not been approved, and no agreement or payment exists yet. Phase 0 planning documents are below. Phase 1 development (real Next.js/Supabase build) begins when approved.
 
 ## Phase 0 Planning Documentation
 
 - **[PHASE_0.md](docs/PHASE_0.md)**: Completion summary, task list for Phase 1.
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: System diagrams, data flow, trust boundaries, tech stack.
-- **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: Security requirements, attack scenarios, verification tests (all 18 threats).
+- **[THREAT_MODEL.md](docs/THREAT_MODEL.md)**: Security requirements, attack scenarios, verification tests (all 19 threats).
 - **[OPEN_QUESTIONS.md](docs/OPEN_QUESTIONS.md)**: 5 questions to ask now, 12 questions for later. Phase 0 defaults stated.
 - **[CONTENT_RULES.md](docs/CONTENT_RULES.md)**: Sample labeling, allowed names (Riley, Arroyo only), tone, demo strip lifecycle.
 - **[DATA_INVENTORY.md](docs/DATA_INVENTORY.md)**: Every personal data field, retention, deletion, compliance, New Jersey privacy law questions.
