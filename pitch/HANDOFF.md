@@ -167,6 +167,20 @@ Not touched. They remain in their current (differently-designed) state. Phase 2 
 
 ---
 
+### Spanish (added 2026-10-17)
+- Content arrays take `{ en, es }` for any text field; `L()` picks the current language. A plain string shows in both languages.
+- Fixed page text is translated from `CONTENT.strings.es.static`, keyed by the exact English text. Add a new English sentence to the page and you must add its Spanish there.
+- In ES mode, `window.__i18nMissing` (browser console) lists any English text with no Spanish entry. It should be empty.
+- Register: "tú", US union usage (local, delegado sindical for steward, queja formal for grievance).
+
+### New Jersey identity (added 2026-10-17)
+- `NJ_OUTLINE` in the script is the state border from US Census boundaries (us-atlas), simplified to 97 points. `njProjector()` fits it into any box.
+- Hero art (`renderHeroMap`), the locals map (`renderMap`), the brand mark and footer seal (`.nj-glyph`) all draw from that one outline. Locals plot at their real lat/lng; the Newark/Hudson cluster gets callout labels.
+- Flag mark (`.nj-flag`) is a simplified NJ flag: buff field, Jersey-blue shield (`--nj-buff`, `--nj-blue`). Swap in the official flag art if the council wants the full coat of arms.
+- The hero photo placeholder was replaced by the NJ route graphic.
+
+---
+
 ## Still-to-do before the pitch
 
 1. ~~Deploy~~ Done 2026-10-17. Hub + preview-823/ + preview-825/ live. Mobile horizontal-scroll bug fixed in the same deploy.
@@ -174,7 +188,7 @@ Not touched. They remain in their current (differently-designed) state. Phase 2 
 3. **Decide 8 vs 9 locals** and pick one set of city labels.
 4. **Any real contract data** → swap into `fight[]` if available (otherwise keep SAMPLE).
 5. **Any real wins** collected from locals in the past 6 months → swap into `wins[]`.
-6. **Spanish translations** for new section strings.
+6. ~~Spanish translations~~ Done 2026-10-17. Every section switches to Spanish.
 7. **GitHub ↔ Vercel link** for push-to-deploy. Vercel project root directory is now `pitch/deploy` and git-sourced deploys work; connecting the repo in Project Settings → Git turns on auto-deploy.
 8. **Content rule conflict:** `docs/CONTENT_RULES.md` allows only Riley and Arroyo by name; the 823/825 previews show those locals' officers. Decide before merging PR #1.
 

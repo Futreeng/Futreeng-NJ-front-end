@@ -523,7 +523,8 @@ img,svg{display:block;max-width:100%}
   .fight-head-row{display:none}
   .fight-cell{padding:12px 16px}
   .fight-cell.topic{background:var(--navy-deep);font-size:18px;padding-top:16px}
-  .fight-row .fight-cell::before{content:attr(data-l) " · ";font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-right:8px}
+  .fight-row .fight-cell::before{content:attr(data-l);display:block;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+  .fight-cell.demand,.fight-cell.offer{display:block}
   .fight-row .fight-cell.topic::before,.fight-row .fight-cell.status::before{display:none}
   .wins-grid{grid-template-columns:1fr 1fr}
   .ladder-grid{grid-template-columns:1fr 1fr}
@@ -552,6 +553,24 @@ img,svg{display:block;max-width:100%}
   .cope-action h3{font-size:22px}
 }
 
+/* ---------- New Jersey identity: state outline + flag colors (buff, Jersey blue) ---------- */
+:root{--nj-buff:#E4BE80;--nj-blue:#1F6FB2}
+.nj-flag{display:inline-block;width:27px;height:18px;flex:none;vertical-align:-4px;margin-right:10px;box-shadow:0 0 0 1px rgba(255,255,255,.25);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect width='30' height='20' fill='%23E4BE80'/%3E%3Cpath d='M11 4.5h8v6c0 2.9-2.1 4.6-4 5.4-1.9-.8-4-2.5-4-5.4z' fill='%231F6FB2'/%3E%3Cpath d='M12.6 7.2h4.8M12.6 9.4h4.8M12.6 11.6h4.8' stroke='%23E4BE80' stroke-width='.8'/%3E%3C/svg%3E") center/cover no-repeat}
+.topbar-right .nj-flag{margin-right:-4px}
+.nj-glyph{display:inline-flex;align-items:center}
+.nj-glyph svg{display:block;height:100%;width:auto}
+.brand .nj-glyph{height:40px}
+.brand .nj-glyph path{fill:var(--ink)}
+.seal .nj-glyph{height:62px}
+.seal .nj-glyph path{fill:var(--nj-buff)}
+.hero-nj{background:radial-gradient(circle at 60% 35%,#13284D 0,var(--navy-deep) 70%)}
+.hero-map{position:absolute;inset:24px 24px 64px}
+.hero-map svg{width:100%;height:100%;display:block}
+.map .region{font-family:var(--mono);font-size:10px;letter-spacing:.3em;fill:var(--nj-buff);opacity:.75}
+.map .leader{fill:none;stroke:rgba(242,244,248,.5);stroke-width:1.5}
+@media (max-width:720px){.brand .nj-glyph{height:32px}.seal .nj-glyph{height:52px}.hero-photo.hero-nj{min-height:460px}.hero-map{inset:16px 16px 56px}}
+
 /* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
 .eyebrow.red,.right .n,.win .win-meta b,.rung .rung-num,.cope-action .ca-eyebrow,.sms-card .sms-eyebrow{color:var(--accent-text)}
 @media (max-width:720px){
@@ -571,6 +590,7 @@ img,svg{display:block;max-width:100%}
       <span><span class="role">VICE PRESIDENT</span>&nbsp;&nbsp;<b>Geraldo Arroyo</b> · Local 822</span>
     </div>
     <div class="topbar-right">
+      <span class="nj-flag" aria-hidden="true"></span>
       <span>Nearly 10,000 NJ Transit workers</span>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" data-lang="en" aria-pressed="true">EN</button>
@@ -585,6 +605,7 @@ img,svg{display:block;max-width:100%}
   <div class="wrap">
     <a class="brand" href="#top" aria-label="NJ Council Hub home">
       <span class="logo-mark" aria-hidden="true">ATU</span>
+      <span class="nj-glyph" aria-hidden="true"></span>
       <span class="brand-name"><strong>NJ Council Hub</strong><span>ATU New Jersey State Council</span></span>
     </a>
     <nav class="nav" aria-label="Main">
@@ -631,8 +652,8 @@ img,svg{display:block;max-width:100%}
       <span class="sms-note">Standard message rates may apply · Reply STOP to opt out</span>
     </form>
   </div>
-  <div class="hero-photo stripes" role="img" aria-label="Photo placeholder: operators in front of their buses at the garage">
-    <div class="ph"><span class="ph-label">Photo placeholder</span><span class="ph-title">Hero photo</span><span class="ph-text">Operators standing in front of their buses at a garage. This will be replaced with a real photo from one of the locals: wide landscape shot, at least 1600px across.</span></div>
+  <div class="hero-photo hero-nj" aria-hidden="true">
+    <div class="hero-map" id="hero-map"></div>
     <div class="tag">Union strong · Transit strong</div>
   </div>
 </section>
@@ -1076,14 +1097,14 @@ img,svg{display:block;max-width:100%}
 <!-- ======================= Footer ======================= -->
 <footer class="footer">
   <div class="wrap">
-    <div class="seal" aria-hidden="true">ATU<br>NJ</div>
+    <div class="seal" aria-hidden="true"><span class="nj-glyph"></span></div>
     <div>
       <span class="slogan" data-i18n="slogan">An injury to one is an injury to all.</span>
-      <span class="aff">ATU New Jersey State Council · Affiliated with the AFL-CIO/CLC</span>
+      <span class="aff"><span class="nj-flag" aria-hidden="true"></span>ATU New Jersey State Council · Affiliated with the AFL-CIO/CLC</span>
     </div>
     <span class="logo-mark" aria-label="Amalgamated Transit Union">ATU</span>
   </div>
-  <div class="wrap credit">Working demo built by Futreeng LLC. Items marked SAMPLE are placeholder content.</div>
+  <div class="wrap credit">Working demo built by FutreEng LLC. Items marked SAMPLE are placeholder content.</div>
 </footer>
 
 <!-- ======================= Mobile tab bar ======================= -->
@@ -1111,7 +1132,13 @@ const CONTENT = {
       benefits: 'Benefits & retirees', spot: 'Member spotlight', wall: 'From the locals', ride: 'Ride to your local',
       slogan: 'An injury to one is an injury to all.', going: "I'm going", rsvp: 'RSVP', goingCount: 'going',
       soon: 'This part of the hub is coming in a later build.',
-      smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.'
+      smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.',
+      phoneErr: 'Enter a 10-digit phone number.', sample: 'Sample', arrived: 'ARRIVED',
+      demandL: 'Union demand', offerL: 'NJT offer', of: 'of', site: 'Local {n} site →',
+      photoPh: 'Photo placeholder', memberPhoto: 'Member photo', council: 'COUNCIL', terminal: 'Terminal · Trenton',
+      mapLabel: 'Map of New Jersey with the nine ATU locals, connected to the council in Trenton',
+      stateName: 'NEW JERSEY', ocean: 'ATLANTIC OCEAN',
+      desc: 'News, events and notices from the ATU New Jersey State Council, delivered to all nine ATU locals.'
     },
     es: {
       nav: ['La Lucha','Victorias','Contrato','Participa','COPE','Locales'],
@@ -1124,110 +1151,369 @@ const CONTENT = {
       benefits: 'Beneficios y jubilados', spot: 'Miembro destacado', wall: 'Desde los locales', ride: 'Viaja a tu local',
       slogan: 'Una injuria a uno es una injuria a todos.', going: 'Voy', rsvp: 'Confirmar', goingCount: 'van',
       soon: 'Esta parte del sitio llegará en una versión posterior.',
-      smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.'
+      smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.',
+      phoneErr: 'Escribe un número de teléfono de 10 dígitos.', sample: 'Muestra', arrived: 'ENTREGADO',
+      demandL: 'Demanda del sindicato', offerL: 'Oferta de NJT', of: 'de', site: 'Sitio del Local {n} →',
+      photoPh: 'Espacio para foto', memberPhoto: 'Foto del miembro', council: 'CONSEJO', terminal: 'Terminal · Trenton',
+      mapLabel: 'Mapa de Nueva Jersey con los nueve locales de ATU, conectados al consejo en Trenton',
+      stateName: 'NUEVA JERSEY', ocean: 'OCÉANO ATLÁNTICO',
+      desc: 'Noticias, eventos y avisos del Consejo Estatal de ATU en Nueva Jersey, entregados a los nueve locales de ATU.',
+      // Every fixed English phrase on the page and its Spanish. Keys must match the English text exactly.
+      static: {
+        "☎": "☎",
+        "→": "→",
+        "CHAIRMAN": "PRESIDENTE",
+        "VICE PRESIDENT": "VICEPRESIDENTE",
+        "· Local 819": "· Local 819",
+        "· Local 822": "· Local 822",
+        "Orlando Riley": "Orlando Riley",
+        "Geraldo Arroyo": "Geraldo Arroyo",
+        "Nearly 10,000 NJ Transit workers": "Casi 10,000 trabajadores de NJ Transit",
+        "EN": "EN",
+        "ES": "ES",
+        "ATU": "ATU",
+        "NJ": "NJ",
+        "OR": "OR",
+        "GA": "GA",
+        "NJ Council Hub": "NJ Council Hub",
+        "ATU New Jersey State Council": "Consejo Estatal de ATU en Nueva Jersey",
+        "Sign in": "Iniciar sesión",
+        "NJ State Council → 9 locals · all stops": "Consejo Estatal de NJ → 9 locales · todas las paradas",
+        "◆ Join the alert line": "◆ Únete a la línea de alertas",
+        "Sample": "Muestra",
+        "When we need you, we text you.": "Cuando te necesitamos, te escribimos.",
+        "When management shuts off the bulletin boards, this is how we reach 10,000 members in an hour. Phone number only. We never share it.": "Cuando la gerencia apaga los tablones de anuncios, así llegamos a 10,000 miembros en una hora. Solo tu número de teléfono. Nunca lo compartimos.",
+        "Sign up": "Inscribirme",
+        "Standard message rates may apply · Reply STOP to opt out": "Pueden aplicarse tarifas estándar de mensajes · Responde STOP para cancelar",
+        "Photo placeholder": "Espacio para foto",
+        "Union strong · Transit strong": "Sindicato fuerte · Tránsito fuerte",
+        "◆ The fight · right now": "◆ La lucha · ahora mismo",
+        "What's at stake": "Lo que está en juego",
+        "NJ Transit's contract with the ATU New Jersey State Council. What the union is demanding, what management is offering, where the fight stands.": "El contrato de NJ Transit con el Consejo Estatal de ATU en Nueva Jersey. Lo que exige el sindicato, lo que ofrece la gerencia y cómo va la lucha.",
+        "Days without a settled barrier upgrade": "Días sin acuerdo sobre mejores barreras",
+        "Topic": "Tema",
+        "Union demand": "Demanda del sindicato",
+        "NJT offer": "Oferta de NJT",
+        "Status": "Estado",
+        "Updated as the council posts bargaining bulletins": "Se actualiza cuando el consejo publica boletines de negociación",
+        "Read the bargaining updates →": "Leer las novedades de la negociación →",
+        "Call your rep in Trenton →": "Llamar a tu legislador en Trenton →",
+        "About the council": "Sobre el consejo",
+        "The ATU New Jersey State Council brings together the Amalgamated Transit Union locals that represent NJ Transit bus workers across the state: operators, mechanics and the people who keep New Jersey moving. The council coordinates bargaining, legislative work in Trenton and member advocacy for all nine locals.": "El Consejo Estatal de ATU en Nueva Jersey reúne a los locales del Sindicato Amalgamado de Tránsito que representan a los trabajadores de autobuses de NJ Transit en todo el estado: operadores, mecánicos y la gente que mantiene a Nueva Jersey en movimiento. El consejo coordina la negociación, el trabajo legislativo en Trenton y la defensa de los miembros de los nueve locales.",
+        "ATU Local 819 · Newark": "ATU Local 819 · Newark",
+        "ATU Local 822": "ATU Local 822",
+        "NJ Transit workers represented": "Trabajadores de NJ Transit representados",
+        "Locals statewide": "Locales en todo el estado",
+        "NJ Transit's largest union": "El sindicato más grande de NJ Transit",
+        "Amalgamated Transit Union · AFL-CIO/CLC · since 1892": "Sindicato Amalgamado de Tránsito · AFL-CIO/CLC · desde 1892",
+        "Updated as council posts": "Se actualiza con cada publicación del consejo",
+        "POSTED": "PUBLICADO",
+        "MESSAGE": "MENSAJE",
+        "DESTINATION": "DESTINO",
+        "STATUS": "ESTADO",
+        "On the job": "En el trabajo",
+        "Short answers for the situations operators run into most. When in doubt, don't sign anything and call your steward first.": "Respuestas cortas para las situaciones más comunes de los operadores. Si tienes dudas, no firmes nada y llama primero a tu delegado sindical.",
+        "Pick your local and garage to reach the steward on duty.": "Elige tu local y tu garaje para comunicarte con el delegado de turno.",
+        "Find my steward →": "Buscar mi delegado →",
+        "NJ Transit bus agreement": "Contrato de autobuses de NJ Transit",
+        "Ratification voting is underway at every local. Read the summary, check your garage's voting times, and bring your union card.": "La votación de ratificación está en curso en todos los locales. Lee el resumen, revisa los horarios de votación de tu garaje y trae tu tarjeta sindical.",
+        "◆ Receipts": "◆ Resultados",
+        "What the union delivered": "Lo que logró el sindicato",
+        "Union contracts are not promises. They are receipts. Here is what the nine locals and the council have won for members this year.": "Los contratos sindicales no son promesas. Son resultados. Esto es lo que los nueve locales y el consejo ganaron para los miembros este año.",
+        "All council bulletins →": "Todos los boletines del consejo →",
+        "Operator safety photo": "Foto de seguridad del operador",
+        "An operator at the wheel with the driver safety barrier visible. This will be replaced with a real photo taken at an NJ Transit garage, with the operator's permission.": "Un operador al volante con la barrera de seguridad visible. Se reemplazará con una foto real tomada en un garaje de NJ Transit, con el permiso del operador.",
+        "Every operator home safe": "Que cada operador vuelva sano a casa",
+        "Safety alerts": "Alertas de seguridad",
+        "Show up · speak up": "Preséntate · hazte oír",
+        "Full calendar →": "Calendario completo →",
+        "◆ Build the local": "◆ Fortalece tu local",
+        "Get involved": "Participa",
+        "Every strong local is built the same way: members become supporters, supporters become activists, activists become stewards, stewards become officers. Pick the next rung.": "Todo local fuerte se construye igual: los miembros se vuelven simpatizantes, los simpatizantes se vuelven activistas, los activistas se vuelven delegados y los delegados se vuelven dirigentes. Sube al siguiente escalón.",
+        "Member": "Miembro",
+        "Pay your dues, vote in elections, come to the monthly meeting at your local.": "Paga tus cuotas, vota en las elecciones y ven a la reunión mensual de tu local.",
+        "You are here if you're reading this →": "Si lees esto, estás aquí →",
+        "Supporter": "Simpatizante",
+        "Sign up for the alert line, show up to rallies, wear your union pin on the job.": "Inscríbete en la línea de alertas, ve a las manifestaciones y lleva tu botón del sindicato en el trabajo.",
+        "Takes 30 seconds →": "Toma 30 segundos →",
+        "Activist": "Activista",
+        "Join a committee, help with phone banks, hand out leaflets at your garage, talk to new hires about the union.": "Únete a un comité, ayuda con las llamadas, reparte volantes en tu garaje y habla del sindicato con los nuevos empleados.",
+        "Two hours a month →": "Dos horas al mes →",
+        "Steward": "Delegado sindical",
+        "Run for garage steward. Represent your crew in grievances. Training provided.": "Postúlate como delegado de tu garaje. Representa a tus compañeros en las quejas formales. Te damos capacitación.",
+        "Elected by your garage →": "Elegido por tu garaje →",
+        "Officer": "Dirigente",
+        "Run for an office at your local or on the state council. Shape the next contract.": "Postúlate a un cargo en tu local o en el consejo estatal. Da forma al próximo contrato.",
+        "Elections every 3 years →": "Elecciones cada 3 años →",
+        "I want to do more.": "Quiero hacer más.",
+        "Drop your number and your steward will reach out about the next rung. No commitment, no spam.": "Deja tu número y tu delegado te contactará sobre el siguiente paso. Sin compromiso, sin spam.",
+        "Count me in": "Cuenten conmigo",
+        "◆ Political power": "◆ Poder político",
+        "COPE & the Trenton fight": "COPE y la lucha en Trenton",
+        "Transit funding, assault laws, pension protection: every one is decided in Trenton. ATU-COPE is how transit workers pay for a seat at that table. Dollar-per-check, member-controlled, no corporate money.": "Financiamiento del tránsito, leyes contra agresiones, protección de pensiones: todo se decide en Trenton. ATU-COPE es como los trabajadores del tránsito pagan su lugar en esa mesa. Un dólar por cheque, controlado por los miembros, sin dinero corporativo.",
+        "COPE participation by local": "Participación en COPE por local",
+        "Sign up for COPE →": "Inscribirme en COPE →",
+        "How COPE works →": "Cómo funciona COPE →",
+        "◆ Active campaign": "◆ Campaña activa",
+        "Call your senator today": "Llama hoy a tu senador",
+        "S-2140 (Operator Safety Act) raises assault on a transit worker to a second-degree offense and requires automatic 90-day paid leave. It's stuck in Senate Judiciary. One phone call per operator moves it.": "La S-2140 (Ley de Seguridad del Operador) convierte la agresión a un trabajador del tránsito en delito de segundo grado y exige 90 días de licencia pagada automática. Está detenida en el Comité Judicial del Senado. Una llamada por operador la saca adelante.",
+        "\"Hi, I'm": "\"Hola, soy",
+        "[your name]": "[tu nombre]",
+        ", a bus operator with ATU Local": ", operador de autobús del Local",
+        "[your local]": "[tu local]",
+        ". I'm a constituent. I'm asking the senator to move S-2140, the Operator Safety Act, out of Judiciary this session. Transit workers are getting assaulted on the job and we need this bill to pass. Thank you.\"": " de ATU y vivo en su distrito. Le pido al senador que saque la S-2140, la Ley de Seguridad del Operador, del Comité Judicial en esta sesión. A los trabajadores del tránsito nos están agrediendo en el trabajo y necesitamos que esta ley se apruebe. Gracias.\"",
+        "Find my senator →": "Buscar a mi senador →",
+        "Script in Spanish": "Guion en inglés",
+        "What you've earned": "Lo que te has ganado",
+        "Retired members stay members. Retiree chapters meet monthly at several locals.": "Los jubilados siguen siendo miembros. Los capítulos de jubilados se reúnen cada mes en varios locales.",
+        "The people who move New Jersey": "La gente que mueve a Nueva Jersey",
+        "Locals: share your photos →": "Locales: compartan sus fotos →",
+        "◆ Who runs the council": "◆ Quién dirige el consejo",
+        "Officers listed are public; committees and delegates are Sample": "Los dirigentes listados son públicos; los comités y delegados son de muestra",
+        "Council governance": "Gobierno del consejo",
+        "The ATU New Jersey State Council is a federation of nine locals, governed by elected officers and standing committees. Members elect delegates at each local. Delegates elect the executive board.": "El Consejo Estatal de ATU en Nueva Jersey es una federación de nueve locales, gobernada por dirigentes electos y comités permanentes. Los miembros eligen delegados en cada local. Los delegados eligen a la junta ejecutiva.",
+        "Executive board": "Junta ejecutiva",
+        "Chairman": "Presidente",
+        "Vice President": "Vicepresidente",
+        "Secretary-Treasurer": "Secretario-tesorero",
+        "Name pending": "Nombre pendiente",
+        "To be confirmed by the council": "Por confirmar por el consejo",
+        "Recording Secretary": "Secretario de actas",
+        "Standing committees": "Comités permanentes",
+        "Bargaining": "Negociación",
+        "Chair: TBD": "Presidencia: por definir",
+        "Leads NJ Transit contract negotiations": "Dirige las negociaciones del contrato con NJ Transit",
+        "Legislative": "Legislativo",
+        "Trenton advocacy, transit funding, COPE": "Cabildeo en Trenton, financiamiento del tránsito, COPE",
+        "Safety": "Seguridad",
+        "Operator assaults, barrier upgrades, incident review": "Agresiones a operadores, mejoras de barreras, revisión de incidentes",
+        "Communications": "Comunicaciones",
+        "This hub, member mobilization, press": "Este sitio, movilización de miembros, prensa",
+        "Scholarship & retirees": "Becas y jubilados",
+        "Member and family scholarships, retiree chapters": "Becas para miembros y familias, capítulos de jubilados",
+        "Delegates per local": "Delegados por local",
+        "Local 540 · Trenton": "Local 540 · Trenton",
+        "Local 819 · Newark": "Local 819 · Newark",
+        "Local 820 · Union City": "Local 820 · Union City",
+        "Local 821 · Jersey City": "Local 821 · Jersey City",
+        "Local 822 · Plainfield": "Local 822 · Plainfield",
+        "Local 823 · Newark (Ironbound)": "Local 823 · Newark (Ironbound)",
+        "Local 824 · New Brunswick": "Local 824 · New Brunswick",
+        "Local 825 · Oradell": "Local 825 · Oradell",
+        "Local 880 · Camden": "Local 880 · Camden",
+        "2 delegates": "2 delegados",
+        "3 delegates": "3 delegados",
+        "Council bylaws (PDF) →": "Estatutos del consejo (PDF) →",
+        "Each local runs its own site, officers and meetings. Council posts show up there automatically.": "Cada local maneja su propio sitio, sus dirigentes y sus reuniones. Las publicaciones del consejo aparecen allí automáticamente.",
+        "◆ Phase 2 preview": "◆ Vista previa de la Fase 2",
+        "What the whole federation looks like unified": "Así se ve toda la federación unificada",
+        "Two existing locals rebuilt in the council design system:": "Dos locales existentes, rehechos con el diseño del consejo:",
+        "Preview Local 823 →": "Ver el Local 823 →",
+        "Preview Local 825 →": "Ver el Local 825 →",
+        "Join the alert line.": "Únete a la línea de alertas.",
+        "The council texts you when it matters: contract votes, Trenton actions, safety alerts, strike votes. Phone number only. We never share it. Reply STOP any time.": "El consejo te escribe cuando importa: votaciones del contrato, acciones en Trenton, alertas de seguridad, votaciones de huelga. Solo tu número de teléfono. Nunca lo compartimos. Responde STOP cuando quieras.",
+        "Join the line": "Unirme",
+        "◆ Officer dashboard · preview": "◆ Panel de dirigentes · vista previa",
+        "You can't improve what you can't measure.": "Lo que no se mide no se puede mejorar.",
+        "Behind the member portal, officers see what landed and what didn't. A separate build.": "Detrás del portal de miembros, los dirigentes ven qué llegó y qué no. Es un desarrollo aparte.",
+        "Alert line signups": "Inscripciones a la línea de alertas",
+        "▲ 47 this week": "▲ 47 esta semana",
+        "Average post open rate": "Tasa promedio de apertura",
+        "▲ 6pts vs last month": "▲ 6 pts vs. el mes pasado",
+        "RSVPs for Lobby Day": "Confirmados para el Día de Cabildeo",
+        "▲ 38 this week": "▲ 38 esta semana",
+        "New COPE signups": "Nuevas inscripciones en COPE",
+        "▲ 23 this month": "▲ 23 este mes",
+        "Posts reaching all 9 locals": "Publicaciones que llegan a los 9 locales",
+        "- same as last week": "- igual que la semana pasada",
+        "Private · For council officers and local presidents only · Updated hourly": "Privado · Solo para dirigentes del consejo y presidentes de locales · Se actualiza cada hora",
+        "◆ Languages ·": "◆ Idiomas ·",
+        "English and Spanish today.": "Inglés y español hoy.",
+        "More coming in Phase 2.": "Más idiomas en la Fase 2.",
+        "English": "English",
+        "Español": "Español",
+        "Português (soon)": "Português (pronto)",
+        "Kreyòl (soon)": "Kreyòl (pronto)",
+        "한국어 (soon)": "한국어 (pronto)",
+        "Tagalog (soon)": "Tagalog (pronto)",
+        "ATU New Jersey State Council · Affiliated with the AFL-CIO/CLC": "Consejo Estatal de ATU en Nueva Jersey · Afiliado a la AFL-CIO/CLC",
+        "Working demo built by FutreEng LLC. Items marked SAMPLE are placeholder content.": "Demo funcional creada por FutreEng LLC. Lo marcado como MUESTRA es contenido provisional.",
+        "Language": "Idioma",
+        "NJ Council Hub home": "Inicio de NJ Council Hub",
+        "Main": "Principal",
+        "Phone number": "Número de teléfono",
+        "Days without a settled contract": "Días sin un contrato acordado",
+        "Contract demands versus offers": "Demandas del contrato frente a ofertas",
+        "Photo placeholder: operator at the wheel, driver barrier visible": "Espacio para foto: operador al volante, con la barrera visible",
+        "Officer dashboard metrics": "Métricas del panel de dirigentes",
+        "Planned language support": "Idiomas planificados",
+        "Amalgamated Transit Union": "Sindicato Amalgamado de Tránsito",
+        "(555) 555-5555": "(555) 555-5555",
+        "Sections": "Secciones",
+        "NJ Council Hub | ATU New Jersey State Council": "NJ Council Hub | Consejo Estatal de ATU en Nueva Jersey"
+      }
     }
   },
 
   // The nine locals. url: replace '' with each local's real website when known.
   // copeMembers: total active members. copeIn: sample COPE participation count.
   locals: [
-    { num: '540', city: 'Trenton',       ll: [40.2171, -74.7429], garages: 'Garages: to confirm', url: '', copeMembers: 420,  copeIn: 71  },
-    { num: '819', city: 'Newark',        ll: [40.7357, -74.1724], garages: 'Garages: to confirm', url: '', copeMembers: 2100, copeIn: 412 },
-    { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: 'Garages: to confirm', url: '', copeMembers: 1180, copeIn: 198 },
-    { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: 'Garages: to confirm', url: '', copeMembers: 980,  copeIn: 142 },
-    { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: 'Garages: to confirm', url: '', copeMembers: 1240, copeIn: 310 },
-    { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: 'Garages: to confirm', url: '', copeMembers: 870,  copeIn: 189 },
-    { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: 'Garages: to confirm', url: '', copeMembers: 740,  copeIn: 94  },
-    { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: 'Garages: to confirm', url: '', copeMembers: 610,  copeIn: 155 },
-    { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: 'Garages: to confirm', url: '', copeMembers: 1860, copeIn: 445 }
+    { num: '540', city: 'Trenton',       ll: [40.2171, -74.7429], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 420,  copeIn: 71  },
+    { num: '819', city: 'Newark',        ll: [40.7357, -74.1724], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 2100, copeIn: 412 },
+    { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1180, copeIn: 198 },
+    { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 980,  copeIn: 142 },
+    { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1240, copeIn: 310 },
+    { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 870,  copeIn: 189 },
+    { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 740,  copeIn: 94  },
+    { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 610,  copeIn: 155 },
+    { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1860, copeIn: 445 }
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
 
   // Contract scoreboard: what the union demands, what NJT offers, and where it stands.
   // Status: impasse | rejected | stalled | counter | offered
+  // Text fields take { en, es }. A plain string shows in both languages.
   fight: [
-    { topic: 'Wages',           demand: '24% raise over 4 years, catch-up for inflation',       offer: '11% over 4 years, no catch-up',                  status: 'impasse',  statusLabel: 'At impasse' },
-    { topic: 'Driver barriers', demand: 'Full-cab barriers on 100% of fleet by end of 2027',    offer: 'Pilot program at two garages',                   status: 'offered',  statusLabel: 'Offered, insufficient' },
-    { topic: 'Assault pay',     demand: 'Automatic 90-day paid leave on verified operator assault', offer: 'Case-by-case review by HR',                 status: 'rejected', statusLabel: 'NJT rejected' },
-    { topic: 'Pension',         demand: 'No changes to defined-benefit plan for any member',    offer: 'Freeze DB; 401(k) for new hires',                status: 'counter',  statusLabel: 'Counter on the table' },
-    { topic: 'Bathroom access', demand: 'A working restroom within 10 minutes of every layover', offer: 'Form a joint "facilities working group"',       status: 'stalled',  statusLabel: 'Stalled since Mar' },
-    { topic: 'Scheduling',      demand: '10-hour rest between runs, no split shifts without member consent', offer: 'Keep existing contract language', status: 'rejected', statusLabel: 'NJT rejected' }
+    { topic: { en: 'Wages', es: 'Salarios' },
+      demand: { en: '24% raise over 4 years, catch-up for inflation', es: 'Aumento del 24% en 4 años, con ajuste por inflación' },
+      offer: { en: '11% over 4 years, no catch-up', es: '11% en 4 años, sin ajuste' },
+      status: 'impasse', statusLabel: { en: 'At impasse', es: 'En punto muerto' } },
+    { topic: { en: 'Driver barriers', es: 'Barreras del conductor' },
+      demand: { en: 'Full-cab barriers on 100% of fleet by end of 2027', es: 'Barreras de cabina completa en el 100% de la flota a fines de 2027' },
+      offer: { en: 'Pilot program at two garages', es: 'Programa piloto en dos garajes' },
+      status: 'offered', statusLabel: { en: 'Offered, insufficient', es: 'Ofrecido, insuficiente' } },
+    { topic: { en: 'Assault pay', es: 'Pago por agresión' },
+      demand: { en: 'Automatic 90-day paid leave on verified operator assault', es: 'Licencia pagada automática de 90 días tras una agresión comprobada a un operador' },
+      offer: { en: 'Case-by-case review by HR', es: 'Revisión caso por caso de Recursos Humanos' },
+      status: 'rejected', statusLabel: { en: 'NJT rejected', es: 'NJT lo rechazó' } },
+    { topic: { en: 'Pension', es: 'Pensión' },
+      demand: { en: 'No changes to defined-benefit plan for any member', es: 'Ningún cambio al plan de beneficios definidos para ningún miembro' },
+      offer: { en: 'Freeze DB; 401(k) for new hires', es: 'Congelar el plan; 401(k) para nuevos empleados' },
+      status: 'counter', statusLabel: { en: 'Counter on the table', es: 'Contraoferta sobre la mesa' } },
+    { topic: { en: 'Bathroom access', es: 'Acceso a baños' },
+      demand: { en: 'A working restroom within 10 minutes of every layover', es: 'Un baño en servicio a menos de 10 minutos de cada punto de descanso' },
+      offer: { en: 'Form a joint "facilities working group"', es: 'Formar un "grupo de trabajo de instalaciones" conjunto' },
+      status: 'stalled', statusLabel: { en: 'Stalled since Mar', es: 'Estancado desde marzo' } },
+    { topic: { en: 'Scheduling', es: 'Horarios' },
+      demand: { en: '10-hour rest between runs, no split shifts without member consent', es: 'Descanso de 10 horas entre corridas, sin turnos partidos sin el consentimiento del miembro' },
+      offer: { en: 'Keep existing contract language', es: 'Mantener el texto actual del contrato' },
+      status: 'rejected', statusLabel: { en: 'NJT rejected', es: 'NJT lo rechazó' } }
   ],
 
   // Wins the council and locals delivered this year. Each has a stat (number) + unit + title + local + month.
   wins: [
-    { stat: '$47K',  unit: 'In back pay',                 title: 'Twelve operators misclassified on the 1 line recovered their wages after a 7-month grievance push.',    local: 'Local 819',    month: 'Oct 2026' },
-    { stat: '12',    unit: 'Cameras installed',           title: 'Management agreed to install incident cameras at Kearny Point after sustained member pressure.',           local: 'Local 823',    month: 'Sep 2026' },
-    { stat: '171',   unit: 'Route · bus swap stopped',    title: 'Council blocked NJT\'s plan to replace full-barrier buses with partial-barrier units on the 171 corridor.', local: 'All 9 locals', month: 'Aug 2026' },
-    { stat: '3',     unit: 'Layovers won',                title: 'Restroom access forced at three Plainfield layover points after member petition and council escalation.', local: 'Local 822',    month: 'Jul 2026' },
-    { stat: '$2.40', unit: 'Hazard pay per hour',         title: 'Secured hazard pay for Oradell operators working the 2026 flood response window.',                        local: 'Local 825',    month: 'Jun 2026' },
-    { stat: '$1B',   unit: 'Per year · dedicated',        title: 'Council + NJ AFL-CIO pushed the NJ Corporate Transit Fee through the Legislature, locking in transit funding.', local: 'Statewide', month: 'May 2026' }
+    { stat: '$47K', unit: { en: 'In back pay', es: 'En pago retroactivo' },
+      title: { en: 'Twelve operators misclassified on the 1 line recovered their wages after a 7-month grievance push.', es: 'Doce operadores mal clasificados en la línea 1 recuperaron sus salarios tras una queja formal de 7 meses.' },
+      local: 'Local 819', month: { en: 'Oct 2026', es: 'oct 2026' } },
+    { stat: '12', unit: { en: 'Cameras installed', es: 'Cámaras instaladas' },
+      title: { en: 'Management agreed to install incident cameras at Kearny Point after sustained member pressure.', es: 'La gerencia aceptó instalar cámaras de incidentes en Kearny Point tras la presión constante de los miembros.' },
+      local: 'Local 823', month: { en: 'Sep 2026', es: 'sep 2026' } },
+    { stat: '171', unit: { en: 'Route · bus swap stopped', es: 'Ruta · cambio de buses frenado' },
+      title: { en: 'Council blocked NJT\'s plan to replace full-barrier buses with partial-barrier units on the 171 corridor.', es: 'El consejo frenó el plan de NJT de reemplazar autobuses con barrera completa por unidades con barrera parcial en el corredor 171.' },
+      local: { en: 'All 9 locals', es: 'Los 9 locales' }, month: { en: 'Aug 2026', es: 'ago 2026' } },
+    { stat: '3', unit: { en: 'Layovers won', es: 'Puntos de descanso ganados' },
+      title: { en: 'Restroom access forced at three Plainfield layover points after member petition and council escalation.', es: 'Se logró acceso a baños en tres puntos de descanso de Plainfield tras una petición de los miembros y la intervención del consejo.' },
+      local: 'Local 822', month: { en: 'Jul 2026', es: 'jul 2026' } },
+    { stat: '$2.40', unit: { en: 'Hazard pay per hour', es: 'Pago por riesgo por hora' },
+      title: { en: 'Secured hazard pay for Oradell operators working the 2026 flood response window.', es: 'Se consiguió pago por riesgo para los operadores de Oradell que trabajaron durante las inundaciones de 2026.' },
+      local: 'Local 825', month: { en: 'Jun 2026', es: 'jun 2026' } },
+    { stat: '$1B', unit: { en: 'Per year · dedicated', es: 'Al año · dedicados' },
+      title: { en: 'Council + NJ AFL-CIO pushed the NJ Corporate Transit Fee through the Legislature, locking in transit funding.', es: 'El consejo y la AFL-CIO de NJ impulsaron en la Legislatura el cargo corporativo para el tránsito de NJ, asegurando su financiamiento.' },
+      local: { en: 'Statewide', es: 'Todo el estado' }, month: { en: 'May 2026', es: 'may 2026' } }
   ],
 
   posts: [
-    { date: 'Oct 15', title: 'Contract ratification votes: schedule for every local', tag: 'Contracts',   reach: 'All 9 locals',  sample: true, action: 'Find my vote time →' },
-    { date: 'Oct 12', title: 'Operator assault reporting: updated procedure',          tag: 'Safety',      reach: 'All 9 locals',  sample: true, action: 'Read the procedure →' },
-    { date: 'Oct 08', title: 'Lobby Day at the State House, November 18',              tag: 'Legislation', reach: 'All 9 locals',  sample: true, action: 'RSVP for Lobby Day →' },
-    { date: 'Oct 02', title: 'Council scholarship applications are open',              tag: 'Members',     reach: '819, 821, 880', sample: true, action: 'Start application →' }
+    { date: { en: 'Oct 15', es: '15 oct' }, title: { en: 'Contract ratification votes: schedule for every local', es: 'Votación de ratificación del contrato: horario para cada local' },
+      tag: { en: 'Contracts', es: 'Contratos' }, reach: { en: 'All 9 locals', es: 'Los 9 locales' }, sample: true, action: { en: 'Find my vote time →', es: 'Ver mi horario de votación →' } },
+    { date: { en: 'Oct 12', es: '12 oct' }, title: { en: 'Operator assault reporting: updated procedure', es: 'Reporte de agresiones a operadores: procedimiento actualizado' },
+      tag: { en: 'Safety', es: 'Seguridad' }, reach: { en: 'All 9 locals', es: 'Los 9 locales' }, sample: true, action: { en: 'Read the procedure →', es: 'Leer el procedimiento →' } },
+    { date: { en: 'Oct 08', es: '08 oct' }, title: { en: 'Lobby Day at the State House, November 18', es: 'Día de Cabildeo en el Capitolio estatal, 18 de noviembre' },
+      tag: { en: 'Legislation', es: 'Legislación' }, reach: { en: 'All 9 locals', es: 'Los 9 locales' }, sample: true, action: { en: 'RSVP for Lobby Day →', es: 'Confirmar para el Día de Cabildeo →' } },
+    { date: { en: 'Oct 02', es: '02 oct' }, title: { en: 'Council scholarship applications are open', es: 'Abiertas las solicitudes de becas del consejo' },
+      tag: { en: 'Members', es: 'Miembros' }, reach: '819, 821, 880', sample: true, action: { en: 'Start application →', es: 'Empezar solicitud →' } }
   ],
 
   rights: [
-    { title: 'Representation', body: 'If a meeting could lead to discipline, you can ask for a union rep before answering questions.', action: 'Call a steward now →' },
-    { title: 'Don’t sign on the spot', body: 'You can take time to review any statement or form. Talk to your steward first.', action: 'Who\'s on duty? →' },
-    { title: 'Hours & rest', body: 'Know the limits on hours behind the wheel and the rest you’re owed between runs.', action: 'See the limits →' },
-    { title: 'Assault on the job', body: 'Report every incident. You’re entitled to medical care and union support afterward.', action: 'Report an assault →' },
-    { title: 'Injured on duty', body: 'Report injuries right away and keep copies. Ask about light duty and IOD pay.', action: 'Start IOD paperwork →' },
-    { title: 'Filing a grievance', body: 'Deadlines are short. Bring dates, run numbers and witnesses to your steward.', action: 'File a grievance →' }
+    { title: { en: 'Representation', es: 'Representación' },
+      body: { en: 'If a meeting could lead to discipline, you can ask for a union rep before answering questions.', es: 'Si una reunión puede terminar en disciplina, puedes pedir un representante sindical antes de responder preguntas.' },
+      action: { en: 'Call a steward now →', es: 'Llamar a un delegado ahora →' } },
+    { title: { en: 'Don’t sign on the spot', es: 'No firmes en el momento' },
+      body: { en: 'You can take time to review any statement or form. Talk to your steward first.', es: 'Puedes tomarte tiempo para revisar cualquier declaración o formulario. Habla primero con tu delegado sindical.' },
+      action: { en: 'Who\'s on duty? →', es: '¿Quién está de turno? →' } },
+    { title: { en: 'Hours & rest', es: 'Horas y descanso' },
+      body: { en: 'Know the limits on hours behind the wheel and the rest you’re owed between runs.', es: 'Conoce los límites de horas al volante y el descanso que te corresponde entre corridas.' },
+      action: { en: 'See the limits →', es: 'Ver los límites →' } },
+    { title: { en: 'Assault on the job', es: 'Agresión en el trabajo' },
+      body: { en: 'Report every incident. You’re entitled to medical care and union support afterward.', es: 'Reporta cada incidente. Tienes derecho a atención médica y al apoyo del sindicato después.' },
+      action: { en: 'Report an assault →', es: 'Reportar una agresión →' } },
+    { title: { en: 'Injured on duty', es: 'Lesión en el trabajo' },
+      body: { en: 'Report injuries right away and keep copies. Ask about light duty and IOD pay.', es: 'Reporta las lesiones de inmediato y guarda copias. Pregunta por trabajo liviano y el pago por lesión en servicio (IOD).' },
+      action: { en: 'Start IOD paperwork →', es: 'Iniciar trámite de IOD →' } },
+    { title: { en: 'Filing a grievance', es: 'Presentar una queja formal' },
+      body: { en: 'Deadlines are short. Bring dates, run numbers and witnesses to your steward.', es: 'Los plazos son cortos. Lleva fechas, números de corrida y testigos a tu delegado sindical.' },
+      action: { en: 'File a grievance →', es: 'Presentar una queja →' } }
   ],
 
   // state: done | current | pending
   contractSteps: [
-    { label: 'Bargaining', note: 'Complete', state: 'done' },
-    { label: 'Tentative agreement', note: 'Reached', state: 'done' },
-    { label: 'Ratification vote', note: 'In progress', state: 'current' },
-    { label: 'Ratified', note: 'Pending', state: 'pending' }
+    { label: { en: 'Bargaining', es: 'Negociación' }, note: { en: 'Complete', es: 'Completa' }, state: 'done' },
+    { label: { en: 'Tentative agreement', es: 'Acuerdo tentativo' }, note: { en: 'Reached', es: 'Alcanzado' }, state: 'done' },
+    { label: { en: 'Ratification vote', es: 'Voto de ratificación' }, note: { en: 'In progress', es: 'En curso' }, state: 'current' },
+    { label: { en: 'Ratified', es: 'Ratificado' }, note: { en: 'Pending', es: 'Pendiente' }, state: 'pending' }
   ],
   docs: [
-    { title: 'Tentative agreement summary', meta: 'PDF · English / Español', action: 'Read' },
-    { title: 'Voting times by garage', meta: 'All 9 locals', action: 'View' },
-    { title: 'Current agreement', meta: 'Full contract text', action: 'PDF' },
-    { title: 'Bargaining updates', meta: 'Council bulletins', action: 'All →' }
+    { title: { en: 'Tentative agreement summary', es: 'Resumen del acuerdo tentativo' }, meta: 'PDF · English / Español', action: { en: 'Read', es: 'Leer' } },
+    { title: { en: 'Voting times by garage', es: 'Horarios de votación por garaje' }, meta: { en: 'All 9 locals', es: 'Los 9 locales' }, action: { en: 'View', es: 'Ver' } },
+    { title: { en: 'Current agreement', es: 'Contrato vigente' }, meta: { en: 'Full contract text', es: 'Texto completo del contrato' }, action: 'PDF' },
+    { title: { en: 'Bargaining updates', es: 'Novedades de la negociación' }, meta: { en: 'Council bulletins', es: 'Boletines del consejo' }, action: { en: 'All →', es: 'Todos →' } }
   ],
 
   safetySteps: [
-    { title: 'Get safe, call it in', body: 'Secure the bus and contact dispatch. Call 911 if anyone is hurt.' },
-    { title: 'Report to your union', body: 'File the incident with your local the same day, even if no one was injured.' },
-    { title: 'Get checked out', body: 'See a doctor and keep every record. You may be entitled to assault pay.' },
-    { title: 'We follow up', body: 'Your steward tracks the case and pushes for prosecution and protections.' }
+    { title: { en: 'Get safe, call it in', es: 'Ponte a salvo y avisa' }, body: { en: 'Secure the bus and contact dispatch. Call 911 if anyone is hurt.', es: 'Asegura el autobús y comunícate con despacho. Llama al 911 si alguien está herido.' } },
+    { title: { en: 'Report to your union', es: 'Repórtalo a tu sindicato' }, body: { en: 'File the incident with your local the same day, even if no one was injured.', es: 'Reporta el incidente a tu local el mismo día, aunque nadie haya resultado herido.' } },
+    { title: { en: 'Get checked out', es: 'Hazte revisar' }, body: { en: 'See a doctor and keep every record. You may be entitled to assault pay.', es: 'Ve al médico y guarda todos los documentos. Podrías tener derecho al pago por agresión.' } },
+    { title: { en: 'We follow up', es: 'Nosotros damos seguimiento' }, body: { en: 'Your steward tracks the case and pushes for prosecution and protections.', es: 'Tu delegado sindical sigue el caso y presiona por el procesamiento penal y por protecciones.' } }
   ],
 
   // Local 819 meetings are the only real events. One event can list several dates.
   // base = sample RSVP count (0 hides the count).
   events: [
-    { id: 'l819', dates: [['20', 'Oct'], ['17', 'Nov'], ['15', 'Dec']], title: 'Local 819 union meetings', where: 'Local 819 · Two sessions each day: 10:00 am and 7:00 pm', base: 0,   sample: false, action: 'Add to calendar →' },
-    { id: 'lobby', dates: [['18', 'Nov']],                              title: 'Lobby Day at the State House',  where: 'Trenton · buses from each local hall, 7:00 am',       base: 214, sample: true,  action: 'Reserve your seat →' }
+    { id: 'l819', dates: [['20', { en: 'Oct', es: 'oct' }], ['17', { en: 'Nov', es: 'nov' }], ['15', { en: 'Dec', es: 'dic' }]],
+      title: { en: 'Local 819 union meetings', es: 'Reuniones sindicales del Local 819' },
+      where: { en: 'Local 819 · Two sessions each day: 10:00 am and 7:00 pm', es: 'Local 819 · Dos sesiones cada día: 10:00 a. m. y 7:00 p. m.' },
+      base: 0, sample: false, action: { en: 'Add to calendar →', es: 'Agregar al calendario →' } },
+    { id: 'lobby', dates: [['18', { en: 'Nov', es: 'nov' }]],
+      title: { en: 'Lobby Day at the State House', es: 'Día de Cabildeo en el Capitolio estatal' },
+      where: { en: 'Trenton · buses from each local hall, 7:00 am', es: 'Trenton · autobuses desde cada local, 7:00 a. m.' },
+      base: 214, sample: true, action: { en: 'Reserve your seat →', es: 'Reservar tu asiento →' } }
   ],
 
   benefits: [
-    { title: 'Pension', body: 'How your pension works, estimating your benefit and planning your retirement date.', action: 'Estimate my pension →' },
-    { title: 'Health & welfare', body: 'Medical, dental and vision for members and families.', action: 'See what\'s covered →' },
-    { title: 'Scholarships', body: 'Council and ATU International scholarships for members and their children.', action: 'Apply this year →' },
-    { title: 'Retiree chapters', body: 'Stay connected: monthly meetings, events and legislative action.', action: 'Find my chapter →' }
+    { title: { en: 'Pension', es: 'Pensión' }, body: { en: 'How your pension works, estimating your benefit and planning your retirement date.', es: 'Cómo funciona tu pensión, cómo calcular tu beneficio y planificar tu fecha de jubilación.' }, action: { en: 'Estimate my pension →', es: 'Calcular mi pensión →' } },
+    { title: { en: 'Health & welfare', es: 'Salud y bienestar' }, body: { en: 'Medical, dental and vision for members and families.', es: 'Cobertura médica, dental y de la vista para miembros y familias.' }, action: { en: 'See what\'s covered →', es: 'Ver qué cubre →' } },
+    { title: { en: 'Scholarships', es: 'Becas' }, body: { en: 'Council and ATU International scholarships for members and their children.', es: 'Becas del consejo y de ATU Internacional para miembros y sus hijos.' }, action: { en: 'Apply this year →', es: 'Solicitar este año →' } },
+    { title: { en: 'Retiree chapters', es: 'Capítulos de jubilados' }, body: { en: 'Stay connected: monthly meetings, events and legislative action.', es: 'Mantente en contacto: reuniones mensuales, eventos y acción legislativa.' }, action: { en: 'Find my chapter →', es: 'Buscar mi capítulo →' } }
   ],
 
   spotlights: [
-    { badge: 'Retirement', name: 'Member name', meta: 'Local 819 · 32 years', body: 'A short note from the member and their local on a career behind the wheel.', photo: 'Portrait of the retiring operator, ideally with their bus or at their garage. Replace with a real photo once the member agrees to be featured.' },
-    { badge: 'Operator of the month', name: 'Member name', meta: 'Local 824 · 11 years', body: 'Recognized by riders and co-workers for going above and beyond on the route.', photo: 'Portrait of the operator of the month. Replace with a real photo once the member agrees to be featured.' },
-    { badge: '25 years', name: 'Member name', meta: 'Local 880 · Maintenance', body: 'Milestones for the mechanics and shop crews who keep the fleet running.', photo: 'Photo of the mechanic or shop crew at work in the garage. Replace with a real photo once the member agrees to be featured.' }
+    { badge: { en: 'Retirement', es: 'Jubilación' }, name: { en: 'Member name', es: 'Nombre del miembro' }, meta: { en: 'Local 819 · 32 years', es: 'Local 819 · 32 años' },
+      body: { en: 'A short note from the member and their local on a career behind the wheel.', es: 'Unas palabras del miembro y de su local sobre una carrera al volante.' },
+      photo: { en: 'Portrait of the retiring operator, ideally with their bus or at their garage. Replace with a real photo once the member agrees to be featured.', es: 'Retrato del operador que se jubila, de preferencia con su autobús o en su garaje. Se reemplazará con una foto real cuando el miembro acepte aparecer.' } },
+    { badge: { en: 'Operator of the month', es: 'Operador del mes' }, name: { en: 'Member name', es: 'Nombre del miembro' }, meta: { en: 'Local 824 · 11 years', es: 'Local 824 · 11 años' },
+      body: { en: 'Recognized by riders and co-workers for going above and beyond on the route.', es: 'Reconocido por pasajeros y compañeros por dar más de lo necesario en la ruta.' },
+      photo: { en: 'Portrait of the operator of the month. Replace with a real photo once the member agrees to be featured.', es: 'Retrato del operador del mes. Se reemplazará con una foto real cuando el miembro acepte aparecer.' } },
+    { badge: { en: '25 years', es: '25 años' }, name: { en: 'Member name', es: 'Nombre del miembro' }, meta: { en: 'Local 880 · Maintenance', es: 'Local 880 · Mantenimiento' },
+      body: { en: 'Milestones for the mechanics and shop crews who keep the fleet running.', es: 'Aniversarios de los mecánicos y equipos de taller que mantienen la flota en marcha.' },
+      photo: { en: 'Photo of the mechanic or shop crew at work in the garage. Replace with a real photo once the member agrees to be featured.', es: 'Foto del mecánico o del equipo de taller trabajando en el garaje. Se reemplazará con una foto real cuando el miembro acepte aparecer.' } }
   ],
 
   // Photo wall: each tile describes the photo a local will send in.
   wall: [
-    { title: 'Rally at the State House', text: 'Members rallying in Trenton. Photos submitted by the locals will appear here.' },
-    { title: 'Local 819 union meeting', text: 'A shot from a Local 819 meeting.' },
-    { title: 'Garage cookout', text: 'Members at a garage cookout.' },
-    { title: 'Retiree breakfast', text: 'Retirees at a chapter breakfast.' },
-    { title: 'Labor Day parade', text: 'Locals marching on Labor Day.' }
+    { title: { en: 'Rally at the State House', es: 'Manifestación en el Capitolio estatal' }, text: { en: 'Members rallying in Trenton. Photos submitted by the locals will appear here.', es: 'Miembros manifestándose en Trenton. Aquí aparecerán las fotos que envíen los locales.' } },
+    { title: { en: 'Local 819 union meeting', es: 'Reunión sindical del Local 819' }, text: { en: 'A shot from a Local 819 meeting.', es: 'Una foto de una reunión del Local 819.' } },
+    { title: { en: 'Garage cookout', es: 'Parrillada en el garaje' }, text: { en: 'Members at a garage cookout.', es: 'Miembros en una parrillada del garaje.' } },
+    { title: { en: 'Retiree breakfast', es: 'Desayuno de jubilados' }, text: { en: 'Retirees at a chapter breakfast.', es: 'Jubilados en un desayuno del capítulo.' } },
+    { title: { en: 'Labor Day parade', es: 'Desfile del Día del Trabajo' }, text: { en: 'Locals marching on Labor Day.', es: 'Los locales marchando el Día del Trabajo.' } }
   ]
 };
 
@@ -1237,7 +1523,9 @@ const CONTENT = {
 const state = { lang: 'en', rsvp: {} };
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const SAMPLE = '<span class="sample">Sample</span>';
+// L() picks the current language from a { en, es } field; plain strings pass through.
+const L = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? (v[state.lang] ?? v.en) : v;
+const sampleChip = () => `<span class="sample">${esc(t().sample)}</span>`;
 const pad2 = (n) => String(n).padStart(2, '0');
 const localHref = (l) => l.url || '#local-' + l.num;
 const isExternal = (l) => !!l.url;
@@ -1246,14 +1534,14 @@ const t = () => CONTENT.strings[state.lang];
 function renderPosts() {
   $('#posts').innerHTML = CONTENT.posts.map((p) => `
     <article class="post">
-      <span class="date">${esc(p.date)}</span>
+      <span class="date">${esc(L(p.date))}</span>
       <div>
-        <div class="title">${esc(p.title)}</div>
-        <div class="meta">${p.sample ? SAMPLE : ''}${esc(p.tag)}</div>
-        ${p.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(p.action)}</button></div>` : ''}
+        <div class="title">${esc(L(p.title))}</div>
+        <div class="meta">${p.sample ? sampleChip() : ''}${esc(L(p.tag))}</div>
+        ${L(p.action) ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(L(p.action))}</button></div>` : ''}
       </div>
-      <span class="reach">${esc(p.reach)}</span>
-      <span class="status"><span class="arrived">ARRIVED</span></span>
+      <span class="reach">${esc(L(p.reach))}</span>
+      <span class="status"><span class="arrived">${esc(t().arrived)}</span></span>
     </article>`).join('');
 }
 
@@ -1261,19 +1549,19 @@ function renderRights() {
   $('#rights-list').innerHTML = CONTENT.rights.map((r, i) => `
     <div class="right">
       <span class="n">${pad2(i + 1)}</span>
-      <span class="t">${esc(r.title)}</span>
-      <span class="b">${esc(r.body)}</span>
-      ${r.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(r.action)}</button></div>` : ''}
+      <span class="t">${esc(L(r.title))}</span>
+      <span class="b">${esc(L(r.body))}</span>
+      ${L(r.action) ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(L(r.action))}</button></div>` : ''}
     </div>`).join('');
 }
 
 function renderFight() {
   $('#fight-rows').innerHTML = CONTENT.fight.map((f) => `
     <div class="fight-row" role="row">
-      <div class="fight-cell topic" role="cell">${esc(f.topic)}</div>
-      <div class="fight-cell demand" role="cell" data-l="Union demand">${esc(f.demand)}</div>
-      <div class="fight-cell offer" role="cell" data-l="NJT offer">${esc(f.offer)}</div>
-      <div class="fight-cell status" role="cell"><span class="fight-status fs-${esc(f.status)}">${esc(f.statusLabel)}</span></div>
+      <div class="fight-cell topic" role="cell">${esc(L(f.topic))}</div>
+      <div class="fight-cell demand" role="cell" data-l="${esc(t().demandL)}">${esc(L(f.demand))}</div>
+      <div class="fight-cell offer" role="cell" data-l="${esc(t().offerL)}">${esc(L(f.offer))}</div>
+      <div class="fight-cell status" role="cell"><span class="fight-status fs-${esc(f.status)}">${esc(L(f.statusLabel))}</span></div>
     </div>`).join('');
 }
 
@@ -1281,9 +1569,9 @@ function renderWins() {
   $('#wins-grid').innerHTML = CONTENT.wins.map((w) => `
     <article class="win">
       <span class="win-stat">${esc(w.stat)}</span>
-      <span class="win-unit">${esc(w.unit)}</span>
-      <span class="win-title">${esc(w.title)}</span>
-      <span class="win-meta"><b>${esc(w.local)}</b><span>${esc(w.month)}</span></span>
+      <span class="win-unit">${esc(L(w.unit))}</span>
+      <span class="win-title">${esc(L(w.title))}</span>
+      <span class="win-meta"><b>${esc(L(w.local))}</b><span>${esc(L(w.month))}</span></span>
     </article>`).join('');
 }
 
@@ -1295,7 +1583,7 @@ function renderCope() {
       <span class="cl-num">${l.num}</span>
       <span class="cl-city">${esc(l.city)}</span>
       <div class="cl-bar"><div class="cl-fill" style="width:${pct}%"></div></div>
-      <span class="cl-pct"><b>${l.copeIn} of ${l.copeMembers}</b><span>${pct}%</span></span>
+      <span class="cl-pct"><b>${l.copeIn} ${esc(t().of)} ${l.copeMembers}</b><span>${pct}%</span></span>
     </div>`;
   }).join('');
 }
@@ -1306,14 +1594,14 @@ function renderContract() {
   const curIdx = steps.findIndex((s) => s.state === 'current');
   const reach = curIdx >= 0 ? curIdx : doneIdx;
   $('#steps').innerHTML = `<div class="steps-track"></div><div class="steps-fill" style="width:${reach * 25}%"></div>` +
-    steps.map((s) => `<div class="step ${s.state}"><span class="ring"></span><span class="label">${esc(s.label)}</span><span class="note">${esc(s.note)}</span></div>`).join('');
+    steps.map((s) => `<div class="step ${s.state}"><span class="ring"></span><span class="label">${esc(L(s.label))}</span><span class="note">${esc(L(s.note))}</span></div>`).join('');
   $('#docs').innerHTML = CONTENT.docs.map((d) => `
-    <div class="doc"><div><span class="t">${esc(d.title)}</span><span class="m">${esc(d.meta)}</span></div><button type="button" data-soon>${esc(d.action)}</button></div>`).join('');
+    <div class="doc"><div><span class="t">${esc(L(d.title))}</span><span class="m">${esc(L(d.meta))}</span></div><button type="button" data-soon>${esc(L(d.action))}</button></div>`).join('');
 }
 
 function renderSafety() {
   $('#safety-steps').innerHTML = CONTENT.safetySteps.map((s, i) => `
-    <div class="sstep"><span class="n">${i + 1}</span><div><span class="t">${esc(s.title)}</span><span class="b">${esc(s.body)}</span></div></div>`).join('');
+    <div class="sstep"><span class="n">${i + 1}</span><div><span class="t">${esc(L(s.title))}</span><span class="b">${esc(L(s.body))}</span></div></div>`).join('');
 }
 
 function renderEvents() {
@@ -1324,16 +1612,16 @@ function renderEvents() {
     return `
     <article class="event">
       <div>
-        <div class="dates">${e.dates.map(([d, m]) => `<div class="when"><span class="day">${esc(d)}</span><span class="mon">${esc(m)}</span></div>`).join('')}</div>
-        ${e.sample ? SAMPLE : ''}
-        <span class="t">${esc(e.title)}</span>
-        <span class="w">${esc(e.where)}</span>
+        <div class="dates">${e.dates.map(([d, m]) => `<div class="when"><span class="day">${esc(d)}</span><span class="mon">${esc(L(m))}</span></div>`).join('')}</div>
+        ${e.sample ? sampleChip() : ''}
+        <span class="t">${esc(L(e.title))}</span>
+        <span class="w">${esc(L(e.where))}</span>
       </div>
       <div class="event-foot">
         <button type="button" class="rsvp" data-rsvp="${e.id}" aria-pressed="${on}">${on ? '✓ ' + esc(s.going) : esc(s.rsvp)}</button>
         <span class="going">${e.base ? count + ' ' + esc(s.goingCount) : ''}</span>
       </div>
-      ${e.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(e.action)}</button></div>` : ''}
+      ${L(e.action) ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(L(e.action))}</button></div>` : ''}
     </article>`;
   }).join('');
 }
@@ -1343,9 +1631,9 @@ function renderBenefits() {
     <div class="benefit">
       <span class="bar"></span>
       <div>
-        <span class="t">${esc(b.title)}</span>
-        <span class="b">${esc(b.body)}</span>
-        ${b.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(b.action)}</button></div>` : ''}
+        <span class="t">${esc(L(b.title))}</span>
+        <span class="b">${esc(L(b.body))}</span>
+        ${L(b.action) ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(L(b.action))}</button></div>` : ''}
       </div>
     </div>`).join('');
 }
@@ -1353,16 +1641,16 @@ function renderBenefits() {
 function renderSpots() {
   $('#spots').innerHTML = CONTENT.spotlights.map((p) => `
     <article class="spot">
-      <div class="photo stripes" role="img" aria-label="Photo placeholder: ${esc(p.photo)}"><span class="badge">${esc(p.badge)}</span>
-        <div class="ph bottom"><span class="ph-label">Photo placeholder</span><span class="ph-title">Member photo</span><span class="ph-text">${esc(p.photo)}</span></div></div>
-      <span class="name">${esc(p.name)}</span><span class="meta">${esc(p.meta)}</span><span class="b">${esc(p.body)}</span>
+      <div class="photo stripes" role="img" aria-label="${esc(t().photoPh)}: ${esc(L(p.photo))}"><span class="badge">${esc(L(p.badge))}</span>
+        <div class="ph bottom"><span class="ph-label">${esc(t().photoPh)}</span><span class="ph-title">${esc(t().memberPhoto)}</span><span class="ph-text">${esc(L(p.photo))}</span></div></div>
+      <span class="name">${esc(L(p.name))}</span><span class="meta">${esc(L(p.meta))}</span><span class="b">${esc(L(p.body))}</span>
     </article>`).join('');
 }
 
 function renderWall() {
   $('#wall-grid').innerHTML = CONTENT.wall.map((w) => `
-    <figure class="tile stripes" style="margin:0" aria-label="Photo placeholder: ${esc(w.title)}">
-      <figcaption class="ph compact"><span class="ph-label">Photo placeholder&nbsp;&nbsp;${SAMPLE}</span><span class="ph-title">${esc(w.title)}</span><span class="ph-text">${esc(w.text)}</span></figcaption>
+    <figure class="tile stripes" style="margin:0" aria-label="${esc(t().photoPh)}: ${esc(L(w.title))}">
+      <figcaption class="ph compact"><span class="ph-label">${esc(t().photoPh)}&nbsp;&nbsp;${sampleChip()}</span><span class="ph-title">${esc(L(w.title))}</span><span class="ph-text">${esc(L(w.text))}</span></figcaption>
     </figure>`).join('');
 }
 
@@ -1370,48 +1658,90 @@ function renderLocals() {
   $('#locals-list').innerHTML = CONTENT.locals.map((l) => `
     <a class="local" id="local-${l.num}" href="${localHref(l)}" ${isExternal(l) ? 'target="_blank" rel="noopener"' : ''}>
       <span class="badge">${l.num}</span>
-      <span><span class="c">${esc(l.city)}</span><span class="g">${esc(l.garages)}</span><span class="s">Local ${l.num} site →</span></span>
+      <span><span class="c">${esc(l.city)}</span><span class="g">${esc(L(l.garages))}</span><span class="s">${esc(t().site.replace('{n}', l.num))}</span></span>
     </a>`).join('');
 }
 
-/* Route map: a simple projected SVG of the nine locals, no map library or tiles needed. */
-function renderMap() {
-  const W = 520, H = 560, PAD = 70;
-  const pts = CONTENT.locals.map((l) => l.ll).concat([CONTENT.terminal.ll]);
-  const lats = pts.map((p) => p[0]), lngs = pts.map((p) => p[1]);
-  const minLat = Math.min(...lats), maxLat = Math.max(...lats), minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
-  const kx = Math.cos(((minLat + maxLat) / 2) * Math.PI / 180);
-  const scale = Math.min((W - PAD * 2) / ((maxLng - minLng) * kx), (H - PAD * 2) / (maxLat - minLat));
-  const offX = (W - (maxLng - minLng) * kx * scale) / 2, offY = (H - (maxLat - minLat) * scale) / 2;
-  const P = ([lat, lng]) => [offX + (lng - minLng) * kx * scale, offY + (maxLat - lat) * scale];
-  const leftSide = new Set(['822', '824', '880', '819']);
+/* New Jersey outline as [lng, lat], simplified from US Census state boundaries (us-atlas, states-10m). */
+const NJ_OUTLINE = [[-75.56,39.63],[-75.478,39.713],[-75.46,39.766],[-75.417,39.802],[-75.356,39.84],[-75.219,39.861],[-75.13,39.9],[-75.13,39.959],[-75.072,39.981],[-75.047,40.009],[-74.925,40.071],[-74.86,40.084],[-74.817,40.127],[-74.781,40.121],[-74.72,40.154],[-74.771,40.215],[-74.842,40.25],[-74.868,40.295],[-74.943,40.341],[-74.968,40.4],[-75.058,40.416],[-75.072,40.455],[-75.065,40.536],[-75.101,40.568],[-75.162,40.564],[-75.194,40.576],[-75.201,40.647],[-75.176,40.673],[-75.205,40.692],[-75.173,40.778],[-75.133,40.773],[-75.051,40.871],[-75.137,40.974],[-75.09,41.015],[-75.026,41.04],[-74.968,41.088],[-74.982,41.109],[-74.921,41.139],[-74.882,41.181],[-74.832,41.287],[-74.753,41.346],[-74.695,41.358],[-73.906,40.998],[-73.895,40.981],[-73.967,40.821],[-74.01,40.765],[-74.024,40.709],[-74.071,40.661],[-74.204,40.631],[-74.218,40.559],[-74.25,40.545],[-74.261,40.502],[-74.261,40.465],[-74.193,40.441],[-74.135,40.456],[-74.049,40.419],[-73.999,40.411],[-73.985,40.449],[-73.97,40.371],[-73.981,40.28],[-74.031,40.123],[-74.078,39.911],[-74.096,39.762],[-74.239,39.555],[-74.279,39.514],[-74.311,39.506],[-74.3,39.479],[-74.336,39.432],[-74.408,39.378],[-74.412,39.361],[-74.523,39.314],[-74.638,39.221],[-74.792,38.992],[-74.864,38.94],[-74.932,38.928],[-74.972,38.94],[-74.95,39.016],[-74.896,39.099],[-74.886,39.158],[-74.961,39.19],[-75.026,39.194],[-75.047,39.215],[-75.112,39.213],[-75.137,39.182],[-75.169,39.202],[-75.176,39.243],[-75.241,39.274],[-75.252,39.3],[-75.288,39.29],[-75.341,39.348],[-75.366,39.341],[-75.431,39.391],[-75.467,39.439],[-75.535,39.461],[-75.514,39.581],[-75.557,39.606],[-75.56,39.63]];
+const NJ_BOX = { minLng: -75.56, maxLng: -73.895, minLat: 38.928, maxLat: 41.358 };
+const NJ_KX = Math.cos(((NJ_BOX.minLat + NJ_BOX.maxLat) / 2) * Math.PI / 180);
+/* Fit New Jersey into a W x H box with padding; returns ([lat, lng]) => [x, y]. */
+function njProjector(W, H, pad) {
+  const { minLng, maxLng, minLat, maxLat } = NJ_BOX;
+  const s = Math.min((W - pad.l - pad.r) / ((maxLng - minLng) * NJ_KX), (H - pad.t - pad.b) / (maxLat - minLat));
+  const offX = pad.l + ((W - pad.l - pad.r) - (maxLng - minLng) * NJ_KX * s) / 2;
+  const offY = pad.t + ((H - pad.t - pad.b) - (maxLat - minLat) * s) / 2;
+  return ([lat, lng]) => [offX + (lng - minLng) * NJ_KX * s, offY + (maxLat - lat) * s];
+}
+const njPath = (P) => 'M' + NJ_OUTLINE.map(([lng, lat]) => P([lat, lng]).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z';
+
+/* Small NJ silhouette used in the brand lockup and footer seal. */
+function renderGlyphs() {
+  const P = njProjector(60, 100, { l: 2, r: 2, t: 2, b: 2 });
+  const svg = `<svg viewBox="0 0 60 100" aria-hidden="true"><path d="${njPath(P)}"/></svg>`;
+  document.querySelectorAll('.nj-glyph').forEach((el) => { el.innerHTML = svg; });
+}
+
+/* Hero art: the state, the council in Trenton, a red line to every local. */
+function renderHeroMap() {
+  const W = 600, H = 780;
+  const P = njProjector(W, H, { l: 40, r: 40, t: 20, b: 20 });
   const [tx, ty] = P(CONTENT.terminal.ll);
+  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join('');
+  const stops = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C1A33" stroke="#F2F4F8" stroke-width="5"/>`; }).join('');
+  $('#hero-map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <path d="${njPath(P)}" fill="rgba(255,255,255,.05)" stroke="var(--nj-buff)" stroke-width="2" stroke-linejoin="round" stroke-opacity=".8"/>
+    <g stroke="#D7263D" stroke-width="6" stroke-linecap="round">${lines}</g>${stops}
+    <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="13" fill="#D7263D" stroke="#F2F4F8" stroke-width="5"/></svg>`;
+}
+
+/* Route map: the nine locals at their real locations on a New Jersey outline. No map library or tiles needed.
+   The crowded Newark / Hudson cluster gets labels in a column on the right with leader lines. */
+function renderMap() {
+  const W = 520, H = 760, COLX = 392;
+  const P = njProjector(W, H, { l: 20, r: 150, t: 24, b: 24 });
+  const [tx, ty] = P(CONTENT.terminal.ll);
+  const column = ['825', '820', '821', '819', '823'];          // top to bottom
+  const place = { '822': 'left', '824': 'below', '880': 'left', '540': 'below' };
+  const colTop = P(CONTENT.locals.find((l) => l.num === '825').ll)[1] - 6;
 
   let dots = '';
-  for (let x = 12; x < W; x += 24) for (let y = 12; y < H; y += 24) dots += `<circle cx="${x}" cy="${y}" r="1" fill="rgba(255,255,255,.12)"/>`;
+  for (let x = 12; x < W; x += 24) for (let y = 12; y < H; y += 24) dots += `<circle cx="${x}" cy="${y}" r="1" fill="rgba(255,255,255,.1)"/>`;
 
-  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line x1="${tx}" y1="${ty}" x2="${x}" y2="${y}" stroke="#D7263D" stroke-width="4" stroke-linecap="round"/>`; }).join('');
+  const shape = `<path d="${njPath(P)}" fill="rgba(255,255,255,.045)" stroke="var(--nj-buff)" stroke-width="1.5" stroke-linejoin="round" stroke-opacity=".7"/>`;
+  const [rx, ry] = P([39.62, -74.62]);
+  const [ox, oy] = P([39.25, -74.05]);
+  const regions = `<text class="region" x="${rx.toFixed(0)}" y="${ry.toFixed(0)}" text-anchor="middle" transform="rotate(-62 ${rx.toFixed(0)} ${ry.toFixed(0)})">${esc(t().stateName)}</text>
+    <text class="region" x="${(ox + 24).toFixed(0)}" y="${oy.toFixed(0)}" text-anchor="start" opacity=".55">${esc(t().ocean)}</text>`;
+
+  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#D7263D" stroke-width="4" stroke-linecap="round"/>`; }).join('');
 
   const stops = CONTENT.locals.map((l) => {
     const [x, y] = P(l.ll);
-    const down = l.num === '540';
-    const left = leftSide.has(l.num);
-    const anchor = down ? 'middle' : (left ? 'end' : 'start');
-    const lx = down ? x : (left ? x - 14 : x + 14);
-    const nudge = { '820': -8, '821': 8 }[l.num] || 0;
-    const ly = (down ? y + 30 : y + 2) + nudge;
-    return `<a href="${localHref(l)}" aria-label="Local ${l.num}, ${esc(l.city)}">
-      <circle class="stop-dot" cx="${x}" cy="${y}" r="7" fill="#0C1A33" stroke="#F2F4F8" stroke-width="4"/>
-      <text class="lbl" x="${lx}" y="${ly}" text-anchor="${anchor}">${l.num}</text>
-      <text class="sub" x="${lx}" y="${ly + 12}" text-anchor="${anchor}">${esc(l.city)}</text>
+    const ci = column.indexOf(l.num);
+    let label, leader = '';
+    if (ci >= 0) {
+      const ly = colTop + ci * 40;
+      leader = `<polyline class="leader" points="${(x + 9).toFixed(1)},${y.toFixed(1)} ${COLX - 30},${ly - 4} ${COLX - 8},${ly - 4}"/>`;
+      label = { x: COLX, y: ly, anchor: 'start' };
+    } else if (place[l.num] === 'below') {
+      label = { x: x + 6, y: y + 28, anchor: 'start' };
+    } else {
+      label = { x: x - 14, y: y - 4, anchor: 'end' };
+    }
+    return `<a href="${localHref(l)}" aria-label="Local ${l.num}, ${esc(l.city)}">${leader}
+      <circle class="stop-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="#0C1A33" stroke="#F2F4F8" stroke-width="4"/>
+      <text class="lbl" x="${label.x.toFixed(1)}" y="${label.y.toFixed(1)}" text-anchor="${label.anchor}">${l.num}</text>
+      <text class="sub" x="${label.x.toFixed(1)}" y="${(label.y + 12).toFixed(1)}" text-anchor="${label.anchor}">${esc(l.city)}</text>
     </a>`;
   }).join('');
 
-  const term = `<circle cx="${tx}" cy="${ty}" r="10" fill="#D7263D" stroke="#F2F4F8" stroke-width="4"/>
-    <text class="lbl" x="${tx - 18}" y="${ty + 2}" text-anchor="end">COUNCIL</text>
-    <text class="sub" x="${tx - 18}" y="${ty + 14}" text-anchor="end">Terminal · Trenton</text>`;
+  const term = `<circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="10" fill="#D7263D" stroke="#F2F4F8" stroke-width="4"/>
+    <text class="lbl" x="${(tx - 18).toFixed(1)}" y="${(ty - 6).toFixed(1)}" text-anchor="end">${esc(t().council)}</text>
+    <text class="sub" x="${(tx - 18).toFixed(1)}" y="${(ty + 6).toFixed(1)}" text-anchor="end">${esc(t().terminal)}</text>`;
 
-  $('#map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Map of the nine ATU locals in New Jersey, connected to the council in Trenton">${dots}${lines}${stops}${term}</svg>`;
+  $('#map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t().mapLabel)}">${dots}${shape}${regions}${lines}${stops}${term}</svg>`;
 }
 
 function renderTabs() {
@@ -1419,16 +1749,55 @@ function renderTabs() {
   $('#tabbar').innerHTML = t().tabs.map((label, i) => `<a href="${hrefs[i]}"${i === 0 ? ' class="active"' : ''}>${esc(label)}</a>`).join('');
 }
 
+/* Fixed page text: remember each English text node and attribute once, then swap from strings[lang].static. */
+const DYNAMIC = '#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
+const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+const fixedText = [], fixedAttrs = [];
+const norm = (x) => x.replace(/\s+/g, ' ').trim();
+const isFixed = (el) => el && !el.closest('script,style,[data-i18n]') && !el.closest(DYNAMIC);
+function collectFixed() {
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    if (/[A-Za-z\u00C0-\uFFFF]/.test(n.nodeValue) && isFixed(n.parentElement)) fixedText.push({ node: n, en: n.nodeValue });
+  }
+  document.querySelectorAll(I18N_ATTRS.map((a) => `[${a}]`).join(',')).forEach((el) => {
+    if (!isFixed(el)) return;
+    I18N_ATTRS.forEach((a) => { if (el.hasAttribute(a)) fixedAttrs.push({ el, a, en: el.getAttribute(a) }); });
+  });
+  fixedText.title = document.title;
+}
+window.__i18nMissing = new Set();
+function translateFixed() {
+  const dict = t().static || {};
+  const tr = (en) => {
+    if (state.lang === 'en') return en;
+    const v = dict[norm(en)];
+    if (v === undefined) { window.__i18nMissing.add(norm(en)); return en; }
+    return en.match(/^\s*/)[0] + v + en.match(/\s*$/)[0];
+  };
+  fixedText.forEach((f) => { f.node.nodeValue = tr(f.en); });
+  fixedAttrs.forEach((f) => f.el.setAttribute(f.a, tr(f.en)));
+  document.title = tr(fixedText.title);
+  const d = document.querySelector('meta[name="description"]'); if (d) d.content = t().desc;
+}
+
+function renderAll() {
+  renderPosts(); renderRights(); renderContract(); renderSafety();
+  renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
+  renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs();
+}
+
 function applyStrings() {
   const s = t();
   document.documentElement.lang = state.lang;
+  translateFixed();
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.dataset.i18n;
     const m = key.match(/^nav(\d)$/);
     el.textContent = m ? s.nav[+m[1]] : s[key];
   });
   document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
-  renderEvents(); renderTabs();
+  renderAll(); watchTabsRefresh();
 }
 
 /* =====================================================================
@@ -1452,13 +1821,15 @@ document.addEventListener('click', (ev) => {
 });
 
 /* Highlight the active tab on phones as you scroll. */
+let activeTab = 0;
+function watchTabsRefresh() { document.querySelectorAll('#tabbar a').forEach((a, j) => a.classList.toggle('active', j === activeTab)); }
 function watchTabs() {
   const map = { top: 0, fight: 1, wins: 2, ladder: 3, locals: 4 };
   const io = new IntersectionObserver((entries) => {
     entries.forEach((en) => {
       if (!en.isIntersecting) return;
-      const i = map[en.target.id];
-      document.querySelectorAll('#tabbar a').forEach((a, j) => a.classList.toggle('active', j === i));
+      activeTab = map[en.target.id];
+      watchTabsRefresh();
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   Object.keys(map).forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
@@ -1470,15 +1841,14 @@ function smsSubmit(ev) {
   const form = ev.target;
   const input = form.querySelector('.sms-input');
   const val = (input.value || '').replace(/\D/g, '');
-  if (val.length < 10) { toast('Enter a 10-digit phone number.'); input.focus(); return false; }
+  if (val.length < 10) { toast(t().phoneErr); input.focus(); return false; }
   input.value = '';
   toast(t().smsOk);
   return false;
 }
 
-renderPosts(); renderRights(); renderContract(); renderSafety();
-renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
-renderFight(); renderWins(); renderCope();
+renderGlyphs(); renderHeroMap();
+collectFixed();
 applyStrings(); watchTabs();
 </script>
 </body>
