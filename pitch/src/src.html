@@ -647,7 +647,7 @@ textarea.sv-input{min-height:84px;resize:vertical}
   .newhire-link{font-size:12px}
 }
 
-/* ---------- Council console (demo) ---------- */
+/* ---------- Council workspace (demo) ---------- */
 .cc-section{background:linear-gradient(180deg,var(--navy) 0,#0E1F3D 100%)}
 .cc{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:start}
 .cc-steps{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:cc}
@@ -655,45 +655,91 @@ textarea.sv-input{min-height:84px;resize:vertical}
 .cc-steps li::before{content:counter(cc);flex:none;width:30px;height:30px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:16px;color:#fff}
 .cc-form{background:var(--navy-deep);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:14px}
 .cc-type{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.cc-type label{display:block;cursor:pointer;position:relative}
-.cc-type input{position:absolute;opacity:0;pointer-events:none}
+.cc-type label,.cc-targets label,.cc-seg label{display:block;cursor:pointer;position:relative}
+.cc-type input,.cc-targets input,.cc-seg input{position:absolute;opacity:0;pointer-events:none}
 .cc-type .opt{display:flex;flex-direction:column;gap:4px;min-height:64px;padding:12px 14px;border:1px solid rgba(255,255,255,.25);transition:border-color .15s,background .15s}
 .cc-type .opt b{font-family:var(--display);font-weight:800;font-size:20px;text-transform:uppercase;line-height:1}
 .cc-type .opt span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
 .cc-type input:checked + .opt{border-color:var(--ink);background:var(--panel)}
 .cc-type input.u:checked + .opt{border-color:var(--red);background:rgba(215,38,61,.18)}
-.cc-type input:focus-visible + .opt{outline:3px solid var(--sample);outline-offset:2px}
+.cc-type input:focus-visible + .opt,.cc-targets input:focus-visible + span,.cc-seg input:focus-visible + span{outline:3px solid var(--sample);outline-offset:2px}
 .cc-es summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--nj-buff);letter-spacing:.04em;padding:6px 0}
 .cc-es[open] summary{margin-bottom:10px}
 .cc-es .sv-field + .sv-field{margin-top:10px}
+.cc-when{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cc-seg{display:flex;gap:6px;margin-bottom:6px}
+.cc-seg span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid rgba(255,255,255,.25);font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase}
+.cc-seg input:checked + span{background:var(--ink);color:var(--navy);border-color:var(--ink)}
+.cc-hint{font-family:var(--body);font-size:12px;letter-spacing:0;text-transform:none;color:var(--dim)}
 .cc-targets{display:flex;flex-wrap:wrap;gap:6px}
-.cc-targets label{cursor:pointer;position:relative}
-.cc-targets input{position:absolute;opacity:0;pointer-events:none}
 .cc-targets span{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border:1px solid rgba(255,255,255,.25);font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em}
 .cc-targets input:checked + span{background:var(--ink);color:var(--navy);border-color:var(--ink)}
-.cc-targets input:focus-visible + span{outline:3px solid var(--sample);outline-offset:2px}
 .cc-sent{margin-top:40px}
-.cc-sent-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
-.cc-sent-head h3{margin:0;font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase}
+.cc-sent-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.cc-tabs{display:flex;gap:2px;flex-wrap:wrap}
+.cc-tab{min-height:46px;padding:0 16px;font-family:var(--display);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:3px solid transparent}
+.cc-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--red)}
+.cc-tab:hover{color:var(--ink)}
+.cc-badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;align-items:center;justify-content:center;border-radius:11px;background:var(--panel);font-family:var(--mono);font-size:11px;color:var(--ink);vertical-align:2px}
+.cc-tab[data-tab="from"] .cc-badge,.cc-tab[data-tab="dir"] .cc-badge{background:var(--red);color:#fff}
+.cc-tools{display:flex;gap:14px;align-items:center;padding-bottom:10px}
+.cc-clock{font-family:var(--mono);font-size:11px;color:var(--nj-buff);letter-spacing:.06em;text-transform:uppercase}
 .cc-reset{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:underline;padding:8px 0}
 .cc-empty{font-family:var(--body);font-size:15px;color:var(--muted);padding:18px 0}
 .cc-post{border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px}
+.cc-post.pulled{opacity:.6}
 .cc-post .tt{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
 .cc-post .mt{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.cc-body{font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted);margin:8px 0 0;max-width:70ch}
 .cc-tag{padding:3px 7px;font-weight:600;color:#fff;background:var(--status)}
 .cc-tag.u{background:var(--red)}
+.cc-tag.o{background:var(--nj-buff);color:var(--navy-deep)}
+.cc-tag.i{background:#5B3E8E}
+.cc-win{color:var(--nj-buff)}
+.cc-win.pulled,.cc-win.ended{color:var(--muted)}
 .cc-count{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right;white-space:nowrap}
-.cc-count span{display:block;color:var(--muted);margin-top:4px}
+.cc-count span{display:block;color:var(--muted);margin-top:4px;white-space:normal;max-width:34ch;margin-left:auto}
 .cc-chips{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px}
 .cc-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border:1px solid rgba(255,255,255,.25);font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted)}
 .cc-chip b{font-family:var(--display);font-size:14px;color:var(--ink);letter-spacing:.02em}
+.cc-chip i{font-style:normal;color:var(--dim)}
 .cc-chip.approved,.cc-chip.pinned{border-color:#3DAA6A;color:#7FD7A3}
 .cc-chip.live{border-color:var(--red);background:rgba(215,38,61,.2);color:#fff}
+.cc-chip.reapprove{border-color:var(--nj-buff);color:var(--nj-buff)}
+.cc-chip.late{border-color:#F2C14E;color:#F2C14E}
+.cc-chip.late i{color:#F2C14E}
 .cc-chip.declined,.cc-chip.removed{border-color:#8FA2C4;color:#C5CDDB;text-decoration:line-through}
+.cc-reach{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.cc-reach b{color:var(--ink);font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:11px}
 .cc-links{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.cc-sim{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px}
+.cc-edit,.cc-route{grid-column:1 / -1;display:flex;flex-direction:column;gap:10px;background:var(--navy-deep);border:1px solid var(--line);padding:16px}
+.cc-route{background:transparent;border:0;padding:0}
+.cc-route textarea{min-height:60px}
+.cc-reply{grid-column:1 / -1;margin:0;border-left:3px solid var(--nj-buff);padding:4px 0 4px 12px;font-family:var(--body);font-size:14px;color:var(--ink)}
+.cc-sim{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px;line-height:1.6}
+.cc-table-wrap{overflow-x:auto;border:1px solid var(--line)}
+.cc-table{width:100%;border-collapse:collapse;font-family:var(--body);font-size:14px}
+.cc-table th{text-align:left;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);background:var(--navy-deep)}
+.cc-table td{padding:10px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--ink)}
+.cc-table td b{font-family:var(--display);font-size:16px}
+.cc-table.log td span{display:block;color:var(--muted);font-size:13px}
+.cc-tbc{color:var(--dim);font-style:italic}
+.cc-due{display:inline-block;margin-left:6px;padding:2px 6px;background:#F2C14E;color:var(--navy-deep);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.cc-due.asked{background:var(--panel);color:var(--muted);margin-left:0}
+.cc-mini{display:inline-block;padding:6px 0;font-family:var(--mono);font-size:11px;color:var(--nj-buff);text-decoration:underline}
+.cc-logbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.cc-logbar .sv-field{min-width:220px}
 @media (max-width:1040px){.cc{grid-template-columns:minmax(0,1fr);gap:28px}}
-@media (max-width:720px){.cc-form{padding:16px}.cc-post{grid-template-columns:minmax(0,1fr)}.cc-count{text-align:left}}
+@media (max-width:720px){
+  .cc-form{padding:16px}.cc-post{grid-template-columns:minmax(0,1fr)}.cc-count{text-align:left}.cc-count span{margin-left:0}
+  .cc-when{grid-template-columns:minmax(0,1fr)}.cc-tab{padding:0 10px;font-size:16px}.cc-tools{width:100%;justify-content:space-between}
+  .cc-table-wrap{border:0;overflow:visible}
+  .cc-table thead{display:none}
+  .cc-table tr{display:block;border:1px solid var(--line);margin-bottom:10px;padding:6px 0}
+  .cc-table td{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;border:0;padding:6px 12px}
+  .cc-table td::before{content:attr(data-l);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .cc-table td:not([data-l]){display:block}
+}
 
 /* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
 .eyebrow.red,.right .n,.win .win-meta b,.rung .rung-num,.cope-action .ca-eyebrow,.sms-card .sms-eyebrow{color:var(--accent-text)}
@@ -1516,38 +1562,79 @@ const CONTENT = {
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
 
-  // Council console: the demo of council -> president approval -> local website. Logic lives in /council-feed.js.
+  // Council workspace: how the council and the locals talk. Logic lives in /council-feed.js.
   console: {
     en: { eyebrow: '◆ Council console · live demo', title: 'Send it down the line',
-          lede: 'Write it once. Urgent alerts go live on every local\'s site right away and notify the president. Everything else waits until the local\'s president or their backup approves it.',
-          steps: ['The council sends a post', 'The local president gets an email and approves it', 'It shows up on that local\'s website'],
-          regular: 'Regular', regularSub: 'Needs local approval', urgent: 'Urgent', urgentSub: 'Goes live now, president notified',
+          lede: 'Write it once. Urgent alerts go live on every local\'s site right away and text members. Everything else waits until the local\'s president or their backup approves it.',
+          steps: ['The council sends a post', 'The local president gets an email and approves it', 'It shows up on that local\'s website, and in members\' texts and email if the local chooses'],
+          regular: 'Regular', regularSub: 'Needs local approval', urgent: 'Urgent', urgentSub: 'Goes live now, members texted',
           titleL: 'Headline', bodyL: 'Message', esToggle: 'Add the Spanish version (optional)', titleEsL: 'Headline in Spanish', bodyEsL: 'Message in Spanish',
+          startL: 'Starts', startNow: 'Now', startLater: 'Later', endL: 'Ends (optional)', endHint: 'Comes down off every site after this day.',
           targetsL: 'Send to', allLocals: 'All 9 locals', send: 'Send as council',
-          needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.',
-          sentUrgent: 'Sent. Live now on {n} local sites. Presidents notified.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
-          sentUrgent1: 'Sent. Live now on Local {l}\'s site. President notified.', sentRegular1: 'Sent to Local {l}. Waiting for approval.',
-          sent: 'Sent from the council', reset: 'Clear demo', empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
+          needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.', needStart: 'Pick when it starts.', badEnd: 'The end date has to be after it starts.',
+          sentUrgent: 'Sent. Live now on {n} local sites. Members texted.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
+          sentUrgent1: 'Sent. Live now on Local {l}\'s site. Members texted.', sentRegular1: 'Sent to Local {l}. Waiting for approval.', scheduled: 'Scheduled. Locals can approve now; it goes live on {d}.',
+          tabs: { sent: 'Sent', from: 'From locals', dir: 'Directory', log: 'Record' },
+          clock: 'Demo clock: 1 second = 1 hour', reset: 'Clear demo', resetDone: 'Demo cleared.',
+          empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
           count: 'Approved by {a} of {n}', countUrgent: 'Live on {a} of {n} sites', waiting: 'Waiting: {list}',
-          states: { live: 'Live', pending: 'Waiting', approved: 'Approved', pinned: 'Pinned', declined: 'Declined', removed: 'Removed' },
-          inbox: 'Open Local {n} president\'s email →', site: 'View Local {n} site →', simNote: 'Locals without a demo site approve on a timer, so the count moves during the demo.',
-          urgentTag: 'Urgent', regularTag: 'Regular', resetDone: 'Demo cleared.' },
+          states: { live: 'Live', pending: 'Waiting', approved: 'Approved', pinned: 'Pinned', declined: 'Declined', removed: 'Removed', reapprove: 'Re-approval' },
+          flags: { reminded: 'reminded', backup: 'with backup', text: 'text', email: 'email' },
+          win: { scheduled: 'Starts {d}', ends: 'Ends {d}', ended: 'Ended {d}', pulled: 'Pulled from all sites' },
+          shared: 'Shared from Local {n}', solidarity: 'Solidarity request from Local {n}',
+          reach: 'Reach', views: 'site views', texts: 'texts', taps: 'tapped', emails: 'emails', opens: 'opened', simReach: 'Simulated numbers for the demo.',
+          correct: 'Correct it', pull: 'Pull from all sites', pullConfirm: 'Click again to pull it everywhere', cancel: 'Cancel', sendCorrection: 'Send correction',
+          corrected: 'Correction sent. Locals that approved it will re-approve; their sites keep the approved version until then.', correctedUrgent: 'Correction sent. The urgent alert is updated on every site.',
+          pulled: 'Pulled from every local site.', edited: 'Corrected {n} time(s)',
+          inbox: 'Local {n} president\'s email →', site: 'Local {n} site →', portal: 'Local {n} officer portal →',
+          simNote: 'Locals without a hands-on demo approve on a timer. Local 880 never answers, so you can watch the 24-hour reminder and the 48-hour hand-off to its backup.',
+          fromEmpty: 'Nothing from the locals yet. Open a local officer portal and send something up.',
+          kinds: { share: 'Share with all locals', solidarity: 'Ask locals for support', issue: 'Issue for the council (private)' },
+          fromLocal: 'From Local {n}', toLocals: 'Asking locals {list}', notePh: 'Note back to the local (optional)', replyPh: 'Reply to the local',
+          actShare: 'Share with all locals', actSolidarity: 'Send to locals {list}', actIssue: 'Reply and mark handled', actDecline: 'Decline',
+          subStates: { pending: 'Waiting for the council', routed: 'Sent out', declined: 'Declined', handled: 'Handled' },
+          routed: 'Sent out. Each local still approves it for their own site.', declinedMsg: 'Declined. The local has been told.', handledMsg: 'Reply sent to the local.',
+          dirCols: ['Local', 'President', 'Backup approver', 'Stewards', 'Delegates', 'Last checked', ''],
+          never: 'Never', daysAgo: '{n} days ago', today: 'Today', due: 'Check due', asked: 'Asked {d}', ask: 'Ask to verify', askedMsg: 'Email sent to the Local {n} president.',
+          dirNote: 'The approval emails go to these people. Locals confirm their contacts every 90 days; the council can ask anytime.', tbc: 'to confirm',
+          logFilter: 'Show', logAll: 'Everything', logCouncil: 'Council actions', download: 'Download record (CSV)', logEmpty: 'Nothing recorded yet.',
+          logCols: ['When', 'Who', 'What', 'Details'] },
     es: { eyebrow: '◆ Consola del consejo · demo en vivo', title: 'Envíalo por toda la línea',
-          lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se avisa al presidente. Todo lo demás espera a que el presidente del local o su suplente lo apruebe.',
-          steps: ['El consejo envía una publicación', 'El presidente del local recibe un correo y la aprueba', 'Aparece en el sitio web de ese local'],
-          regular: 'Normal', regularSub: 'Requiere aprobación del local', urgent: 'Urgente', urgentSub: 'Se publica ya, con aviso al presidente',
+          lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se envían por texto a los miembros. Todo lo demás espera a que el presidente del local o su suplente lo apruebe.',
+          steps: ['El consejo envía una publicación', 'El presidente del local recibe un correo y la aprueba', 'Aparece en el sitio web de ese local, y en los textos y correos de los miembros si el local lo decide'],
+          regular: 'Normal', regularSub: 'Requiere aprobación del local', urgent: 'Urgente', urgentSub: 'Se publica ya, con texto a los miembros',
           titleL: 'Titular', bodyL: 'Mensaje', esToggle: 'Agregar la versión en español (opcional)', titleEsL: 'Titular en español', bodyEsL: 'Mensaje en español',
+          startL: 'Empieza', startNow: 'Ahora', startLater: 'Más tarde', endL: 'Termina (opcional)', endHint: 'Se retira de todos los sitios después de este día.',
           targetsL: 'Enviar a', allLocals: 'Los 9 locales', send: 'Enviar como consejo',
-          needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.',
-          sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Presidentes avisados.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
-          sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Presidente avisado.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.',
-          sent: 'Enviado por el consejo', reset: 'Borrar demo', empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
+          needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.', needStart: 'Elige cuándo empieza.', badEnd: 'La fecha final tiene que ser después del inicio.',
+          sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Texto enviado a los miembros.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
+          sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Texto enviado a los miembros.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.', scheduled: 'Programado. Los locales pueden aprobarlo ya; se publica el {d}.',
+          tabs: { sent: 'Enviados', from: 'De los locales', dir: 'Directorio', log: 'Registro' },
+          clock: 'Reloj de la demo: 1 segundo = 1 hora', reset: 'Borrar demo', resetDone: 'Demo borrada.',
+          empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
           count: 'Aprobado por {a} de {n}', countUrgent: 'En vivo en {a} de {n} sitios', waiting: 'En espera: {list}',
-          states: { live: 'En vivo', pending: 'En espera', approved: 'Aprobado', pinned: 'Fijado', declined: 'Rechazado', removed: 'Retirado' },
-          inbox: 'Abrir el correo del presidente del Local {n} →', site: 'Ver el sitio del Local {n} →', simNote: 'Los locales sin sitio de demostración aprueban con un temporizador, así el conteo avanza durante la demo.',
-          urgentTag: 'Urgente', regularTag: 'Normal', resetDone: 'Demo borrada.' }
+          states: { live: 'En vivo', pending: 'En espera', approved: 'Aprobado', pinned: 'Fijado', declined: 'Rechazado', removed: 'Retirado', reapprove: 'Reaprobación' },
+          flags: { reminded: 'recordado', backup: 'con el suplente', text: 'texto', email: 'correo' },
+          win: { scheduled: 'Empieza el {d}', ends: 'Termina el {d}', ended: 'Terminó el {d}', pulled: 'Retirado de todos los sitios' },
+          shared: 'Compartido desde el Local {n}', solidarity: 'Pedido de solidaridad del Local {n}',
+          reach: 'Alcance', views: 'visitas al sitio', texts: 'textos', taps: 'abiertos', emails: 'correos', opens: 'abiertos', simReach: 'Cifras simuladas para la demo.',
+          correct: 'Corregir', pull: 'Retirar de todos los sitios', pullConfirm: 'Haz clic otra vez para retirarlo de todos', cancel: 'Cancelar', sendCorrection: 'Enviar corrección',
+          corrected: 'Corrección enviada. Los locales que la aprobaron la volverán a aprobar; sus sitios mantienen la versión aprobada mientras tanto.', correctedUrgent: 'Corrección enviada. La alerta urgente se actualizó en todos los sitios.',
+          pulled: 'Retirado de todos los sitios de los locales.', edited: 'Corregido {n} vez/veces',
+          inbox: 'Correo del presidente del Local {n} →', site: 'Sitio del Local {n} →', portal: 'Portal de dirigentes del Local {n} →',
+          simNote: 'Los locales sin demo práctica aprueban con un temporizador. El Local 880 nunca responde, así puedes ver el recordatorio de 24 horas y el traspaso al suplente a las 48 horas.',
+          fromEmpty: 'Todavía no llega nada de los locales. Abre un portal de dirigentes y envía algo al consejo.',
+          kinds: { share: 'Compartir con todos los locales', solidarity: 'Pedir apoyo a otros locales', issue: 'Asunto para el consejo (privado)' },
+          fromLocal: 'Del Local {n}', toLocals: 'Pide apoyo a los locales {list}', notePh: 'Nota para el local (opcional)', replyPh: 'Respuesta al local',
+          actShare: 'Compartir con todos los locales', actSolidarity: 'Enviar a los locales {list}', actIssue: 'Responder y marcar atendido', actDecline: 'Rechazar',
+          subStates: { pending: 'Esperando al consejo', routed: 'Enviado', declined: 'Rechazado', handled: 'Atendido' },
+          routed: 'Enviado. Cada local todavía lo aprueba para su propio sitio.', declinedMsg: 'Rechazado. Se le avisó al local.', handledMsg: 'Respuesta enviada al local.',
+          dirCols: ['Local', 'Presidente', 'Suplente', 'Delegados sindicales', 'Delegados al consejo', 'Última revisión', ''],
+          never: 'Nunca', daysAgo: 'hace {n} días', today: 'Hoy', due: 'Revisión pendiente', asked: 'Pedido el {d}', ask: 'Pedir verificación', askedMsg: 'Correo enviado al presidente del Local {n}.',
+          dirNote: 'Los correos de aprobación van a estas personas. Los locales confirman sus contactos cada 90 días; el consejo puede pedirlo cuando quiera.', tbc: 'por confirmar',
+          logFilter: 'Mostrar', logAll: 'Todo', logCouncil: 'Acciones del consejo', download: 'Descargar registro (CSV)', logEmpty: 'Todavía no hay nada registrado.',
+          logCols: ['Cuándo', 'Quién', 'Qué', 'Detalles'] }
   },
-
   // Bargaining survey. base = sample count of members who put the issue in their top 3.
   survey: {
     sample: true,
@@ -2092,11 +2179,20 @@ function applyStrings() {
   renderAll(); watchTabsRefresh();
 }
 
-/* ---------- Council console (demo): council -> president approval -> local site ---------- */
-const cc = { urgent: false, title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false };
+/* ---------- Council workspace (demo): council <-> locals. Engine: /council-feed.js ---------- */
+const cc = { urgent: false, title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false,
+             startMode: 'now', startAt: '', endAt: '', tab: 'sent', editing: null, edit: {}, pullArm: null, subNotes: {}, logFilter: 'all' };
 const CF = () => window.CouncilFeed;
+const CU = () => CONTENT.console[state.lang];
+const LOC = () => (state.lang === 'es' ? 'es-US' : 'en-US');
+const when = (ms, withTime) => new Date(ms).toLocaleString(LOC(), withTime === false ? { month: 'short', day: 'numeric', year: 'numeric' } : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const nf = (n) => Number(n || 0).toLocaleString(LOC());
+const ACTIONS_ES = { 'sent': 'enviado', 'sent urgent': 'urgente enviado', 'approved': 'aprobado', 're-approved': 'reaprobado', 'declined': 'rechazado', 'removed': 'retirado',
+  'pulled': 'retirado de todos', 'corrected': 'corregido', 'reminded': 'recordatorio', 'passed to backup': 'pasado al suplente', 'submitted': 'enviado al consejo',
+  'routed submission': 'reenviado por el consejo', 'declined submission': 'pedido rechazado', 'replied': 'respondido', 'asked to verify contacts': 'pidió verificar contactos', 'verified contacts': 'contactos verificados' };
+
 function renderConsoleForm() {
-  const u = CONTENT.console[state.lang];
+  const u = CU();
   const chip = (n) => `<label><input type="checkbox" name="t" value="${n}"${cc.targets.includes(n) ? ' checked' : ''}><span>${n}</span></label>`;
   $('#console-form').innerHTML = `
     <div>
@@ -2116,71 +2212,212 @@ function renderConsoleForm() {
         <label class="sv-field">${esc(u.titleEsL)}<input class="sv-input" name="titleEs" maxlength="90" lang="es" value="${esc(cc.titleEs)}"></label>
         <label class="sv-field">${esc(u.bodyEsL)}<textarea class="sv-input" name="bodyEs" maxlength="400" lang="es">${esc(cc.bodyEs)}</textarea></label>
       </details>
+      <div class="cc-when">
+        <div class="sv-field" role="group" aria-label="${esc(u.startL)}">${esc(u.startL)}
+          <div class="cc-seg">
+            <label><input type="radio" name="startMode" value="now"${cc.startMode === 'now' ? ' checked' : ''}><span>${esc(u.startNow)}</span></label>
+            <label><input type="radio" name="startMode" value="later"${cc.startMode === 'later' ? ' checked' : ''}><span>${esc(u.startLater)}</span></label>
+          </div>
+          ${cc.startMode === 'later' ? `<input class="sv-input" type="datetime-local" name="startAt" value="${esc(cc.startAt)}" aria-label="${esc(u.startL)}">` : ''}
+        </div>
+        <label class="sv-field">${esc(u.endL)}<input class="sv-input" type="date" name="endAt" value="${esc(cc.endAt)}"><span class="cc-hint">${esc(u.endHint)}</span></label>
+      </div>
       <div class="sv-field" role="group" aria-label="${esc(u.targetsL)}">${esc(u.targetsL)}
         <div class="cc-targets">${CONTENT.locals.map((l) => chip(l.num)).join('')}<button type="button" class="action-btn" data-cc="all">${esc(u.allLocals)}</button></div>
       </div>
       <button type="submit" class="btn btn-red">${esc(u.send)}</button>
     </form>`;
 }
-function renderConsoleSent() {
-  if (!CF()) return;
-  const u = CONTENT.console[state.lang];
-  const posts = CF().all();
-  const S = CF().SITES;
-  const list = posts.map((p) => {
+
+/* ---------- workspace tabs ---------- */
+function statusChip(p, n) {
+  const u = CU(), s = p.status[n];
+  let key = s.state === 'approved' && s.placement === 'pinned' ? 'pinned' : s.state;
+  if (s.state === 'pending' && s.version) key = 'reapprove';
+  const flags = [];
+  if (s.state === 'pending' && s.escalatedAt) flags.push(u.flags.backup);
+  else if (s.state === 'pending' && s.remindedAt) flags.push(u.flags.reminded);
+  if (s.state === 'pending') flags.push(CF().ageLabel(s.pendingSince || p.created));
+  if (['approved', 'live'].includes(s.state) && s.channels) { if (s.channels.text) flags.push(u.flags.text); if (s.channels.email) flags.push(u.flags.email); }
+  const cls = key + (s.state === 'pending' && s.escalatedAt ? ' late' : '');
+  return `<span class="cc-chip ${cls}"${s.by === 'simulated' ? ' title="simulated"' : ''}><b>${n}</b>${esc(u.states[key])}${flags.length ? ` <i>· ${esc(flags.join(' · '))}</i>` : ''}</span>`;
+}
+function renderSentTab() {
+  const u = CU(), F = CF(), list = F.posts();
+  if (!list.length) return `<p class="cc-empty">${esc(u.empty)}</p>`;
+  return list.map((p) => {
     const ns = Object.keys(p.status);
     const ok = ns.filter((n) => ['approved', 'live'].includes(p.status[n].state));
     const wait = ns.filter((n) => p.status[n].state === 'pending');
-    const chips = ns.map((n) => {
-      const st = p.status[n]; const key = st.state === 'approved' && st.placement === 'pinned' ? 'pinned' : st.state;
-      return `<span class="cc-chip ${key}"${st.by === 'simulated' ? ' title="simulated"' : ''}><b>${n}</b>${esc(u.states[key])}</span>`;
-    }).join('');
-    const links = ns.filter((n) => CF().HANDS_ON.includes(n)).map((n) => `<a class="action-btn" href="/inbox/?local=${n}">${esc(u.inbox.replace('{n}', n))}</a><a class="action-btn" href="${S[n].site}">${esc(u.site.replace('{n}', n))}</a>`).join('');
+    const ws = F.windowState(p);
+    const win = ws === 'pulled' ? u.win.pulled : ws === 'scheduled' ? u.win.scheduled.replace('{d}', when(p.startAt))
+      : ws === 'ended' ? u.win.ended.replace('{d}', when(p.endAt, false)) : (p.endAt ? u.win.ends.replace('{d}', when(p.endAt, false)) : '');
+    const r = F.reachTotal(p);
     const title = state.lang === 'es' && p.titleEs ? p.titleEs : p.title;
-    return `<article class="cc-post">
+    const origin = p.origin ? `<span class="cc-tag o">${esc((p.kind === 'solidarity' ? u.solidarity : u.shared).replace('{n}', p.origin))}</span>` : '';
+    const links = ns.filter((n) => F.HANDS_ON.includes(n)).map((n) => `<a class="action-btn" href="/inbox/?local=${n}">${esc(u.inbox.replace('{n}', n))}</a><a class="action-btn" href="/preview-${n}/">${esc(u.site.replace('{n}', n))}</a>`).join('');
+    const editing = cc.editing === p.id;
+    const editor = editing ? `
+      <form class="cc-edit" data-form="correct" data-id="${p.id}" novalidate>
+        <label class="sv-field">${esc(u.titleL)}<input class="sv-input" name="title" maxlength="90" value="${esc(cc.edit.title)}"></label>
+        <label class="sv-field">${esc(u.bodyL)}<textarea class="sv-input" name="body" maxlength="400">${esc(cc.edit.body)}</textarea></label>
+        <label class="sv-field">${esc(u.titleEsL)}<input class="sv-input" name="titleEs" maxlength="90" lang="es" value="${esc(cc.edit.titleEs)}"></label>
+        <label class="sv-field">${esc(u.bodyEsL)}<textarea class="sv-input" name="bodyEs" maxlength="400" lang="es">${esc(cc.edit.bodyEs)}</textarea></label>
+        <div class="cc-links"><button type="submit" class="action-btn solid">${esc(u.sendCorrection)}</button><button type="button" class="action-btn" data-cc="cancel">${esc(u.cancel)}</button></div>
+      </form>` : '';
+    const actions = ws === 'pulled' ? '' : `<div class="cc-links">${editing ? '' : `<button type="button" class="action-btn" data-cc="correct" data-id="${p.id}">${esc(u.correct)}</button>`}
+        <button type="button" class="action-btn${cc.pullArm === p.id ? ' solid' : ''}" data-cc="pull" data-id="${p.id}">${esc(cc.pullArm === p.id ? u.pullConfirm : u.pull)}</button>${links}</div>`;
+    return `<article class="cc-post${ws === 'pulled' ? ' pulled' : ''}">
         <div><div class="tt">${esc(title)}</div>
-          <div class="mt"><span class="cc-tag${p.urgent ? ' u' : ''}">${esc(p.urgent ? u.urgentTag : u.regularTag)}</span><span>${esc(new Date(p.created).toLocaleString(state.lang === 'es' ? 'es-US' : 'en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</span></div></div>
+          <div class="mt"><span class="cc-tag${p.urgent ? ' u' : ''}">${esc(p.urgent ? u.urgent : u.regular)}</span>${origin}<span>${esc(when(p.created))}</span>${win ? `<span class="cc-win ${ws}">${esc(win)}</span>` : ''}${p.edits && p.edits.length ? `<span>${esc(u.edited.replace('{n}', p.edits.length))}</span>` : ''}</div></div>
         <div class="cc-count">${esc((p.urgent ? u.countUrgent : u.count).replace('{a}', ok.length).replace('{n}', ns.length))}${wait.length ? `<span>${esc(u.waiting.replace('{list}', wait.join(', ')))}</span>` : ''}</div>
-        <div class="cc-chips">${chips}</div>
-        <div class="cc-links">${links}</div>
+        <div class="cc-chips">${ns.map((n) => statusChip(p, n)).join('')}</div>
+        <div class="cc-reach"><b>${esc(u.reach)}</b><span>${nf(r.views)} ${esc(u.views)}</span><span>${nf(r.texts)} ${esc(u.texts)} · ${nf(r.taps)} ${esc(u.taps)}</span><span>${nf(r.emails)} ${esc(u.emails)} · ${nf(r.opens)} ${esc(u.opens)}</span></div>
+        ${editor}${actions}
       </article>`;
+  }).join('') + `<p class="cc-sim">${esc(u.simNote)} ${esc(u.simReach)}</p>`;
+}
+function renderFromTab() {
+  const u = CU(), list = CF().subs();
+  if (!list.length) return `<p class="cc-empty">${esc(u.fromEmpty)}</p>${portalLinks()}`;
+  return list.map((s) => {
+    const kind = `<span class="cc-tag${s.kind === 'issue' ? ' i' : ' o'}">${esc(u.kinds[s.kind])}</span>`;
+    const to = s.kind === 'solidarity' ? `<span>${esc(u.toLocals.replace('{list}', s.targets.join(', ')))}</span>` : '';
+    let act = '';
+    if (s.state === 'pending') {
+      const main = s.kind === 'share' ? u.actShare : s.kind === 'solidarity' ? u.actSolidarity.replace('{list}', s.targets.join(', ')) : u.actIssue;
+      act = `<div class="cc-route"><textarea class="sv-input" data-subnote="${s.id}" maxlength="280" placeholder="${esc(s.kind === 'issue' ? u.replyPh : u.notePh)}" aria-label="${esc(s.kind === 'issue' ? u.replyPh : u.notePh)}">${esc(cc.subNotes[s.id] || '')}</textarea>
+        <div class="cc-links"><button type="button" class="action-btn solid" data-cc="route" data-id="${s.id}">${esc(main)}</button><button type="button" class="action-btn" data-cc="decline-sub" data-id="${s.id}">${esc(u.actDecline)}</button></div></div>`;
+    } else if (s.councilNote) act = `<p class="cc-reply">${esc(s.councilNote)}</p>`;
+    return `<article class="cc-post">
+        <div><div class="tt">${esc(s.title)}</div>
+          <div class="mt">${kind}<span>${esc(u.fromLocal.replace('{n}', s.from))}</span>${to}<span>${esc(when(s.created))}</span></div>
+          <p class="cc-body">${esc(s.body)}</p></div>
+        <div class="cc-count">${esc(u.subStates[s.state])}</div>
+        ${act}
+      </article>`;
+  }).join('') + portalLinks();
+}
+function portalLinks() {
+  const u = CU();
+  return `<div class="cc-links" style="margin-top:14px">${CF().HANDS_ON.map((n) => `<a class="action-btn" href="/portal/?local=${n}">${esc(u.portal.replace('{n}', n))}</a>`).join('')}</div>`;
+}
+function renderDirTab() {
+  const u = CU(), F = CF();
+  const days = (t) => { if (!t) return u.never; const d = Math.floor((Date.now() - t) / 86400000); return d === 0 ? u.today : u.daysAgo.replace('{n}', d); };
+  const rows = F.ALL.map((n) => {
+    const c = F.contacts(n);
+    const name = (v, set) => set ? esc(v) : `<span class="cc-tbc">${esc(u.tbc)}</span>`;
+    const status = c.requestedAt ? `<span class="cc-due asked">${esc(u.asked.replace('{d}', when(c.requestedAt, false)))}</span>`
+      : (c.verifyDue ? `<button type="button" class="action-btn" data-cc="verify" data-n="${n}">${esc(u.ask)}</button>` : '');
+    return `<tr><td data-l="${esc(u.dirCols[0])}"><b>${n}</b> ${esc(c.city)}</td><td data-l="${esc(u.dirCols[1])}">${name(c.president, c.presidentSet)}</td><td data-l="${esc(u.dirCols[2])}">${name(c.backup, c.backupSet)}</td>
+      <td data-l="${esc(u.dirCols[3])}">${c.stewards == null ? `<span class="cc-tbc">${esc(u.tbc)}</span>` : c.stewards}</td><td data-l="${esc(u.dirCols[4])}">${c.delegates == null ? `<span class="cc-tbc">${esc(u.tbc)}</span>` : c.delegates}</td>
+      <td data-l="${esc(u.dirCols[5])}">${esc(days(c.verifiedAt))}${c.verifyDue ? ` <span class="cc-due">${esc(u.due)}</span>` : ''}</td><td>${status} <a class="cc-mini" href="/portal/?local=${n}">${esc(u.portal.replace('{n}', n))}</a></td></tr>`;
   }).join('');
+  return `<p class="cc-sim" style="margin-top:0">${esc(u.dirNote)}</p><div class="cc-table-wrap"><table class="cc-table"><thead><tr>${u.dirCols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderLogTab() {
+  const u = CU(), F = CF();
+  let rows = F.log();
+  if (cc.logFilter === 'council') rows = rows.filter((r) => r.actor === 'Council');
+  else if (cc.logFilter !== 'all') rows = rows.filter((r) => r.local === cc.logFilter);
+  const opts = [['all', u.logAll], ['council', u.logCouncil]].concat(F.ALL.map((n) => [n, 'Local ' + n]))
+    .map(([v, l]) => `<option value="${v}"${cc.logFilter === v ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  const act = (a) => state.lang === 'es' ? (ACTIONS_ES[a] || a) : a;
+  const body = rows.slice(0, 120).map((r) => `<tr><td data-l="${esc(u.logCols[0])}">${esc(when(r.at))}</td><td data-l="${esc(u.logCols[1])}">${esc(r.actor)}</td>
+      <td data-l="${esc(u.logCols[2])}"><b>${esc(act(r.action))}</b>${r.title ? `<span>${esc(r.title)}</span>` : ''}</td><td data-l="${esc(u.logCols[3])}">${esc(r.detail || '')}</td></tr>`).join('');
+  return `<div class="cc-logbar"><label class="sv-field">${esc(u.logFilter)}<select class="sv-input" data-logfilter>${opts}</select></label>
+      <button type="button" class="action-btn" data-cc="csv">${esc(u.download)}</button></div>
+    ${rows.length ? `<div class="cc-table-wrap"><table class="cc-table log"><thead><tr>${u.logCols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>` : `<p class="cc-empty">${esc(u.logEmpty)}</p>`}`;
+}
+function renderConsoleSent() {
+  if (!CF()) return;
+  const u = CU(), F = CF();
+  const pendingSubs = F.subs().filter((s) => s.state === 'pending').length;
+  const due = F.ALL.filter((n) => F.contacts(n).verifyDue && !F.contacts(n).requestedAt).length;
+  const tab = (k, label, badge) => `<button type="button" role="tab" class="cc-tab" data-tab="${k}" aria-selected="${cc.tab === k}">${esc(label)}${badge ? ` <span class="cc-badge">${badge}</span>` : ''}</button>`;
+  const panel = { sent: renderSentTab, from: renderFromTab, dir: renderDirTab, log: renderLogTab }[cc.tab]();
   $('#console-sent').innerHTML = `<div class="cc-sent">
-      <div class="cc-sent-head"><h3>${esc(u.sent)}</h3>${posts.length ? `<button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button>` : ''}</div>
-      ${posts.length ? list + `<p class="cc-sim">${esc(u.simNote)}</p>` : `<p class="cc-empty">${esc(u.empty)}</p>`}
+      <div class="cc-sent-head">
+        <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('log', u.tabs.log, 0)}</div>
+        <div class="cc-tools"><span class="cc-clock">${esc(u.clock)}</span><button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button></div>
+      </div>
+      <div class="cc-panel" role="tabpanel">${panel}</div>
     </div>`;
 }
+const busy = () => cc.editing || (document.activeElement && document.activeElement.closest && document.activeElement.closest('#console-sent textarea, #console-sent select, #console-sent input'));
 function wireConsole() {
   if (!CF()) return;
-  CF().onChange(renderConsoleSent);
-  setInterval(() => { if (CF().all().some((p) => Object.values(p.status).some((s) => s.simAt))) renderConsoleSent(); }, 1500);
+  CF().onChange(() => { if (!busy()) renderConsoleSent(); });
+  setInterval(() => { CF().tick(); if (!busy() && ['sent', 'log', 'dir'].includes(cc.tab)) renderConsoleSent(); }, 1000);
   const form = () => $('#console-form form');
   document.addEventListener('input', (ev) => {
-    if (!ev.target.closest('[data-form="council"]')) return;
-    const n = ev.target.name;
-    if (['title', 'body', 'titleEs', 'bodyEs'].includes(n)) cc[n] = ev.target.value;
+    const t = ev.target;
+    if (t.closest('[data-form="council"]') && ['title', 'body', 'titleEs', 'bodyEs', 'startAt', 'endAt'].includes(t.name)) cc[t.name] = t.value;
+    if (t.closest('[data-form="correct"]')) cc.edit[t.name] = t.value;
+    if (t.dataset.subnote) cc.subNotes[t.dataset.subnote] = t.value;
   });
   document.addEventListener('change', (ev) => {
-    if (!ev.target.closest('[data-form="council"]')) return;
-    if (ev.target.name === 'kind') cc.urgent = ev.target.value === 'urgent';
-    if (ev.target.name === 't') cc.targets = [...form().querySelectorAll('input[name=t]:checked')].map((i) => i.value);
+    const t = ev.target;
+    if (t.dataset.logfilter !== undefined) { cc.logFilter = t.value; renderConsoleSent(); return; }
+    if (!t.closest('[data-form="council"]')) return;
+    if (t.name === 'kind') cc.urgent = t.value === 'urgent';
+    if (t.name === 't') cc.targets = [...form().querySelectorAll('input[name=t]:checked')].map((i) => i.value);
+    if (t.name === 'startMode') { cc.startMode = t.value; renderConsoleForm(); }
+    if (['startAt', 'endAt'].includes(t.name)) cc[t.name] = t.value;
   });
   document.addEventListener('toggle', (ev) => { if (ev.target.classList && ev.target.classList.contains('cc-es')) cc.esOpen = ev.target.open; }, true);
   document.addEventListener('click', (ev) => {
+    const tb = ev.target.closest('[data-tab]');
+    if (tb) { cc.tab = tb.dataset.tab; cc.pullArm = null; renderConsoleSent(); const again = document.querySelector(`[data-tab="${cc.tab}"]`); if (again) again.focus(); return; }
     const b = ev.target.closest('[data-cc]'); if (!b) return;
-    if (b.dataset.cc === 'all') { form().querySelectorAll('input[name=t]').forEach((i) => { i.checked = true; }); cc.targets = CONTENT.locals.map((l) => l.num); }
-    if (b.dataset.cc === 'reset') { CF().reset(); toast(CONTENT.console[state.lang].resetDone); }
+    const u = CU(), F = CF(), id = b.dataset.id, a = b.dataset.cc;
+    if (a === 'all') { form().querySelectorAll('input[name=t]').forEach((i) => { i.checked = true; }); cc.targets = CONTENT.locals.map((l) => l.num); }
+    if (a === 'reset') { F.reset(); Object.assign(cc, { editing: null, pullArm: null, subNotes: {} }); toast(u.resetDone); renderConsoleSent(); }
+    if (a === 'correct') { const p = F.posts().find((x) => x.id === id); cc.editing = id; cc.edit = { title: p.title, body: p.body, titleEs: p.titleEs, bodyEs: p.bodyEs }; renderConsoleSent(); const f = document.querySelector('.cc-edit input'); if (f) f.focus(); }
+    if (a === 'cancel') { cc.editing = null; renderConsoleSent(); }
+    if (a === 'pull') {
+      if (cc.pullArm === id) { F.pull(id); cc.pullArm = null; toast(u.pulled); } else { cc.pullArm = id; setTimeout(() => { if (cc.pullArm === id) { cc.pullArm = null; renderConsoleSent(); } }, 4000); }
+      renderConsoleSent();
+    }
+    if (a === 'route' || a === 'decline-sub') {
+      const s = F.subs().find((x) => x.id === id);
+      F.routeSub(id, { approve: a === 'route', note: cc.subNotes[id] || '' });
+      delete cc.subNotes[id];
+      toast(a === 'decline-sub' ? u.declinedMsg : (s.kind === 'issue' ? u.handledMsg : u.routed));
+      renderConsoleSent();
+    }
+    if (a === 'verify') { F.requestVerify(b.dataset.n); toast(u.askedMsg.replace('{n}', b.dataset.n)); renderConsoleSent(); }
+    if (a === 'csv') {
+      const blob = new Blob([F.exportCSV()], { type: 'text/csv' });
+      const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'nj-council-record.csv';
+      document.body.appendChild(link); link.click(); setTimeout(() => { URL.revokeObjectURL(link.href); link.remove(); }, 500);
+    }
   });
   document.addEventListener('submit', (ev) => {
-    if (!ev.target.closest('[data-form="council"]')) return;
+    const f = ev.target;
+    if (f.closest('[data-form="correct"]')) {
+      ev.preventDefault();
+      const u = CU(), e = cc.edit;
+      if (!String(e.title || '').trim() || !String(e.body || '').trim()) { toast(u.needTitle); return; }
+      const p = CF().correct(f.dataset.id, e);
+      cc.editing = null; toast(p && p.urgent ? u.correctedUrgent : u.corrected); renderConsoleSent();
+      return;
+    }
+    if (!f.closest('[data-form="council"]')) return;
     ev.preventDefault();
-    const u = CONTENT.console[state.lang];
+    const u = CU();
     if (!cc.title.trim() || !cc.body.trim()) { toast(u.needTitle); return; }
     if (!cc.targets.length) { toast(u.needTarget); return; }
-    CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice() });
+    let startAt = null, endAt = null;
+    if (cc.startMode === 'later') { if (!cc.startAt) { toast(u.needStart); return; } startAt = new Date(cc.startAt).getTime(); }
+    if (cc.endAt) endAt = new Date(cc.endAt + 'T23:59:59').getTime();
+    if (endAt && endAt <= (startAt || Date.now())) { toast(u.badEnd); return; }
+    CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice(), startAt, endAt });
     const one = cc.targets.length === 1;
-    toast((cc.urgent ? (one ? u.sentUrgent1 : u.sentUrgent) : (one ? u.sentRegular1 : u.sentRegular)).replace('{n}', cc.targets.length).replace('{l}', cc.targets[0]));
-    Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false });
+    toast(startAt && startAt > Date.now() ? u.scheduled.replace('{d}', when(startAt))
+      : (cc.urgent ? (one ? u.sentUrgent1 : u.sentUrgent) : (one ? u.sentRegular1 : u.sentRegular)).replace('{n}', cc.targets.length).replace('{l}', cc.targets[0]));
+    Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false, startMode: 'now', startAt: '', endAt: '', tab: 'sent' });
     renderConsoleForm(); renderConsoleSent();
   });
 }

@@ -72,6 +72,9 @@ button{font:inherit;cursor:pointer}
 .site-preview .es h4{margin:4px 0 0;font-family:var(--display);font-weight:800;font-size:20px}
 .site-preview .note{margin-top:12px;border-left:3px solid var(--accent,var(--red));padding:4px 0 4px 10px;font-size:14px}
 .site-preview .note span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8FA2C4}
+fieldset.chan{margin-top:16px}
+.chan label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;cursor:pointer}
+.chan small{display:block;color:var(--muted);font-size:12px}
 form.decide{margin-top:24px;border:1px solid var(--line);border-radius:10px;padding:18px 20px;background:#FAFBFC}
 fieldset{border:0;margin:0;padding:0}
 legend{font-weight:700;margin-bottom:8px}
@@ -81,6 +84,7 @@ legend{font-weight:700;margin-bottom:8px}
 .place small{display:block;color:var(--muted);font-size:12px}
 .field{display:block;margin-top:14px;font-weight:700}
 .field small{font-weight:400;color:var(--muted)}
+.field textarea,.field input,.field select{font-weight:400}
 .field textarea{display:block;width:100%;margin-top:6px;min-height:68px;border:1px solid #B9C0CC;border-radius:8px;padding:10px 12px;font:inherit;resize:vertical}
 .count{font-size:12px;color:var(--dim);text-align:right;margin-top:4px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
@@ -103,7 +107,7 @@ legend{font-weight:700;margin-bottom:8px}
 </style>
 </head>
 <body>
-<div class="demo-ribbon">Demo · This is the email a local president receives <a href="/#console">← Back to the council console</a></div>
+<div class="demo-ribbon">Demo · This is the email a local president receives <a href="/#console">← Council console</a><a id="portal-link" href="/portal/">Officer portal →</a></div>
 <header class="app-bar">
   <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
   <div class="switches">
@@ -122,72 +126,97 @@ legend{font-weight:700;margin-bottom:8px}
 (function () {
   const CF = window.CouncilFeed, esc = CF.esc;
   const params = new URLSearchParams(location.search);
-  const LOCAL = CF.SITES[params.get('local')] ? params.get('local') : '823';
-  const SITE = CF.SITES[LOCAL];
-  let role = 'president', selected = params.get('post') || null, declining = false;
-  const draft = { placement: 'feed', note: '', reason: '' };
+  const LOCAL = CF.ALL.includes(params.get('local')) ? params.get('local') : '823';
+  let role = params.get('role') === 'backup' ? 'backup' : 'president';
+  let selected = params.get('msg') || null, declining = false;
+  const draft = { placement: 'feed', note: '', reason: '', text: false, email: true };
   const $ = (s) => document.querySelector(s);
+  const C = () => CF.contacts(LOCAL);
   const initials = (name) => name.replace(/\(.*\)/, '').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   const timeFmt = (ms) => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  let toastT; const toast = (m) => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600); };
-  document.documentElement.style.setProperty('--accent', SITE.accent);
-
-  const me = () => role === 'president' ? SITE.president : SITE.backup;
-  const other = () => role === 'president' ? SITE.backup : SITE.president;
-  const roleLabel = () => role === 'president' ? 'President, ' + SITE.name : 'Backup approver, ' + SITE.name;
-
+  let toastT; const toast = (m) => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); };
+  document.documentElement.style.setProperty('--accent', C().accent);
   document.getElementById('local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
+  document.getElementById('portal-link').href = '/portal/?local=' + LOCAL;
+
+  const me = () => role === 'president' ? C().president : C().backup;
+  const other = () => role === 'president' ? C().backup : C().president;
+  const firstName = (s) => s.replace(/\s*\(.*\)/, '');
+
+  /* ---------- every email this officer has received ---------- */
+  function messages() {
+    const out = [], c = C();
+    CF.posts().forEach((p) => {
+      const s = p.status[LOCAL]; if (!s || p.origin === LOCAL) return;
+      if (p.urgent) { out.push({ id: 'u-' + p.id, at: p.created, kind: 'urgent', p, s }); return; }
+      const reapprove = s.state === 'pending' && s.version;
+      const from = p.origin ? (p.kind === 'solidarity' ? 'Solidarity request from Local ' + p.origin : 'Post from Local ' + p.origin + ', shared by the council') : 'Council post';
+      out.push({ id: 'a-' + p.id, at: (reapprove && s.pendingSince) || p.created, kind: 'approval', p, s,
+        subject: (reapprove ? 'Corrected, please re-approve: ' : 'Approve for ' + c.name + ': ') + p.title, from });
+      if (s.remindedAt && role === 'president') out.push({ id: 'r-' + p.id, at: s.remindedAt, kind: 'reminder', p, s });
+      if (s.escalatedAt) out.push({ id: 'e-' + p.id, at: s.escalatedAt, kind: 'escalated', p, s });
+    });
+    if (c.requestedAt) out.push({ id: 'v-' + LOCAL, at: c.requestedAt, kind: 'verify' });
+    CF.subs().filter((x) => x.from === LOCAL && x.state !== 'pending').forEach((x) => out.push({ id: 's-' + x.id, at: x.decidedAt, kind: 'sub', sub: x }));
+    return out.sort((a, b) => b.at - a.at);
+  }
+  const subjectOf = (m) => ({
+    urgent: () => 'URGENT, now live on your site: ' + m.p.title,
+    approval: () => m.subject,
+    reminder: () => 'Reminder: waiting 24 hours for your approval: ' + m.p.title,
+    escalated: () => role === 'backup' ? 'Passed to you after 48 hours: ' + m.p.title : 'Passed to your backup after 48 hours: ' + m.p.title,
+    verify: () => 'Please confirm ' + C().name + '\'s contacts',
+    sub: () => ({ routed: 'The council sent out your post: ', declined: 'The council declined your post: ', handled: 'The council replied: ' }[m.sub.state] || '') + m.sub.title
+  }[m.kind])();
+  const snippetOf = (m) => m.p ? m.p.body : m.kind === 'verify' ? 'The approval emails go to the people on file. Take a minute to check them.' : (m.sub.councilNote || m.sub.body);
+  function pillOf(m) {
+    if (m.kind === 'urgent') return m.p.pulledAt ? '<span class="pill removed">Pulled by council</span>' : m.s.state === 'live' ? '<span class="pill urgent">Urgent · Live</span>' : '<span class="pill removed">Removed</span>';
+    if (m.kind === 'verify') return C().requestedAt ? '<span class="pill pending">Action needed</span>' : '<span class="pill approved">Done</span>';
+    if (m.kind === 'sub') return '<span class="pill ' + (m.sub.state === 'declined' ? 'declined' : 'approved') + '">' + { routed: 'Sent out', declined: 'Declined', handled: 'Replied' }[m.sub.state] + '</span>';
+    const st = m.s.state;
+    if (st === 'pending') return '<span class="pill pending">' + (m.s.version ? 'Re-approve' : 'Needs approval') + '</span>';
+    return { approved: '<span class="pill approved">Approved</span>', declined: '<span class="pill declined">Declined</span>', removed: '<span class="pill removed">Removed</span>' }[st] || '';
+  }
+
   function header() {
     $('#who-name').textContent = me();
-    $('#who-role').textContent = roleLabel();
+    $('#who-role').textContent = (role === 'president' ? 'President, ' : 'Backup approver, ') + C().name;
     $('#who-initials').textContent = initials(me()) || 'VP';
     document.querySelectorAll('[data-l]').forEach((a) => a.setAttribute('aria-current', String(a.dataset.l === LOCAL)));
     document.querySelectorAll('[data-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
   }
-  const posts = () => CF.all().filter((p) => p.status[LOCAL]);
-  const pillFor = (p) => {
-    const st = p.status[LOCAL].state;
-    if (p.urgent && st === 'live') return '<span class="pill urgent">Urgent · Live</span>';
-    return { pending: '<span class="pill pending">Needs your approval</span>', approved: '<span class="pill approved">Approved</span>',
-             declined: '<span class="pill declined">Declined</span>', removed: '<span class="pill removed">Removed</span>' }[st] || '';
-  };
-  const subjectFor = (p) => p.urgent ? 'URGENT, now live on your site: ' + p.title : 'Approve council post for ' + SITE.name + ': ' + p.title;
-
   function renderList() {
-    const ps = posts();
-    if (!selected && ps.length) selected = ps[0].id;
-    $('#list').innerHTML = ps.length ? ps.map((p) => `
-      <button type="button" class="msg" data-post="${p.id}" aria-current="${p.id === selected}">
-        <span class="from"><span>NJ Council Hub</span><time>${esc(timeFmt(p.created))}</time></span>
-        <span class="subj">${esc(subjectFor(p))}</span>
-        <span class="snip">${esc(p.body)}</span>
-        ${pillFor(p)}
+    const ms = messages();
+    if (!selected || !ms.some((m) => m.id === selected)) selected = ms.length ? ms[0].id : null;
+    $('#list').innerHTML = ms.length ? ms.map((m) => `
+      <button type="button" class="msg" data-msg="${m.id}" aria-current="${m.id === selected}">
+        <span class="from"><span>NJ Council Hub</span><time>${esc(timeFmt(m.at))}</time></span>
+        <span class="subj">${esc(subjectOf(m))}</span>
+        <span class="snip">${esc(snippetOf(m))}</span>
+        ${pillOf(m)}
       </button>`).join('') : '<p class="empty" style="padding:24px 18px;text-align:left">No messages yet.</p>';
   }
 
-  function preview(p, st) {
-    const note = st.state === 'approved' && st.note ? st.note : (st.state === 'pending' ? draft.note : '');
+  function preview(p, s, liveNote) {
+    const v = s.version && s.state !== 'pending' ? s.version : p;
+    const note = s.state === 'approved' ? s.note : (s.state === 'pending' ? liveNote : '');
+    const badge = p.origin ? (p.kind === 'solidarity' ? '◆ Solidarity request · Local ' + p.origin : '◆ From Local ' + p.origin) : '◆ From the State Council';
     return `<div class="site-preview">
-        <span class="badge">◆ From the State Council</span>
-        <h3>${esc(p.title)}</h3><p>${esc(p.body)}</p>
-        ${p.titleEs || p.bodyEs ? `<div class="es"><span>Spanish version</span><h4>${esc(p.titleEs)}</h4><p>${esc(p.bodyEs)}</p></div>` : ''}
+        <span class="badge">${esc(badge)}</span>
+        <h3>${esc(v.title)}</h3><p>${esc(v.body)}</p>
+        ${v.titleEs || v.bodyEs ? `<div class="es"><span>Spanish version</span><h4>${esc(v.titleEs)}</h4><p>${esc(v.bodyEs)}</p></div>` : ''}
         ${note ? `<div class="note"><span>Note from Local ${LOCAL}</span>${esc(note)}</div>` : ''}
       </div>`;
   }
+  const by = (s) => s.by === 'president' ? C().president : s.by === 'backup' ? C().backup : s.by === 'simulated' ? 'your local' : s.by;
 
-  function renderRead() {
-    const p = posts().find((x) => x.id === selected);
-    if (!p) {
-      $('#read').innerHTML = `<div class="empty"><b>No council posts yet</b>When the State Council sends a post to ${esc(SITE.name)}, the approval email lands here.<br><br><a href="/#console">Send one from the council console →</a></div>`;
-      return;
-    }
-    const st = p.status[LOCAL];
-    const byName = st.by === 'president' ? SITE.president : st.by === 'backup' ? SITE.backup : st.by;
+  function approvalBody(m) {
+    const p = m.p, s = p.status[LOCAL], c = C();
     let callout = '', decision = '';
-    if (p.urgent && st.state === 'live') {
-      callout = `<div class="callout urgent"><b>This urgent alert is already live on your site.</b> The council marked it urgent, so it went up at ${esc(timeFmt(p.created))} without waiting for approval. If it should not be on ${esc(SITE.name)}'s site, you can take it down.</div>`;
-      decision = `<div class="actions"><button type="button" class="b danger" data-act="remove">Remove from my site</button><a class="b link" href="${SITE.site}">View on your site →</a></div>`;
-    } else if (st.state === 'pending') {
+    const reapprove = s.state === 'pending' && s.version;
+    if (reapprove) callout = `<div class="callout urgent"><b>The council corrected this post after you approved it.</b> Your site keeps showing the version you approved until you re-approve the corrected one below.</div>`;
+    if (s.state === 'pending' && s.escalatedAt) callout += `<div class="callout no"><b>No answer in 48 hours, so this was also sent to ${esc(c.backup)}.</b> Whoever acts first decides.</div>`;
+    if (s.state === 'pending') {
       decision = declining ? `
         <form class="decide" data-form="decline">
           <label class="field">Why are you declining? <small>(optional, sent to the council)</small><textarea name="reason" maxlength="280">${esc(draft.reason)}</textarea></label>
@@ -200,56 +229,113 @@ legend{font-weight:700;margin-bottom:8px}
               <label><input type="radio" name="placement" value="pinned"${draft.placement === 'pinned' ? ' checked' : ''}><span>Pinned to the top<small>Stays above your news until you unpin it.</small></span></label>
             </div>
           </fieldset>
-          <label class="field">Add a note from Local ${LOCAL} <small>(optional, shown under the council's post)</small><textarea name="note" maxlength="${CF.NOTE_MAX}" placeholder="Example: Ironbound votes start at 5am.">${esc(draft.note)}</textarea></label>
+          <fieldset class="chan"><legend>Also send it to your members</legend>
+            <label><input type="checkbox" name="text"${draft.text ? ' checked' : ''}><span>Text the alert line<small>${CF.alertSubs(LOCAL).toLocaleString()} members signed up</small></span></label>
+            <label><input type="checkbox" name="email"${draft.email ? ' checked' : ''}><span>Email members<small>${CF.emailSubs(LOCAL).toLocaleString()} members on the list</small></span></label>
+          </fieldset>
+          <label class="field">Add a note from Local ${LOCAL} <small>(optional, shown under the council's post)</small><textarea name="note" maxlength="${CF.NOTE_MAX}" placeholder="Example: Our hall votes start at 5am.">${esc(draft.note)}</textarea></label>
           <div class="count"><span id="note-count">${draft.note.length}</span> / ${CF.NOTE_MAX}</div>
-          <div class="actions"><button type="submit" class="b ok">Approve and publish</button><button type="button" class="b no" data-act="decline">Decline</button></div>
+          <div class="actions"><button type="submit" class="b ok">${reapprove ? 'Re-approve and publish' : 'Approve and publish'}</button><button type="button" class="b no" data-act="decline">Decline</button></div>
         </form>`;
-    } else if (st.state === 'approved') {
-      callout = `<div class="callout done"><b>Approved by ${esc(byName)}</b> on ${esc(timeFmt(st.at))}. It is live on your site${st.placement === 'pinned' ? ', pinned to the top' : ' in the news feed'}.</div>`;
-      decision = `<div class="actions"><a class="b ok" style="text-decoration:none;display:inline-flex;align-items:center" href="${SITE.site}">View on your site →</a><button type="button" class="b no" data-act="remove">Take it down</button></div>`;
-    } else if (st.state === 'declined') {
-      callout = `<div class="callout no"><b>Declined by ${esc(byName)}</b> on ${esc(timeFmt(st.at))}.${st.reason ? ' Reason sent to the council: “' + esc(st.reason) + '”' : ''} It will not appear on your site.</div>`;
-    } else if (st.state === 'removed') {
-      callout = `<div class="callout no"><b>Removed from your site by ${esc(byName)}</b> on ${esc(timeFmt(st.at))}.</div>`;
+    } else if (s.state === 'approved') {
+      const ch = s.channels || {}, sent = [ch.text ? 'texted ' + CF.alertSubs(LOCAL).toLocaleString() + ' members' : '', ch.email ? 'emailed ' + CF.emailSubs(LOCAL).toLocaleString() + ' members' : ''].filter(Boolean).join(' and ');
+      callout = `<div class="callout done"><b>Approved by ${esc(by(s))}</b> on ${esc(timeFmt(s.at))}. Live on your site${s.placement === 'pinned' ? ', pinned to the top' : ' in the news feed'}${sent ? ', and ' + sent : ''}.</div>`;
+      decision = `<div class="actions"><a class="b ok" style="text-decoration:none;display:inline-flex;align-items:center" href="${c.site}">View on your site →</a><button type="button" class="b no" data-act="remove">Take it down</button></div>`;
+    } else if (s.state === 'declined') {
+      callout = `<div class="callout no"><b>Declined by ${esc(by(s))}</b> on ${esc(timeFmt(s.at))}.${s.reason ? ' Reason sent to the council: “' + esc(s.reason) + '”' : ''} It will not appear on your site.</div>`;
+    } else if (s.state === 'removed') {
+      callout = `<div class="callout no"><b>Taken down from your site by ${esc(by(s))}</b> on ${esc(timeFmt(s.at))}.</div>`;
     }
-    $('#read').innerHTML = `
-      <h1 class="subject">${esc(subjectFor(p))}</h1>
-      <div class="hdr"><span class="avatar" aria-hidden="true">NJ</span>
-        <div class="meta"><b>NJ Council Hub</b> &lt;approvals@council-hub.demo&gt;<br>
-        To: ${esc(SITE.president)} (President), ${esc(SITE.backup)} (Backup)<br>${esc(timeFmt(p.created))}</div></div>
-      <div class="body">
-        ${callout}
-        <p>Hi ${esc(me().replace(/\s*\(.*\)/, ''))},</p>
-        <p>${p.urgent ? 'The ATU New Jersey State Council sent an urgent alert to ' + esc(SITE.name) + '. Urgent alerts go live right away so members see them in time.' : 'The ATU New Jersey State Council wants to post this on ' + esc(SITE.name) + '\'s website. Nothing appears on your site until you or your backup approves it. Whoever acts first decides.'}</p>
-        <div class="preview-label">How it will look on your site</div>
-        ${preview(p, st)}
-        ${decision}
-        <p class="fine">You can approve or decline, and add a short note from your local. The council's wording can't be changed here, so every local carries the same message. ${esc(other())} received this email too. This link works once and expires in 72 hours.</p>
-      </div>`;
+    if (p.pulledAt) { callout = `<div class="callout no"><b>The council pulled this post from every site</b> on ${esc(timeFmt(p.pulledAt))}.</div>`; decision = ''; }
+    const intro = p.origin
+      ? (p.kind === 'solidarity' ? `Local ${esc(p.origin)} is asking for support, and the State Council sent the request to you. Approve it to post it on ${esc(c.name)}'s site.`
+         : `Local ${esc(p.origin)} asked the council to share this with every local. Approve it to post it on ${esc(c.name)}'s site.`)
+      : `The ATU New Jersey State Council wants to post this on ${esc(c.name)}'s website. Nothing appears on your site until you or your backup approves it. Whoever acts first decides.`;
+    const timing = [p.startAt && p.startAt > Date.now() ? 'It is scheduled to start ' + timeFmt(p.startAt) + '.' : '', p.endAt ? 'It comes down automatically after ' + new Date(p.endAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '.' : ''].filter(Boolean).join(' ');
+    return { callout, intro: intro + (timing ? ' ' + timing : ''), preview: preview(p, s, draft.note), decision };
   }
 
+  function renderRead() {
+    const m = messages().find((x) => x.id === selected);
+    if (!m) {
+      $('#read').innerHTML = `<div class="empty"><b>No messages yet</b>When the State Council sends a post to ${esc(C().name)}, the email lands here.<br><br><a href="/#console">Send one from the council console →</a></div>`;
+      return;
+    }
+    const c = C();
+    let callout = '', intro = '', body = '', decision = '';
+    if (m.kind === 'approval' || m.kind === 'reminder' || m.kind === 'escalated') {
+      const r = approvalBody(m);
+      callout = r.callout; body = '<div class="preview-label">How it will look on your site</div>' + r.preview; decision = r.decision;
+      intro = m.kind === 'reminder' ? 'This council post has been waiting 24 hours for your approval. If nobody answers in another 24 hours, it goes to your backup, ' + esc(c.backup) + '.'
+        : m.kind === 'escalated' ? (role === 'backup' ? esc(c.president) + ' hasn\'t answered in 48 hours, so this is now with you too. Whoever acts first decides.' : 'You didn\'t answer in 48 hours, so this was also sent to your backup, ' + esc(c.backup) + '. You can still act on it.')
+        : r.intro;
+    } else if (m.kind === 'urgent') {
+      const s = m.s;
+      callout = m.p.pulledAt ? `<div class="callout no"><b>The council pulled this alert from every site</b> on ${esc(timeFmt(m.p.pulledAt))}. Nothing to do.</div>`
+        : s.state === 'live'
+        ? `<div class="callout urgent"><b>This urgent alert is already live on your site,</b> and ${CF.alertSubs(LOCAL).toLocaleString()} members on your alert line were texted. The council marked it urgent, so it went up at ${esc(timeFmt(m.p.created))} without waiting for approval.${s.corrected ? ' The council has since corrected the text.' : ''}</div>`
+        : `<div class="callout no"><b>Taken down from your site by ${esc(by(s))}</b> on ${esc(timeFmt(s.at))}.</div>`;
+      intro = 'If it should not be on ' + esc(c.name) + '\'s site, you can take it down.';
+      body = '<div class="preview-label">On your site now</div>' + preview(m.p, s, '');
+      decision = s.state === 'live' && !m.p.pulledAt ? `<div class="actions"><button type="button" class="b danger" data-act="remove">Remove from my site</button><a class="b link" href="${c.site}">View on your site →</a></div>` : '';
+    } else if (m.kind === 'verify') {
+      intro = 'The State Council sends approval emails to the people on file for ' + esc(c.name) + '. Locals confirm their contacts every 90 days so nothing goes to the wrong person. It takes a minute.';
+      body = `<div class="callout ${c.requestedAt ? 'urgent' : 'done'}">${c.requestedAt ? '<b>Waiting for you.</b> On file now: president ' + esc(c.president) + ', backup ' + esc(c.backup) + '.' : '<b>Done.</b> Thanks, your contacts are confirmed.'}</div>`;
+      decision = c.requestedAt ? `<div class="actions"><a class="b ok" style="text-decoration:none;display:inline-flex;align-items:center" href="/portal/?local=${LOCAL}#contacts">Confirm contacts →</a></div>` : '';
+    } else if (m.kind === 'sub') {
+      const x = m.sub;
+      intro = { routed: 'The council approved your post and sent it out. Each local still approves it for their own site; you\'ll see it on theirs as they do.',
+                declined: 'The council decided not to send this one out.', handled: 'The council answered the issue you raised.' }[x.state];
+      callout = x.councilNote ? `<div class="callout ${x.state === 'declined' ? 'no' : 'done'}"><b>From the council:</b> ${esc(x.councilNote)}</div>` : '';
+      body = `<div class="preview-label">What you sent</div><div class="site-preview"><span class="badge">◆ From Local ${LOCAL}</span><h3>${esc(x.title)}</h3><p>${esc(x.body)}</p></div>`;
+      decision = `<div class="actions"><a class="b link" href="/portal/?local=${LOCAL}#sent">See it in your officer portal →</a></div>`;
+    }
+    $('#read').innerHTML = `
+      <h1 class="subject">${esc(subjectOf(m))}</h1>
+      <div class="hdr"><span class="avatar" aria-hidden="true">NJ</span>
+        <div class="meta"><b>NJ Council Hub</b> &lt;approvals@council-hub.demo&gt;<br>
+        To: ${esc(c.president)} (President), ${esc(c.backup)} (Backup)<br>${esc(timeFmt(m.at))}</div></div>
+      <div class="body">
+        ${callout}
+        <p>Hi ${esc(firstName(me()))},</p>
+        <p>${intro}</p>
+        ${body}
+        ${decision}
+        <p class="fine">You can approve or decline council posts and add a short note from your local. The council's wording can't be changed here, so every local carries the same message. ${esc(other())} received this email too. Links work once and expire in 72 hours.</p>
+      </div>`;
+  }
+  const currentPost = () => { const m = messages().find((x) => x.id === selected); return m && m.p; };
   function render() { header(); renderList(); renderRead(); }
 
   document.addEventListener('click', (e) => {
     const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
-    const m = e.target.closest('[data-post]'); if (m) { selected = m.dataset.post; declining = false; Object.assign(draft, { placement: 'feed', note: '', reason: '' }); render(); return; }
+    const m = e.target.closest('[data-msg]'); if (m) { selected = m.dataset.msg; declining = false; Object.assign(draft, { placement: 'feed', note: '', reason: '', text: false, email: true }); render(); return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
+    const p = currentPost();
     if (a.dataset.act === 'decline') { declining = true; renderRead(); }
     if (a.dataset.act === 'cancel') { declining = false; renderRead(); }
-    if (a.dataset.act === 'remove') { CF.remove(selected, LOCAL, { by: role }); render(); toast('Removed from ' + SITE.name + '\'s site.'); }
+    if (a.dataset.act === 'remove' && p) { CF.remove(p.id, LOCAL, { by: role }); render(); toast('Taken down from ' + C().name + '\'s site.'); }
   });
   document.addEventListener('input', (e) => {
-    if (e.target.name === 'note') { draft.note = e.target.value; const c = $('#note-count'); if (c) c.textContent = draft.note.length; const pv = $('.site-preview'); if (pv) { const p = posts().find((x) => x.id === selected); pv.outerHTML = preview(p, p.status[LOCAL]); } }
+    if (e.target.name === 'note') { draft.note = e.target.value; const cnt = $('#note-count'); if (cnt) cnt.textContent = draft.note.length; const pv = $('.site-preview'); const p = currentPost(); if (pv && p) pv.outerHTML = preview(p, p.status[LOCAL], draft.note); }
     if (e.target.name === 'reason') draft.reason = e.target.value;
   });
-  document.addEventListener('change', (e) => { if (e.target.name === 'placement') draft.placement = e.target.value; });
+  document.addEventListener('change', (e) => {
+    if (e.target.name === 'placement') draft.placement = e.target.value;
+    if (e.target.name === 'text' || e.target.name === 'email') draft[e.target.name] = e.target.checked;
+  });
   document.addEventListener('submit', (e) => {
     e.preventDefault();
-    const f = e.target.dataset.form;
-    if (f === 'approve') { CF.approve(selected, LOCAL, { placement: draft.placement, note: draft.note, by: role }); render(); toast('Approved. It is live on ' + SITE.name + '\'s site.'); }
-    if (f === 'decline') { CF.decline(selected, LOCAL, { reason: draft.reason, by: role }); declining = false; render(); toast('Declined. The council has been told.'); }
+    const f = e.target.dataset.form, p = currentPost(); if (!p) return;
+    if (f === 'approve') {
+      CF.approve(p.id, LOCAL, { placement: draft.placement, note: draft.note, by: role, text: draft.text, email: draft.email }); render();
+      const sent = [draft.text ? 'texted ' + CF.alertSubs(LOCAL).toLocaleString() : '', draft.email ? 'emailed ' + CF.emailSubs(LOCAL).toLocaleString() : ''].filter(Boolean).join(' and ');
+      toast('Approved. Live on ' + C().name + '\'s site' + (sent ? ', ' + sent + ' members' : '') + '.');
+    }
+    if (f === 'decline') { CF.decline(p.id, LOCAL, { reason: draft.reason, by: role }); declining = false; render(); toast('Declined. The council has been told.'); }
   });
   CF.onChange(() => { renderList(); if (!document.activeElement || !document.activeElement.closest('form')) renderRead(); });
+  setInterval(() => { CF.tick(); }, 1000);
   render();
 })();
 </script>

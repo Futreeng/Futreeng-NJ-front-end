@@ -15,7 +15,7 @@ for f in sorted(src.glob('preview-*.html')):
     assert '—' not in p, f'em dash in preview-{n}'
     (out / f'preview-{n}').mkdir(exist_ok=True)
     (out / f'preview-{n}' / 'index.html').write_text(p, encoding='utf-8')
-for name, dest in (('council-feed.js', 'council-feed.js'), ('inbox.html', 'inbox/index.html')):
+for name, dest in (('council-feed.js', 'council-feed.js'), ('inbox.html', 'inbox/index.html'), ('portal.html', 'portal/index.html')):
     t = (src / name).read_text(encoding='utf-8')
     assert '\u2014' not in t, f'em dash in {name}'
     (out / dest).parent.mkdir(exist_ok=True)
