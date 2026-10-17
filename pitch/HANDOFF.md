@@ -4,7 +4,7 @@
 **Client.** ATU New Jersey State Council (9 locals, ~10,000 NJ Transit bus workers).
 **Built by.** Futreeng LLC.
 **Audience.** Pitch to the state council.
-**Status.** Phase 1 content complete. Hub rebuilt with 9 new sections. Two local-site previews built. **Deploy to Vercel is pending** — stopped mid-flight to produce this handoff.
+**Status.** Phase 1 content complete. Hub rebuilt with 9 new sections. Two local-site previews built. **Deployed to Vercel production on 2026-10-17** from branch `pitch-phase1` (PR #1).
 
 ---
 
@@ -169,13 +169,14 @@ Not touched. They remain in their current (differently-designed) state. Phase 2 
 
 ## Still-to-do before the pitch
 
-1. **Deploy pending.** Hub + preview-823/ + preview-825/ to Vercel production. Mid-flight when this handoff was requested — SHA1 hashes and base64 versions of all three files are already prepared at `/tmp/{hub,p823,p825}.b64`.
+1. ~~Deploy~~ Done 2026-10-17. Hub + preview-823/ + preview-825/ live. Mobile horizontal-scroll bug fixed in the same deploy.
 2. **Confirm officer names** with Riley and Arroyo.
 3. **Decide 8 vs 9 locals** and pick one set of city labels.
 4. **Any real contract data** → swap into `fight[]` if available (otherwise keep SAMPLE).
 5. **Any real wins** collected from locals in the past 6 months → swap into `wins[]`.
 6. **Spanish translations** for new section strings.
-7. **GitHub ↔ Vercel link** for push-to-deploy going forward.
+7. **GitHub ↔ Vercel link** for push-to-deploy. Vercel project root directory is now `pitch/deploy` and git-sourced deploys work; connecting the repo in Project Settings → Git turns on auto-deploy.
+8. **Content rule conflict:** `docs/CONTENT_RULES.md` allows only Riley and Arroyo by name; the 823/825 previews show those locals' officers. Decide before merging PR #1.
 
 ---
 
