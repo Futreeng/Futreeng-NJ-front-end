@@ -296,6 +296,9 @@ img,svg{display:block;max-width:100%}
   </div>
 </div>
 
+<!-- Urgent council alerts land here (see /council-feed.js) -->
+<div id="council-alert"></div>
+
 <!-- Header -->
 <header class="header" id="top">
   <div class="wrap">
@@ -416,6 +419,7 @@ img,svg{display:block;max-width:100%}
       </div>
       <a href="#" class="action-btn">All updates →</a>
     </div>
+    <div id="council-pinned"></div>
     <div class="news-grid">
       <article class="news-card">
         <div class="news-img"><span class="lab">[ Photo · Operator at FMCSA briefing ]</span></div>
@@ -617,5 +621,7 @@ function smsSubmit(ev){
   return false;
 }
 </script>
+<script src="/council-feed.js"></script>
+<script>CouncilFeed.mountLocal('823', { alert: '#council-alert', pinned: '#council-pinned', grid: '.news-grid' });</script>
 </body>
 </html>

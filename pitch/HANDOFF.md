@@ -173,6 +173,16 @@ Not touched. They remain in their current (differently-designed) state. Phase 2 
 - In ES mode, `window.__i18nMissing` (browser console) lists any English text with no Spanish entry. It should be empty.
 - Register: "tú", US union usage (local, delegado sindical for steward, queja formal for grievance).
 
+### Council to local: approval flow (added 2026-10-17)
+Agreed rules: urgent posts go live on every targeted local's site at once and notify the president and backup, who can take them down. Regular posts wait until the local president OR their backup approves (first one decides). Locals approve or decline, choose news feed or pinned, and can add a note of up to 140 characters. They cannot edit the council's text.
+
+Demo pieces:
+- Hub `#console`: "Send as council" (regular or urgent, optional Spanish, pick locals), sent list with per-local status.
+- `/inbox/?local=823` and `?local=825`: the approval email, with a President / Backup switch.
+- Previews: urgent alert bar under the top bar, pinned council card, council cards in the news feed.
+- Shared logic in `src/council-feed.js`. Demo storage is the browser's localStorage, so the demo works in one browser only. Locals without a demo site approve on a timer (880 always stays waiting).
+- Production: replace council-feed.js storage with the database and approval gate in docs/ARCHITECTURE.md; email/SMS via the planned providers; signed one-time links that expire.
+
 ### New Jersey identity (added 2026-10-17)
 - `NJ_OUTLINE` in the script is the state border from US Census boundaries (us-atlas), simplified to 97 points. `njProjector()` fits it into any box.
 - Hero art (`renderHeroMap`), the locals map (`renderMap`), the brand mark and footer seal (`.nj-glyph`) all draw from that one outline. Locals plot at their real lat/lng; the Newark/Hudson cluster gets callout labels.

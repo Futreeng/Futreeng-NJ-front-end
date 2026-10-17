@@ -647,6 +647,54 @@ textarea.sv-input{min-height:84px;resize:vertical}
   .newhire-link{font-size:12px}
 }
 
+/* ---------- Council console (demo) ---------- */
+.cc-section{background:linear-gradient(180deg,var(--navy) 0,#0E1F3D 100%)}
+.cc{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:start}
+.cc-steps{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:cc}
+.cc-steps li{counter-increment:cc;display:flex;gap:12px;align-items:center;font-family:var(--body);font-size:15px;color:var(--ink)}
+.cc-steps li::before{content:counter(cc);flex:none;width:30px;height:30px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:16px;color:#fff}
+.cc-form{background:var(--navy-deep);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:14px}
+.cc-type{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cc-type label{display:block;cursor:pointer;position:relative}
+.cc-type input{position:absolute;opacity:0;pointer-events:none}
+.cc-type .opt{display:flex;flex-direction:column;gap:4px;min-height:64px;padding:12px 14px;border:1px solid rgba(255,255,255,.25);transition:border-color .15s,background .15s}
+.cc-type .opt b{font-family:var(--display);font-weight:800;font-size:20px;text-transform:uppercase;line-height:1}
+.cc-type .opt span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
+.cc-type input:checked + .opt{border-color:var(--ink);background:var(--panel)}
+.cc-type input.u:checked + .opt{border-color:var(--red);background:rgba(215,38,61,.18)}
+.cc-type input:focus-visible + .opt{outline:3px solid var(--sample);outline-offset:2px}
+.cc-es summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--nj-buff);letter-spacing:.04em;padding:6px 0}
+.cc-es[open] summary{margin-bottom:10px}
+.cc-es .sv-field + .sv-field{margin-top:10px}
+.cc-targets{display:flex;flex-wrap:wrap;gap:6px}
+.cc-targets label{cursor:pointer;position:relative}
+.cc-targets input{position:absolute;opacity:0;pointer-events:none}
+.cc-targets span{display:inline-flex;align-items:center;min-height:40px;padding:0 12px;border:1px solid rgba(255,255,255,.25);font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em}
+.cc-targets input:checked + span{background:var(--ink);color:var(--navy);border-color:var(--ink)}
+.cc-targets input:focus-visible + span{outline:3px solid var(--sample);outline-offset:2px}
+.cc-sent{margin-top:40px}
+.cc-sent-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
+.cc-sent-head h3{margin:0;font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase}
+.cc-reset{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:underline;padding:8px 0}
+.cc-empty{font-family:var(--body);font-size:15px;color:var(--muted);padding:18px 0}
+.cc-post{border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px}
+.cc-post .tt{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
+.cc-post .mt{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.cc-tag{padding:3px 7px;font-weight:600;color:#fff;background:var(--status)}
+.cc-tag.u{background:var(--red)}
+.cc-count{font-family:var(--mono);font-size:12px;color:var(--ink);text-align:right;white-space:nowrap}
+.cc-count span{display:block;color:var(--muted);margin-top:4px}
+.cc-chips{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px}
+.cc-chip{display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border:1px solid rgba(255,255,255,.25);font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted)}
+.cc-chip b{font-family:var(--display);font-size:14px;color:var(--ink);letter-spacing:.02em}
+.cc-chip.approved,.cc-chip.pinned{border-color:#3DAA6A;color:#7FD7A3}
+.cc-chip.live{border-color:var(--red);background:rgba(215,38,61,.2);color:#fff}
+.cc-chip.declined,.cc-chip.removed{border-color:#8FA2C4;color:#C5CDDB;text-decoration:line-through}
+.cc-links{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.cc-sim{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px}
+@media (max-width:1040px){.cc{grid-template-columns:minmax(0,1fr);gap:28px}}
+@media (max-width:720px){.cc-form{padding:16px}.cc-post{grid-template-columns:minmax(0,1fr)}.cc-count{text-align:left}}
+
 /* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
 .eyebrow.red,.right .n,.win .win-meta b,.rung .rung-num,.cope-action .ca-eyebrow,.sms-card .sms-eyebrow{color:var(--accent-text)}
 @media (max-width:720px){
@@ -817,6 +865,12 @@ textarea.sv-input{min-height:84px;resize:vertical}
     <div class="board-cols" aria-hidden="true"><span>POSTED</span><span>MESSAGE</span><span>DESTINATION</span><span>STATUS</span></div>
     <div id="posts"></div>
   </div>
+</section>
+
+<!-- ======================= Council console (demo) ======================= -->
+<section class="section cc-section" id="console" aria-labelledby="cc-title">
+  <div class="wrap cc" id="console-form"></div>
+  <div class="wrap" id="console-sent" aria-live="polite"></div>
 </section>
 
 <!-- ======================= Rights ======================= -->
@@ -1199,6 +1253,7 @@ textarea.sv-input{min-height:84px;resize:vertical}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="/council-feed.js"></script>
 <script>
 /* =====================================================================
    CONTENT
@@ -1458,6 +1513,38 @@ const CONTENT = {
     { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1860, copeIn: 445 }
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
+
+  // Council console: the demo of council -> president approval -> local website. Logic lives in /council-feed.js.
+  console: {
+    en: { eyebrow: '◆ Council console · live demo', title: 'Send it down the line',
+          lede: 'Write it once. Urgent alerts go live on every local\'s site right away and notify the president. Everything else waits until the local\'s president or their backup approves it.',
+          steps: ['The council sends a post', 'The local president gets an email and approves it', 'It shows up on that local\'s website'],
+          regular: 'Regular', regularSub: 'Needs local approval', urgent: 'Urgent', urgentSub: 'Goes live now, president notified',
+          titleL: 'Headline', bodyL: 'Message', esToggle: 'Add the Spanish version (optional)', titleEsL: 'Headline in Spanish', bodyEsL: 'Message in Spanish',
+          targetsL: 'Send to', allLocals: 'All 9 locals', send: 'Send as council',
+          needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.',
+          sentUrgent: 'Sent. Live now on {n} local sites. Presidents notified.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
+          sentUrgent1: 'Sent. Live now on Local {l}\'s site. President notified.', sentRegular1: 'Sent to Local {l}. Waiting for approval.',
+          sent: 'Sent from the council', reset: 'Clear demo', empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
+          count: 'Approved by {a} of {n}', countUrgent: 'Live on {a} of {n} sites', waiting: 'Waiting: {list}',
+          states: { live: 'Live', pending: 'Waiting', approved: 'Approved', pinned: 'Pinned', declined: 'Declined', removed: 'Removed' },
+          inbox: 'Open Local {n} president\'s email →', site: 'View Local {n} site →', simNote: 'Locals without a demo site approve on a timer, so the count moves during the demo.',
+          urgentTag: 'Urgent', regularTag: 'Regular', resetDone: 'Demo cleared.' },
+    es: { eyebrow: '◆ Consola del consejo · demo en vivo', title: 'Envíalo por toda la línea',
+          lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se avisa al presidente. Todo lo demás espera a que el presidente del local o su suplente lo apruebe.',
+          steps: ['El consejo envía una publicación', 'El presidente del local recibe un correo y la aprueba', 'Aparece en el sitio web de ese local'],
+          regular: 'Normal', regularSub: 'Requiere aprobación del local', urgent: 'Urgente', urgentSub: 'Se publica ya, con aviso al presidente',
+          titleL: 'Titular', bodyL: 'Mensaje', esToggle: 'Agregar la versión en español (opcional)', titleEsL: 'Titular en español', bodyEsL: 'Mensaje en español',
+          targetsL: 'Enviar a', allLocals: 'Los 9 locales', send: 'Enviar como consejo',
+          needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.',
+          sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Presidentes avisados.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
+          sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Presidente avisado.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.',
+          sent: 'Enviado por el consejo', reset: 'Borrar demo', empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
+          count: 'Aprobado por {a} de {n}', countUrgent: 'En vivo en {a} de {n} sitios', waiting: 'En espera: {list}',
+          states: { live: 'En vivo', pending: 'En espera', approved: 'Aprobado', pinned: 'Fijado', declined: 'Rechazado', removed: 'Retirado' },
+          inbox: 'Abrir el correo del presidente del Local {n} →', site: 'Ver el sitio del Local {n} →', simNote: 'Los locales sin sitio de demostración aprueban con un temporizador, así el conteo avanza durante la demo.',
+          urgentTag: 'Urgente', regularTag: 'Normal', resetDone: 'Demo borrada.' }
+  },
 
   // Bargaining survey. base = sample count of members who put the issue in their top 3.
   survey: {
@@ -1952,7 +2039,7 @@ function renderTabs() {
 }
 
 /* Fixed page text: remember each English text node and attribute once, then swap from strings[lang].static. */
-const DYNAMIC = '#survey-body,#newhire-body,#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
+const DYNAMIC = '#console-form,#console-sent,#survey-body,#newhire-body,#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
 const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
 const fixedText = [], fixedAttrs = [];
 const norm = (x) => x.replace(/\s+/g, ' ').trim();
@@ -1987,7 +2074,7 @@ function renderAll() {
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
   renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
-  renderSurvey(); renderNewHires();
+  renderSurvey(); renderNewHires(); renderConsoleForm(); renderConsoleSent();
 }
 
 function applyStrings() {
@@ -2001,6 +2088,99 @@ function applyStrings() {
   });
   document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
   renderAll(); watchTabsRefresh();
+}
+
+/* ---------- Council console (demo): council -> president approval -> local site ---------- */
+const cc = { urgent: false, title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false };
+const CF = () => window.CouncilFeed;
+function renderConsoleForm() {
+  const u = CONTENT.console[state.lang];
+  const chip = (n) => `<label><input type="checkbox" name="t" value="${n}"${cc.targets.includes(n) ? ' checked' : ''}><span>${n}</span></label>`;
+  $('#console-form').innerHTML = `
+    <div>
+      <div class="eyebrow red">${esc(u.eyebrow)}</div>
+      <h2 class="h2" id="cc-title">${esc(u.title)}</h2>
+      <p class="lede" style="margin-top:14px">${esc(u.lede)}</p>
+      <ol class="cc-steps">${u.steps.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+    </div>
+    <form class="cc-form" data-form="council" novalidate>
+      <div class="cc-type" role="radiogroup">
+        <label><input type="radio" name="kind" value="regular"${cc.urgent ? '' : ' checked'}><span class="opt"><b>${esc(u.regular)}</b><span>${esc(u.regularSub)}</span></span></label>
+        <label><input class="u" type="radio" name="kind" value="urgent"${cc.urgent ? ' checked' : ''}><span class="opt"><b>${esc(u.urgent)}</b><span>${esc(u.urgentSub)}</span></span></label>
+      </div>
+      <label class="sv-field">${esc(u.titleL)}<input class="sv-input" name="title" maxlength="90" value="${esc(cc.title)}"></label>
+      <label class="sv-field">${esc(u.bodyL)}<textarea class="sv-input" name="body" maxlength="400">${esc(cc.body)}</textarea></label>
+      <details class="cc-es"${cc.esOpen ? ' open' : ''}><summary>${esc(u.esToggle)}</summary>
+        <label class="sv-field">${esc(u.titleEsL)}<input class="sv-input" name="titleEs" maxlength="90" lang="es" value="${esc(cc.titleEs)}"></label>
+        <label class="sv-field">${esc(u.bodyEsL)}<textarea class="sv-input" name="bodyEs" maxlength="400" lang="es">${esc(cc.bodyEs)}</textarea></label>
+      </details>
+      <div class="sv-field" role="group" aria-label="${esc(u.targetsL)}">${esc(u.targetsL)}
+        <div class="cc-targets">${CONTENT.locals.map((l) => chip(l.num)).join('')}<button type="button" class="action-btn" data-cc="all">${esc(u.allLocals)}</button></div>
+      </div>
+      <button type="submit" class="btn btn-red">${esc(u.send)}</button>
+    </form>`;
+}
+function renderConsoleSent() {
+  if (!CF()) return;
+  const u = CONTENT.console[state.lang];
+  const posts = CF().all();
+  const S = CF().SITES;
+  const list = posts.map((p) => {
+    const ns = Object.keys(p.status);
+    const ok = ns.filter((n) => ['approved', 'live'].includes(p.status[n].state));
+    const wait = ns.filter((n) => p.status[n].state === 'pending');
+    const chips = ns.map((n) => {
+      const st = p.status[n]; const key = st.state === 'approved' && st.placement === 'pinned' ? 'pinned' : st.state;
+      return `<span class="cc-chip ${key}"${st.by === 'simulated' ? ' title="simulated"' : ''}><b>${n}</b>${esc(u.states[key])}</span>`;
+    }).join('');
+    const links = ns.filter((n) => S[n]).map((n) => `<a class="action-btn" href="/inbox/?local=${n}">${esc(u.inbox.replace('{n}', n))}</a><a class="action-btn" href="${S[n].site}">${esc(u.site.replace('{n}', n))}</a>`).join('');
+    const title = state.lang === 'es' && p.titleEs ? p.titleEs : p.title;
+    return `<article class="cc-post">
+        <div><div class="tt">${esc(title)}</div>
+          <div class="mt"><span class="cc-tag${p.urgent ? ' u' : ''}">${esc(p.urgent ? u.urgentTag : u.regularTag)}</span><span>${esc(new Date(p.created).toLocaleString(state.lang === 'es' ? 'es-US' : 'en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))}</span></div></div>
+        <div class="cc-count">${esc((p.urgent ? u.countUrgent : u.count).replace('{a}', ok.length).replace('{n}', ns.length))}${wait.length ? `<span>${esc(u.waiting.replace('{list}', wait.join(', ')))}</span>` : ''}</div>
+        <div class="cc-chips">${chips}</div>
+        <div class="cc-links">${links}</div>
+      </article>`;
+  }).join('');
+  $('#console-sent').innerHTML = `<div class="cc-sent">
+      <div class="cc-sent-head"><h3>${esc(u.sent)}</h3>${posts.length ? `<button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button>` : ''}</div>
+      ${posts.length ? list + `<p class="cc-sim">${esc(u.simNote)}</p>` : `<p class="cc-empty">${esc(u.empty)}</p>`}
+    </div>`;
+}
+function wireConsole() {
+  if (!CF()) return;
+  CF().onChange(renderConsoleSent);
+  setInterval(() => { if (CF().all().some((p) => Object.values(p.status).some((s) => s.simAt))) renderConsoleSent(); }, 1500);
+  const form = () => $('#console-form form');
+  document.addEventListener('input', (ev) => {
+    if (!ev.target.closest('[data-form="council"]')) return;
+    const n = ev.target.name;
+    if (['title', 'body', 'titleEs', 'bodyEs'].includes(n)) cc[n] = ev.target.value;
+  });
+  document.addEventListener('change', (ev) => {
+    if (!ev.target.closest('[data-form="council"]')) return;
+    if (ev.target.name === 'kind') cc.urgent = ev.target.value === 'urgent';
+    if (ev.target.name === 't') cc.targets = [...form().querySelectorAll('input[name=t]:checked')].map((i) => i.value);
+  });
+  document.addEventListener('toggle', (ev) => { if (ev.target.classList && ev.target.classList.contains('cc-es')) cc.esOpen = ev.target.open; }, true);
+  document.addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-cc]'); if (!b) return;
+    if (b.dataset.cc === 'all') { form().querySelectorAll('input[name=t]').forEach((i) => { i.checked = true; }); cc.targets = CONTENT.locals.map((l) => l.num); }
+    if (b.dataset.cc === 'reset') { CF().reset(); toast(CONTENT.console[state.lang].resetDone); }
+  });
+  document.addEventListener('submit', (ev) => {
+    if (!ev.target.closest('[data-form="council"]')) return;
+    ev.preventDefault();
+    const u = CONTENT.console[state.lang];
+    if (!cc.title.trim() || !cc.body.trim()) { toast(u.needTitle); return; }
+    if (!cc.targets.length) { toast(u.needTarget); return; }
+    CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice() });
+    const one = cc.targets.length === 1;
+    toast((cc.urgent ? (one ? u.sentUrgent1 : u.sentUrgent) : (one ? u.sentRegular1 : u.sentRegular)).replace('{n}', cc.targets.length).replace('{l}', cc.targets[0]));
+    Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false });
+    renderConsoleForm(); renderConsoleSent();
+  });
 }
 
 /* ---------- Bargaining survey ---------- */
@@ -2173,7 +2353,7 @@ function smsSubmit(ev) {
 
 renderGlyphs();
 collectFixed();
-applyStrings(); watchTabs(); wireHeroMap(); wireForms();
+applyStrings(); watchTabs(); wireHeroMap(); wireForms(); wireConsole();
 </script>
 </body>
 </html>
