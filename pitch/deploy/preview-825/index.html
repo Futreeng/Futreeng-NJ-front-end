@@ -23,6 +23,7 @@
   --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --pad:48px; --max:1344px; --gutter:max(var(--pad), calc((100vw - var(--max)) / 2 + var(--pad)));
   --local-accent: var(--red);
+  --accent-text: #F25C70; /* small-text accent, 4.5:1 on navy */
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--navy-deep);color-scheme:dark}
@@ -206,7 +207,7 @@ img,svg{display:block;max-width:100%}
 /* Footer */
 .footer{border-top:6px solid var(--local-accent)}
 .footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding-top:48px;padding-bottom:32px}
-.footer h4{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;color:var(--ink)}
+.footer h3,.footer h4{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;color:var(--ink)}
 .footer ul{list-style:none;margin:0;padding:0;font-family:var(--body);font-size:14px;color:var(--muted);line-height:2}
 .footer ul a:hover{color:var(--ink);text-decoration:underline}
 .footer .seal{width:72px;height:72px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--local-accent);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:18px;line-height:1}
@@ -256,8 +257,24 @@ img,svg{display:block;max-width:100%}
   .footer-bottom{flex-direction:column;align-items:flex-start}
 }
 
+/* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
+.eyebrow.red,.sms-card .sms-eyebrow,.meeting .m-label,.news-foot b,.garage .g-cta,.tool-num{color:var(--accent-text)}
+@media (max-width:720px){
+  .action-btn{min-height:44px}
+  .footer ul a{display:inline-block;padding:6px 0}
+  .preview-ribbon a{display:inline-block;padding:10px 0}
+  .topbar .wrap{flex-direction:column;align-items:flex-start;gap:6px}
+  .topbar-left>span:nth-child(2),.topbar-right>span:nth-child(2){display:none}
+  .topbar-left{gap:4px 12px}
+}
+
 /* Local 825 accent (gold) */
-:root{ --local-accent: var(--gold); --local-dark: var(--gold-dark); }
+:root{ --local-accent: var(--gold); --local-dark: var(--gold-dark); --accent-text: var(--gold); }
+/* White on gold is 2.4:1; use deep navy (7.9:1) for text sitting on gold fills */
+.logo-mark,.btn-accent,.btn-accent:hover,.sms-btn,.hero-photo .tag,.alert strong,.alert span,.news-tag:not(.advisory):not(.event),.sms-footer,.sms-footer strong,.sms-footer span.sub,.cs-local.self,.cs-local.self b,.action-btn.solid,.action-btn:hover,.header-actions .steward{color:var(--navy-deep)}
+.sms-footer .sms-btn{background:var(--navy-deep);border-color:var(--navy-deep);color:#fff}
+.sms-footer .sms-input{background:rgba(6,16,31,.08);border-color:rgba(6,16,31,.45);color:var(--navy-deep)}
+.sms-footer .sms-input::placeholder{color:rgba(6,16,31,.65)}
 </style>
 </head>
 <body>
@@ -565,7 +582,7 @@ img,svg{display:block;max-width:100%}
       <p class="footer-tag">The voice of operators across Bergen County every day. Contracts won at the table. Solidarity built behind the wheel.</p>
     </div>
     <div>
-      <h4>The Local</h4>
+      <h3>The Local</h3>
       <ul>
         <li><a href="#news">News &amp; Advisories</a></li>
         <li><a href="#about">Officers</a></li>
@@ -574,7 +591,7 @@ img,svg{display:block;max-width:100%}
       </ul>
     </div>
     <div>
-      <h4>Member Tools</h4>
+      <h3>Member Tools</h3>
       <ul>
         <li><a href="#tools">Pick Schedules</a></li>
         <li><a href="#tools">Route Descriptions</a></li>
@@ -583,7 +600,7 @@ img,svg{display:block;max-width:100%}
       </ul>
     </div>
     <div>
-      <h4>Visit the Hall</h4>
+      <h3>Visit the Hall</h3>
       <ul>
         <li>Mailing address pending</li>
         <li><a href="tel:2012253039">201 · 225 · 3039</a></li>

@@ -31,6 +31,7 @@
   --panel:#13284D;
   --panel-2:#102344;
   --red:#D7263D;
+  --accent-text:#F25C70; /* brand red lifted to 4.5:1 for small text on navy */
   --red-dark:#B81E33;
   --ink:#F2F4F8;
   --muted:#C5CDDB;
@@ -549,6 +550,13 @@ img,svg{display:block;max-width:100%}
   .ladder-cta strong{font-size:22px}
   .cope-action{padding:22px}
   .cope-action h3{font-size:22px}
+}
+
+/* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
+.eyebrow.red,.right .n,.win .win-meta b,.rung .rung-num,.cope-action .ca-eyebrow,.sms-card .sms-eyebrow{color:var(--accent-text)}
+@media (max-width:720px){
+  .lang button{min-height:44px;min-width:44px}
+  .action-btn,.rsvp{min-height:44px}
 }
 </style>
 </head>

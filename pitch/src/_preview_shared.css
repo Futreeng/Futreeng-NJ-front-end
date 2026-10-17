@@ -10,6 +10,7 @@
   --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --pad:48px; --max:1344px; --gutter:max(var(--pad), calc((100vw - var(--max)) / 2 + var(--pad)));
   --local-accent: var(--red);
+  --accent-text: #F25C70; /* small-text accent, 4.5:1 on navy */
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--navy-deep);color-scheme:dark}
@@ -193,7 +194,7 @@ img,svg{display:block;max-width:100%}
 /* Footer */
 .footer{border-top:6px solid var(--local-accent)}
 .footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding-top:48px;padding-bottom:32px}
-.footer h4{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;color:var(--ink)}
+.footer h3,.footer h4{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;color:var(--ink)}
 .footer ul{list-style:none;margin:0;padding:0;font-family:var(--body);font-size:14px;color:var(--muted);line-height:2}
 .footer ul a:hover{color:var(--ink);text-decoration:underline}
 .footer .seal{width:72px;height:72px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--local-accent);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:18px;line-height:1}
@@ -241,4 +242,15 @@ img,svg{display:block;max-width:100%}
   .sms-form{flex-direction:column}
   .sms-btn{padding:12px}
   .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+
+/* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
+.eyebrow.red,.sms-card .sms-eyebrow,.meeting .m-label,.news-foot b,.garage .g-cta,.tool-num{color:var(--accent-text)}
+@media (max-width:720px){
+  .action-btn{min-height:44px}
+  .footer ul a{display:inline-block;padding:6px 0}
+  .preview-ribbon a{display:inline-block;padding:10px 0}
+  .topbar .wrap{flex-direction:column;align-items:flex-start;gap:6px}
+  .topbar-left>span:nth-child(2),.topbar-right>span:nth-child(2){display:none}
+  .topbar-left{gap:4px 12px}
 }
