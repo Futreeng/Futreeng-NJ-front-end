@@ -587,6 +587,68 @@ img,svg{display:block;max-width:100%}
 .map .leader{fill:none;stroke:rgba(242,244,248,.5);stroke-width:1.5}
 @media (max-width:720px){.brand .nj-glyph{height:32px}.seal .nj-glyph{height:52px}.hero-photo.hero-nj{min-height:460px}.hero-map{inset:16px 16px 56px}}
 
+/* ---------- Bargaining survey ---------- */
+.sv{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.sv .privacy{display:flex;gap:10px;align-items:flex-start;margin-top:20px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted);line-height:1.5;max-width:48ch}
+.sv .privacy::before{content:"";flex:none;width:10px;height:10px;margin-top:3px;background:var(--nj-buff)}
+.sv-panel{background:var(--navy);border:1px solid var(--line);padding:24px}
+.sv-hint{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:14px}
+.sv-hint b{color:var(--accent-text);font-weight:600}
+.sv-issues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sv-issue{display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 14px;border:1px solid rgba(255,255,255,.22);background:var(--navy-deep);text-align:left;font-family:var(--body);font-size:15px;line-height:1.3;color:var(--ink);transition:border-color .15s,background .15s}
+.sv-issue:hover{border-color:var(--ink)}
+.sv-issue .rk{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:17px}
+.sv-issue[aria-pressed="true"]{border-color:var(--red);background:var(--panel)}
+.sv-issue[aria-pressed="true"] .rk{background:var(--red);border-color:var(--red);color:#fff}
+.sv-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.sv-field{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sv-field.wide{grid-column:1 / -1}
+.sv-input{width:100%;min-height:46px;background:var(--navy-deep);color:var(--ink);border:1px solid rgba(255,255,255,.3);padding:10px 12px;font-family:var(--body);font-size:15px;letter-spacing:0;text-transform:none}
+.sv-input:focus{outline:none;border-color:var(--accent-text)}
+textarea.sv-input{min-height:84px;resize:vertical}
+.sv-submit{width:100%;margin-top:18px}
+.sv-done{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1}
+.sv-sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin:8px 0 18px}
+.sv-bars{display:flex;flex-direction:column;gap:12px}
+.sv-bar .top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-family:var(--body);font-size:15px}
+.sv-bar .top .ct{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.sv-bar .track{height:10px;background:rgba(255,255,255,.1);margin-top:6px}
+.sv-bar .fill{height:100%;background:rgba(255,255,255,.45)}
+.sv-bar.mine .fill{background:var(--red)}
+.sv-tag{display:inline-block;margin-left:8px;padding:2px 6px;background:var(--nj-buff);color:var(--navy-deep);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;vertical-align:2px}
+.sv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+
+/* ---------- New hires ---------- */
+.newhire-link{display:inline-block;align-self:flex-start;margin-top:14px;padding:6px 0;font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--nj-buff);border-bottom:1px solid rgba(228,190,128,.5)}
+.newhire-link:hover{color:#fff;border-color:#fff}
+.nh-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.nh-call{margin-top:26px;background:var(--ink);color:var(--navy);padding:22px}
+.nh-call .t{display:block;font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;line-height:1}
+.nh-call .b{display:block;font-family:var(--body);font-size:14px;line-height:1.5;margin:8px 0 14px;color:#2a3550}
+.nh-call form{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.nh-call .sv-input{background:#fff;color:var(--navy);border-color:#9aa6bd}
+.nh-call .sv-input::placeholder{color:#5b6680}
+.nh-steps{border-top:1px solid var(--line)}
+.nh-step{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+.nh-step .when{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-text);padding-top:4px}
+.nh-step .t{display:block;font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;line-height:1}
+.nh-step .b{display:block;font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted);margin-top:6px}
+.nh-lists{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:40px}
+.nh-list{background:var(--navy);padding:22px 24px}
+.nh-list h3{margin:0 0 12px;font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase}
+.nh-list ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.nh-list li{position:relative;padding-left:22px;font-family:var(--body);font-size:15px;line-height:1.45;color:var(--muted)}
+.nh-list li::before{content:"";position:absolute;left:0;top:7px;width:10px;height:10px;background:var(--red)}
+.nh-list.dues li::before{background:var(--nj-buff)}
+@media (max-width:1040px){.sv,.nh-grid{grid-template-columns:minmax(0,1fr);gap:28px}}
+@media (max-width:720px){
+  .sv-panel{padding:16px}
+  .sv-issues,.sv-meta,.nh-lists{grid-template-columns:minmax(0,1fr)}
+  .nh-step{grid-template-columns:minmax(0,1fr);gap:4px}
+  .nh-call form{grid-template-columns:minmax(0,1fr)}
+  .newhire-link{font-size:12px}
+}
+
 /* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
 .eyebrow.red,.right .n,.win .win-meta b,.rung .rung-num,.cope-action .ca-eyebrow,.sms-card .sms-eyebrow{color:var(--accent-text)}
 @media (max-width:720px){
@@ -657,6 +719,7 @@ img,svg{display:block;max-width:100%}
       <a class="btn btn-light" href="#board" data-i18n="board">Now broadcasting</a>
       <a class="btn btn-ghost" href="#locals" data-i18n="findLocal">Find your local</a>
     </div>
+    <a class="newhire-link" href="#new-hires" data-i18n="newHireLink">New to NJ Transit? Start with your first 90 days →</a>
     <form class="sms-card" data-sms="hero" onsubmit="return smsSubmit(event)">
       <span class="sms-eyebrow">◆ Join the alert line <span class="sample" style="margin-left:6px">Sample</span></span>
       <span class="sms-title">When we need you, we text you.</span>
@@ -718,6 +781,11 @@ img,svg{display:block;max-width:100%}
   </div>
 </section>
 
+<!-- ======================= Bargaining survey ======================= -->
+<section class="deep section" id="survey" aria-labelledby="survey-title">
+  <div class="wrap sv" id="survey-body"></div>
+</section>
+
 <!-- ======================= About ======================= -->
 <section class="wrap about" aria-labelledby="about-title">
   <div>
@@ -768,6 +836,11 @@ img,svg{display:block;max-width:100%}
     </div>
     <div class="cards-3" id="rights-list"></div>
   </div>
+</section>
+
+<!-- ======================= New hires ======================= -->
+<section class="section" id="new-hires" aria-labelledby="nh-title">
+  <div class="wrap" id="newhire-body"></div>
 </section>
 
 <!-- ======================= Contract ======================= -->
@@ -1149,6 +1222,7 @@ const CONTENT = {
       slogan: 'An injury to one is an injury to all.', going: "I'm going", rsvp: 'RSVP', goingCount: 'going',
       soon: 'This part of the hub is coming in a later build.',
       smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.',
+      newHireLink: 'New to NJ Transit? Start with your first 90 days →', phone: 'Phone number',
       phoneErr: 'Enter a 10-digit phone number.', sample: 'Sample', arrived: 'ARRIVED',
       demandL: 'Union demand', offerL: 'NJT offer', of: 'of', site: 'Local {n} site →',
       photoPh: 'Photo placeholder', memberPhoto: 'Member photo', council: 'COUNCIL', terminal: 'Terminal · Trenton',
@@ -1168,6 +1242,7 @@ const CONTENT = {
       slogan: 'Una injuria a uno es una injuria a todos.', going: 'Voy', rsvp: 'Confirmar', goingCount: 'van',
       soon: 'Esta parte del sitio llegará en una versión posterior.',
       smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.',
+      newHireLink: '¿Nuevo en NJ Transit? Empieza con tus primeros 90 días →', phone: 'Número de teléfono',
       phoneErr: 'Escribe un número de teléfono de 10 dígitos.', sample: 'Muestra', arrived: 'ENTREGADO',
       demandL: 'Demanda del sindicato', offerL: 'Oferta de NJT', of: 'de', site: 'Sitio del Local {n} →',
       photoPh: 'Espacio para foto', memberPhoto: 'Foto del miembro', council: 'CONSEJO', terminal: 'Terminal · Trenton',
@@ -1385,6 +1460,81 @@ const CONTENT = {
     { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1860, copeIn: 445 }
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
+
+  // Bargaining survey. base = sample count of members who put the issue in their top 3.
+  survey: {
+    sample: true,
+    eyebrow: { en: '◆ Your voice · bargaining survey', es: '◆ Tu voz · encuesta de negociación' },
+    title: { en: 'What should we fight for first?', es: '¿Por qué luchamos primero?' },
+    lede: { en: 'Pick your top 3, in order. Every answer goes to the bargaining committee, and the results show the whole membership where we stand.', es: 'Elige tus 3 prioridades, en orden. Cada respuesta llega al comité de negociación, y los resultados muestran a todos los miembros dónde estamos.' },
+    privacy: { en: 'Your answers go to the bargaining committee only. Never to management.', es: 'Tus respuestas van solo al comité de negociación. Nunca a la gerencia.' },
+    baseResponses: 1284,
+    issues: [
+      { id: 'wages',     base: 412, label: { en: 'Wages that beat inflation', es: 'Salarios que superen la inflación' } },
+      { id: 'barriers',  base: 388, label: { en: 'Full driver barriers on every bus', es: 'Barreras completas en cada autobús' } },
+      { id: 'assault',   base: 351, label: { en: 'Assault protection and paid leave', es: 'Protección y licencia pagada por agresión' } },
+      { id: 'restrooms', base: 297, label: { en: 'Restroom access on every route', es: 'Acceso a baños en cada ruta' } },
+      { id: 'rest',      base: 263, label: { en: 'Rest between runs, no forced split shifts', es: 'Descanso entre corridas, sin turnos partidos forzados' } },
+      { id: 'pension',   base: 240, label: { en: 'Protect the pension', es: 'Proteger la pensión' } },
+      { id: 'overtime',  base: 198, label: { en: 'End forced overtime', es: 'Fin a las horas extra obligatorias' } },
+      { id: 'equipment', base: 146, label: { en: 'Buses that work: AC, heat, seats', es: 'Autobuses en buen estado: aire, calefacción, asientos' } }
+    ],
+    years: [
+      { v: '0-2', en: '0 to 2 years', es: '0 a 2 años' }, { v: '3-10', en: '3 to 10 years', es: '3 a 10 años' },
+      { v: '11-20', en: '11 to 20 years', es: '11 a 20 años' }, { v: '20+', en: 'More than 20 years', es: 'Más de 20 años' }
+    ],
+    ui: {
+      en: { pickHint: 'Tap up to 3 issues. Your first tap is your #1.', picked: '{n} of 3 picked', local: 'Your local', years: 'Years on the job', choose: 'Choose one',
+            note: 'Anything else the committee should hear? (optional)', submit: 'Send to the bargaining committee', needPick: 'Pick at least one issue.',
+            max: 'You can pick 3. Tap one of your picks to remove it.', thanks: 'Thank you. Your voice is in.', results: 'Where the membership stands',
+            responses: '{n} members have answered', count: '{n} put this in their top 3', yours: 'Your #{r}', share: 'Share with your garage →',
+            copied: 'Link copied. Post it in your garage group chat.', again: 'Change my answers' },
+      es: { pickHint: 'Toca hasta 3 temas. Tu primer toque es tu n.º 1.', picked: '{n} de 3 elegidos', local: 'Tu local', years: 'Años en el trabajo', choose: 'Elige uno',
+            note: '¿Algo más que el comité deba saber? (opcional)', submit: 'Enviar al comité de negociación', needPick: 'Elige al menos un tema.',
+            max: 'Puedes elegir 3. Toca uno de tus temas para quitarlo.', thanks: 'Gracias. Tu voz ya cuenta.', results: 'Dónde están los miembros',
+            responses: '{n} miembros han respondido', count: '{n} lo pusieron entre sus 3', yours: 'Tu n.º {r}', share: 'Compártela con tu garaje →',
+            copied: 'Enlace copiado. Publícalo en el chat de tu garaje.', again: 'Cambiar mis respuestas' }
+    }
+  },
+
+  // New hires: the first 90 days. General guidance; each local's contract has the specifics.
+  newHire: {
+    sample: true,
+    eyebrow: { en: '◆ New to NJ Transit', es: '◆ Nuevo en NJ Transit' },
+    title: { en: 'Your first 90 days', es: 'Tus primeros 90 días' },
+    lede: { en: 'Welcome to the job and to the union. The first months matter most. Here is what to do, who to call, and what to watch for. Your local\'s contract has the exact rules.', es: 'Bienvenido al trabajo y al sindicato. Los primeros meses son los más importantes. Esto es lo que debes hacer, a quién llamar y qué cuidar. El contrato de tu local tiene las reglas exactas.' },
+    steps: [
+      { when: { en: 'Day 1', es: 'Día 1' }, title: { en: 'Find your steward', es: 'Conoce a tu delegado' },
+        body: { en: 'Get the name and number of the steward at your garage. Save it in your phone before your first run.', es: 'Pide el nombre y el número del delegado sindical de tu garaje. Guárdalo en tu teléfono antes de tu primera corrida.' } },
+      { when: { en: 'Week 1', es: 'Semana 1' }, title: { en: 'Get connected', es: 'Conéctate' },
+        body: { en: 'Join the alert line. Ask your steward when your membership starts and when your local meets, then put the next meeting on your calendar.', es: 'Únete a la línea de alertas. Pregúntale a tu delegado cuándo empieza tu membresía y cuándo se reúne tu local, y anota la próxima reunión.' } },
+      { when: { en: 'First 30 days', es: 'Primeros 30 días' }, title: { en: 'Learn how picks work', es: 'Aprende cómo funcionan las selecciones' },
+        body: { en: 'Picks go by seniority. Ask how the next pick works at your garage, when it opens, and how to bid.', es: 'Las selecciones de turnos van por antigüedad. Pregunta cómo funciona la próxima en tu garaje, cuándo abre y cómo participar.' } },
+      { when: { en: 'Day 90', es: 'Día 90' }, title: { en: 'Finish probation strong', es: 'Termina bien el período de prueba' },
+        body: { en: 'Probation is when you are most exposed. Be on time, keep copies of everything, and call your steward early, not after it is too late.', es: 'El período de prueba es cuando estás más expuesto. Llega a tiempo, guarda copias de todo y llama a tu delegado a tiempo, no cuando ya sea tarde.' } }
+    ],
+    trapsTitle: { en: 'Watch out for', es: 'Ten cuidado con' },
+    traps: [
+      { en: 'Signing a statement on the spot. You can ask for time and for your steward.', es: 'Firmar una declaración en el momento. Puedes pedir tiempo y a tu delegado.' },
+      { en: 'Skipping an incident report, even a small one. Report it the same day and keep a copy.', es: 'No reportar un incidente, aunque sea pequeño. Repórtalo el mismo día y guarda una copia.' },
+      { en: 'Working past your hours limit. Rest rules protect you and your riders.', es: 'Trabajar más allá del límite de horas. Las reglas de descanso te protegen a ti y a tus pasajeros.' },
+      { en: 'Staying quiet when something is wrong. Your steward would rather hear it early.', es: 'Quedarte callado cuando algo anda mal. Tu delegado prefiere enterarse a tiempo.' }
+    ],
+    duesTitle: { en: 'What your dues buy', es: 'Lo que pagan tus cuotas' },
+    dues: [
+      { en: 'The contract: your wages, raises and benefits', es: 'El contrato: tus salarios, aumentos y beneficios' },
+      { en: 'A steward in the room when discipline is on the line', es: 'Un delegado presente cuando está en juego una sanción' },
+      { en: 'Grievances and arbitration when the contract is broken', es: 'Quejas formales y arbitraje cuando se viola el contrato' },
+      { en: 'Your pension and health coverage, defended at the table', es: 'Tu pensión y tu cobertura médica, defendidas en la mesa' },
+      { en: 'A voice in Trenton on safety and transit funding', es: 'Una voz en Trenton sobre seguridad y financiamiento del tránsito' }
+    ],
+    call: {
+      title: { en: 'Get a welcome call', es: 'Recibe una llamada de bienvenida' },
+      body: { en: 'Leave your number and your local. A steward or a veteran operator will call you this week, answer your questions, and stay your contact through probation.', es: 'Deja tu número y tu local. Un delegado o un operador con experiencia te llamará esta semana, responderá tus preguntas y será tu contacto durante el período de prueba.' },
+      button: { en: 'Call me', es: 'Llámenme' },
+      done: { en: 'Thanks - in the real build, a steward from your local would call you this week.', es: 'Gracias - en la versión real, un delegado de tu local te llamaría esta semana.' }
+    }
+  },
 
   // Contract scoreboard: what the union demands, what NJT offers, and where it stands.
   // Status: impasse | rejected | stalled | counter | offered
@@ -1804,7 +1954,7 @@ function renderTabs() {
 }
 
 /* Fixed page text: remember each English text node and attribute once, then swap from strings[lang].static. */
-const DYNAMIC = '#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
+const DYNAMIC = '#survey-body,#newhire-body,#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
 const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
 const fixedText = [], fixedAttrs = [];
 const norm = (x) => x.replace(/\s+/g, ' ').trim();
@@ -1839,6 +1989,7 @@ function renderAll() {
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
   renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
+  renderSurvey(); renderNewHires();
 }
 
 function applyStrings() {
@@ -1852,6 +2003,127 @@ function applyStrings() {
   });
   document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
   renderAll(); watchTabsRefresh();
+}
+
+/* ---------- Bargaining survey ---------- */
+const sv = { picks: [], local: '', years: '', note: '', done: false };
+const fmt = (str, o) => str.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+const num = (n) => n.toLocaleString(state.lang === 'es' ? 'es-US' : 'en-US');
+function renderSurvey() {
+  const S = CONTENT.survey, u = S.ui[state.lang];
+  const intro = `<div>
+      <div class="eyebrow red">${esc(L(S.eyebrow))} ${S.sample ? sampleChip() : ''}</div>
+      <h2 class="h2" id="survey-title">${esc(L(S.title))}</h2>
+      <p class="lede" style="margin-top:14px">${esc(L(S.lede))}</p>
+      <p class="privacy">${esc(L(S.privacy))}</p>
+    </div>`;
+  let panel;
+  if (!sv.done) {
+    const issues = S.issues.map((i) => {
+      const r = sv.picks.indexOf(i.id);
+      return `<button type="button" class="sv-issue" data-issue="${i.id}" aria-pressed="${r >= 0}"><span class="rk" aria-hidden="true">${r >= 0 ? r + 1 : ''}</span><span>${esc(L(i.label))}</span></button>`;
+    }).join('');
+    const locals = CONTENT.locals.map((l) => `<option value="${l.num}"${sv.local === l.num ? ' selected' : ''}>Local ${l.num} · ${esc(l.city)}</option>`).join('');
+    const years = S.years.map((y) => `<option value="${y.v}"${sv.years === y.v ? ' selected' : ''}>${esc(y[state.lang])}</option>`).join('');
+    panel = `<form class="sv-panel" data-form="survey" novalidate>
+        <div class="sv-hint"><span>${esc(u.pickHint)}</span><b aria-live="polite">${esc(fmt(u.picked, { n: sv.picks.length }))}</b></div>
+        <div class="sv-issues" role="group" aria-label="${esc(L(S.title))}">${issues}</div>
+        <div class="sv-meta">
+          <label class="sv-field">${esc(u.local)}<select class="sv-input" name="local"><option value="">${esc(u.choose)}</option>${locals}</select></label>
+          <label class="sv-field">${esc(u.years)}<select class="sv-input" name="years"><option value="">${esc(u.choose)}</option>${years}</select></label>
+          <label class="sv-field wide">${esc(u.note)}<textarea class="sv-input" name="note" maxlength="600">${esc(sv.note)}</textarea></label>
+        </div>
+        <button type="submit" class="btn btn-red sv-submit">${esc(u.submit)}</button>
+      </form>`;
+  } else {
+    const total = S.baseResponses + 1;
+    const rows = S.issues.map((i) => ({ i, n: i.base + (sv.picks.includes(i.id) ? 1 : 0), r: sv.picks.indexOf(i.id) }))
+      .sort((a, b) => b.n - a.n).map(({ i, n, r }) => `
+        <div class="sv-bar${r >= 0 ? ' mine' : ''}">
+          <div class="top"><span>${esc(L(i.label))}${r >= 0 ? `<span class="sv-tag">${esc(fmt(u.yours, { r: r + 1 }))}</span>` : ''}</span><span class="ct">${esc(fmt(u.count, { n: num(n) }))}</span></div>
+          <div class="track"><div class="fill" style="width:${Math.round((n / total) * 100)}%"></div></div>
+        </div>`).join('');
+    panel = `<div class="sv-panel" aria-live="polite">
+        <div class="sv-done">${esc(u.thanks)}</div>
+        <div class="sv-sub">${esc(u.results)} · ${esc(fmt(u.responses, { n: num(total) }))}</div>
+        <div class="sv-bars">${rows}</div>
+        <div class="sv-actions"><button type="button" class="action-btn solid" data-sv="share">${esc(u.share)}</button><button type="button" class="action-btn" data-sv="again">${esc(u.again)}</button></div>
+      </div>`;
+  }
+  $('#survey-body').innerHTML = intro + panel;
+}
+
+/* ---------- New hires ---------- */
+function renderNewHires() {
+  const N = CONTENT.newHire;
+  const locals = CONTENT.locals.map((l) => `<option value="${l.num}">Local ${l.num} · ${esc(l.city)}</option>`).join('');
+  $('#newhire-body').innerHTML = `
+    <div class="nh-grid">
+      <div>
+        <div class="eyebrow red">${esc(L(N.eyebrow))} ${N.sample ? sampleChip() : ''}</div>
+        <h2 class="h2" id="nh-title">${esc(L(N.title))}</h2>
+        <p class="lede" style="margin-top:14px">${esc(L(N.lede))}</p>
+        <div class="nh-call">
+          <span class="t">${esc(L(N.call.title))}</span>
+          <span class="b">${esc(L(N.call.body))}</span>
+          <form data-form="welcome" novalidate>
+            <input class="sv-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 555-5555" aria-label="${esc(t().phone)}">
+            <select class="sv-input" aria-label="${esc(CONTENT.survey.ui[state.lang].local)}"><option value="">${esc(CONTENT.survey.ui[state.lang].local)}</option>${locals}</select>
+            <button type="submit" class="btn btn-red">${esc(L(N.call.button))}</button>
+          </form>
+        </div>
+      </div>
+      <div class="nh-steps">${N.steps.map((st) => `
+        <div class="nh-step"><span class="when">${esc(L(st.when))}</span><div><span class="t">${esc(L(st.title))}</span><span class="b">${esc(L(st.body))}</span></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="nh-lists">
+      <div class="nh-list"><h3>${esc(L(N.trapsTitle))}</h3><ul>${N.traps.map((x) => `<li>${esc(L(x))}</li>`).join('')}</ul></div>
+      <div class="nh-list dues"><h3>${esc(L(N.duesTitle))}</h3><ul>${N.dues.map((x) => `<li>${esc(L(x))}</li>`).join('')}</ul></div>
+    </div>`;
+}
+
+function wireForms() {
+  document.addEventListener('click', (ev) => {
+    const issue = ev.target.closest('[data-issue]');
+    if (issue) {
+      const id = issue.dataset.issue, at = sv.picks.indexOf(id);
+      if (at >= 0) sv.picks.splice(at, 1);
+      else if (sv.picks.length >= 3) { toast(CONTENT.survey.ui[state.lang].max); return; }
+      else sv.picks.push(id);
+      renderSurvey();
+      const again = document.querySelector(`[data-issue="${id}"]`); if (again) again.focus();
+      return;
+    }
+    const act = ev.target.closest('[data-sv]');
+    if (act && act.dataset.sv === 'again') { sv.done = false; renderSurvey(); $('#survey-body .sv-issue').focus(); }
+    if (act && act.dataset.sv === 'share') {
+      const url = location.href.split('#')[0] + '#survey';
+      const msg = CONTENT.survey.ui[state.lang].copied;
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => toast(msg), () => toast(msg)); else toast(msg);
+    }
+  });
+  document.addEventListener('input', (ev) => {
+    const f = ev.target.closest('[data-form="survey"]'); if (!f) return;
+    sv[ev.target.name] = ev.target.value;
+  });
+  document.addEventListener('change', (ev) => {
+    const f = ev.target.closest('[data-form="survey"]'); if (!f) return;
+    sv[ev.target.name] = ev.target.value;
+  });
+  document.addEventListener('submit', (ev) => {
+    const f = ev.target.closest('[data-form]'); if (!f) return;
+    ev.preventDefault();
+    if (f.dataset.form === 'survey') {
+      if (!sv.picks.length) { toast(CONTENT.survey.ui[state.lang].needPick); return; }
+      sv.done = true; renderSurvey();
+      document.getElementById('survey').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    } else if (f.dataset.form === 'welcome') {
+      const input = f.querySelector('input'); const val = (input.value || '').replace(/\D/g, '');
+      if (val.length < 10) { toast(t().phoneErr); input.focus(); return; }
+      input.value = ''; toast(L(CONTENT.newHire.call.done));
+    }
+  });
 }
 
 /* =====================================================================
@@ -1903,7 +2175,7 @@ function smsSubmit(ev) {
 
 renderGlyphs();
 collectFixed();
-applyStrings(); watchTabs(); wireHeroMap();
+applyStrings(); watchTabs(); wireHeroMap(); wireForms();
 </script>
 </body>
 </html>
