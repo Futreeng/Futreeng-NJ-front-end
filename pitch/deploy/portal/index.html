@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F4F5F7">
 <title>Officer portal (demo) | NJ Council Hub</title>
-<meta name="description" content="Demo of the local officer portal: send posts up to the State Council, ask other locals for support, and confirm your local's contacts.">
+<meta name="description" content="Demo of the local officer portal: send posts up to the State Council, ask other locals for support, manage your member benefits partners, and confirm your local's contacts.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -136,6 +136,24 @@ textarea.input{min-height:100px;resize:vertical}
 .reply{margin-top:10px;border-left:3px solid var(--accent,var(--red));padding:4px 0 4px 10px;font-size:14px}
 .banner{border-radius:8px;padding:12px 14px;margin:0 0 18px;font-size:14px;background:#FFF1CC;color:#4A3600}
 .banner.ok{background:#DDF3E6;color:#0E4024}
+/* Partners */
+.pt-admin{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:10px;background:#fff}
+.pt-admin.feat{border-color:#C9A14A;box-shadow:inset 4px 0 0 #C9A14A}
+.pt-admin .lg{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:18px;border-radius:6px}
+.pt-admin h3{margin:0;font-size:16px}
+.pt-admin p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.pt-admin .meta{margin-top:6px;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--dim)}
+.pt-admin .meta .pill{margin-top:0}
+.b[disabled]{opacity:.45;cursor:not-allowed}
+.pt-admin .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.pt-admin .acts .b{min-height:38px;padding:8px 12px;font-size:13px}
+.ack{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 14px;border:1px solid #F1DC9A;background:#FFF8E1;border-radius:8px;font-size:14px;cursor:pointer}
+.ack input{margin-top:3px}
+.section-h{margin:28px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.check{display:flex;gap:10px;align-items:center;margin-top:14px;font-weight:700;cursor:pointer}
+.check small{font-weight:400;color:var(--muted)}
+select.input{appearance:auto}
+@media (max-width:860px){.pt-admin{grid-template-columns:auto minmax(0,1fr)}.pt-admin .acts{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}}
 @media (max-width:860px){.portal{margin:0;border-radius:0;border-left:0;border-right:0}.ppanel{padding:18px 16px 28px}.kinds,.grid2{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
@@ -161,9 +179,11 @@ textarea.input{min-height:100px;resize:vertical}
   const params = new URLSearchParams(location.search);
   const LOCAL = CF.ALL.includes(params.get('local')) ? params.get('local') : '823';
   let role = 'president';
-  let tab = ['send', 'sent', 'contacts'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'send';
+  let tab = ['send', 'sent', 'partners', 'contacts'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'send';
   const draft = { kind: 'share', title: '', body: '', targets: [] };
   let contactDraft = null;
+  const ptDraft = { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false };
+  let ptConfirm = null;
   const $ = (s) => document.querySelector(s);
   const C = () => CF.contacts(LOCAL);
   const timeFmt = (ms) => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -182,7 +202,7 @@ textarea.input{min-height:100px;resize:vertical}
     document.querySelectorAll('[data-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
     const mine = CF.subs().filter((x) => x.from === LOCAL).length;
     const t = (k, label, n) => `<button type="button" class="ptab" role="tab" data-tab="${k}" aria-selected="${tab === k}">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`;
-    $('#ptabs').innerHTML = t('send', 'Send to the council') + t('sent', 'Sent by your local', mine) + t('contacts', 'Contacts', C().requestedAt || C().verifyDue ? '!' : 0);
+    $('#ptabs').innerHTML = t('send', 'Send to the council') + t('sent', 'Sent by your local', mine) + t('partners', 'Partners', CF.partnersAdmin(LOCAL).length) + t('contacts', 'Contacts', C().requestedAt || C().verifyDue ? '!' : 0);
   }
 
   function sendPanel() {
@@ -245,22 +265,68 @@ textarea.input{min-height:100px;resize:vertical}
         <p class="fine">Confirming is recorded with your name and the date, so the council knows the list is current.</p>
       </form>`;
   }
+  function partnersPanel() {
+    const list = CF.partnersAdmin(LOCAL), state = CF.partnerWindow;
+    const featN = list.filter((p) => p.featured && state(p) !== 'ended').length, full = featN >= CF.FEATURED_MAX;
+    const dateFmt = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const row = (p) => {
+      const [bg, fg] = CF.swatch(p.name), w = state(p);
+      return `<div class="pt-admin${p.featured ? ' feat' : ''}">
+        <span class="lg" style="background:${bg};color:${fg}" aria-hidden="true">${esc(CF.mono(p.name))}</span>
+        <div><h3>${esc(p.name)}</h3><p>${esc(p.offer)}</p>
+          <div class="meta"><span class="pill ${w === 'active' ? 'approved' : w === 'scheduled' ? 'pending' : 'declined'}">${w === 'active' ? 'On your site' : w === 'scheduled' ? 'Starts later' : 'Ended'}</span>${p.featured ? '<span class="pill pending">Featured</span>' : ''}${p.sample ? '<span class="pill">Sample</span>' : ''}<span>${esc((CF.CATS[p.cat] || CF.CATS.other).en)}</span><span>${(p.clicks || 0).toLocaleString('en-US')} clicks</span>${p.endAt ? `<span>Ends ${esc(dateFmt(p.endAt))}</span>` : ''}</div></div>
+        <div class="acts">
+          <button type="button" class="b no" data-pt="feature" data-id="${esc(p.id)}"${!p.featured && full ? ' disabled title="Up to ' + CF.FEATURED_MAX + ' featured partners"' : ''}>${p.featured ? 'Unfeature' : 'Feature'}</button>
+          <button type="button" class="b ${ptConfirm === p.id ? 'danger' : 'no'}" data-pt="remove" data-id="${esc(p.id)}">${ptConfirm === p.id ? 'Click again to remove' : 'Remove'}</button>
+        </div></div>`;
+    };
+    return `<h2>Member benefits &amp; partners</h2>
+      <p class="lead">Your local's own partners, shown in the Member Benefits section of <a href="${esc(C().site)}#partners">your site</a>. Your local finds them and sets the terms. The council's statewide partners show in a separate row under yours. Nobody else can change your list.</p>
+      <div class="section-h">On your list (${list.length}) · ${featN} of ${CF.FEATURED_MAX} featured</div>
+      ${list.length ? list.map(row).join('') : '<p class="lead">No partners yet. Add your first one below.</p>'}
+      <form data-form="partner" novalidate style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px">
+        <h2 style="font-size:18px">Add a partner</h2>
+        <div class="grid2">
+          <label class="field">Business name<input class="input" name="name" maxlength="60" value="${esc(ptDraft.name)}" placeholder="Example: Corner Coffee"></label>
+          <label class="field">Website <small>(optional)</small><input class="input" name="url" inputmode="url" value="${esc(ptDraft.url)}" placeholder="example.com"></label>
+        </div>
+        <label class="field">The member deal<input class="input" name="offer" maxlength="140" value="${esc(ptDraft.offer)}" placeholder="Example: 10% off for ATU members. Show your union card."></label>
+        <div class="grid2">
+          <label class="field">Category<select class="input" name="cat">${Object.entries(CF.CATS).map(([k, v]) => `<option value="${k}"${ptDraft.cat === k ? ' selected' : ''}>${esc(v.en)}</option>`).join('')}</select></label>
+          <label class="field">Ends <small>(optional, comes off your site after this day)</small><input class="input" type="date" name="endAt" value="${esc(ptDraft.endAt)}"></label>
+        </div>
+        <label class="check"><input type="checkbox" name="featured"${ptDraft.featured ? ' checked' : ''}${full ? ' disabled' : ''}> Feature this partner <small>${full ? '(all ' + CF.FEATURED_MAX + ' featured spots are taken)' : '(bigger card at the top, up to ' + CF.FEATURED_MAX + ')'}</small></label>
+        <label class="ack"><input type="checkbox" name="ack"${ptDraft.ack ? ' checked' : ''}><span><b>Our local is responsible for this partnership.</b> We found this partner and set the terms. If the partner employs our members, we checked with our attorney first.</span></label>
+        <div class="actions"><button type="submit" class="b ok">Add to our site</button></div>
+        <p class="fine">Partners show on your website only, never in texts, alerts or emails. Clicks are counted as totals. Partners never receive member information. Adding a partner is recorded with your name and the date.</p>
+      </form>`;
+  }
   function render() {
     header();
-    $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : contactsPanel();
+    $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : tab === 'partners' ? partnersPanel() : contactsPanel();
   }
 
   document.addEventListener('click', (e) => {
     const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
+    const pa = e.target.closest('[data-pt]');
+    if (pa) {
+      const id = pa.dataset.id;
+      if (pa.dataset.pt === 'feature') { const p = CF.partnersAdmin(LOCAL).find((x) => x.id === id); const r = CF.setFeatured(id, !p.featured, role); ptConfirm = null; render(); toast(r.error === 'full' ? 'All ' + CF.FEATURED_MAX + ' featured spots are taken.' : p.featured ? 'Now featured on your site.' : 'Moved to the regular list.'); }
+      if (pa.dataset.pt === 'remove') { if (ptConfirm !== id) { ptConfirm = id; render(); return; } const p = CF.removePartner(id, role); ptConfirm = null; render(); toast((p ? p.name : 'Partner') + ' is off your site.'); }
+      return;
+    }
     const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; history.replaceState(null, '', '#' + tab); render(); const again = document.querySelector(`[data-tab="${tab}"]`); if (again) again.focus(); }
   });
   document.addEventListener('input', (e) => {
     const f = e.target.closest('form'); if (!f) return;
     if (f.dataset.form === 'submit' && ['title', 'body'].includes(e.target.name)) draft[e.target.name] = e.target.value;
     if (f.dataset.form === 'contacts') contactDraft[e.target.name] = e.target.value;
+    if (f.dataset.form === 'partner' && ['name', 'offer', 'url', 'endAt'].includes(e.target.name)) ptDraft[e.target.name] = e.target.value;
   });
   document.addEventListener('change', (e) => {
-    const f = e.target.closest('form'); if (!f || f.dataset.form !== 'submit') return;
+    const f = e.target.closest('form'); if (!f) return;
+    if (f.dataset.form === 'partner') { if (e.target.type === 'checkbox') ptDraft[e.target.name] = e.target.checked; else ptDraft[e.target.name] = e.target.value; return; }
+    if (f.dataset.form !== 'submit') return;
     if (e.target.name === 'kind') { draft.kind = e.target.value; render(); }
     if (e.target.name === 't') draft.targets = [...f.querySelectorAll('input[name=t]:checked')].map((i) => i.value);
   });
@@ -274,6 +340,15 @@ textarea.input{min-height:100px;resize:vertical}
       Object.assign(draft, { title: '', body: '', targets: [] });
       tab = 'sent'; history.replaceState(null, '', '#sent'); render();
       toast('Sent to the council. You will get an email when they answer.');
+    }
+    if (f === 'partner') {
+      if (!ptDraft.name.trim() || !ptDraft.offer.trim()) { toast('Add the business name and the member deal.'); return; }
+      if (!ptDraft.ack) { toast('Confirm your local is responsible for this partnership.'); return; }
+      const endAt = ptDraft.endAt ? new Date(ptDraft.endAt + 'T23:59:59').getTime() : null;
+      if (endAt && endAt < Date.now()) { toast('The end date has already passed.'); return; }
+      const r = CF.addPartner(LOCAL, Object.assign({}, ptDraft, { endAt, by: role }));
+      Object.assign(ptDraft, { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false });
+      render(); toast(r.partner.name + ' is on your site now.' + (r.featuredFull ? ' Featured spots were full, so it went in the regular list.' : ''));
     }
     if (f === 'contacts') {
       if (!String(contactDraft.president).trim() || !String(contactDraft.backup).trim()) { toast('Add both the president and the backup approver.'); return; }

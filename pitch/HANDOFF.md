@@ -115,6 +115,24 @@ Hub main nav now reads: The Fight · Wins · Contract · Get Involved · COPE ·
 
 ---
 
+## Member benefits & partners (sponsorship)
+
+Agreed with Haron, 2026-10-17:
+- **Two kinds of list.** The council keeps a statewide list (hub + a "Statewide partners" row on every local site). Each local keeps its own list on its own site. Lists are independent: the council can't change a local's list, locals can't change the council's or each other's.
+- **Anyone can be a partner.** No union-shop rule in the software. The council and each local decide where the money goes.
+- **FutreEng only provides the tool.** It never finds, approves or handles sponsors or sponsor money.
+- **Featured:** up to 3 featured partners per list (bigger card at the top), so locals can charge more for that spot.
+- **Responsibility checkbox:** adding a partner requires confirming "our local/the council is responsible for this partnership… if the partner employs our members, we checked with our attorney first" (LMRA §302 concern). Recorded in the log with name and date.
+- **Privacy:** partners appear on websites only, never in texts, alerts or emails. Clicks are counted as totals; partners never receive member data. Links use rel="sponsored noopener".
+
+Where it lives:
+- Engine: `CouncilFeed.addPartner / setFeatured / removePartner / partners / partnersAdmin / partnersHTML / mountPartners` in `src/council-feed.js` (sample partners are fictional and marked SAMPLE).
+- Hub: `#partners` section above the languages note (English + Spanish) and a **Partners** tab in the council console.
+- Local sites: `#partners` section above the council strip on all nine previews (generator updated).
+- Officer portal: **Partners** tab (`/portal/?local=825#partners`).
+
+Production notes: logo upload (demo uses monogram tiles), per-month click totals, optional partner start dates in the UI, and counsel review of the responsibility text.
+
 ## Content rules (strictly enforced)
 
 - **No em dashes anywhere.** Use commas, periods, colons, parentheses. The build has `assert '\u2014' not in s` in it.

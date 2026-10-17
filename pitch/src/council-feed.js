@@ -23,6 +23,15 @@
      keeps the approved version until then. The council can pull a post
      from every site at once.
    - Every action is recorded (who, what, when) and can be exported.
+   - Partners (member benefits): the council keeps its own statewide list
+     on the hub; each local keeps its own list on its site, completely
+     separate from the council and from other locals. Statewide partners
+     also show in a row on every local site. Up to 3 featured partners
+     per list. Officers confirm the local or council is responsible for
+     each partnership. FutreEng provides the tool only and never finds,
+     approves or handles sponsors or money. Partners appear on websites
+     only (never in texts, alerts or emails), and clicks are counted as
+     totals: partners never receive member information.
 
    Demo clock: 1 real second = 1 hour, so reminders and hand-offs happen
    during the pitch. Calendar start/end dates use real time.
@@ -60,7 +69,32 @@
     Object.assign(d['819'], { verifiedAt: t - 40 * DAY });
     return d;
   }
-  const fresh = () => ({ v: 2, posts: [], subs: [], dir: seedDirectory(), log: [] });
+  /* ---------- partners (member benefits) ---------- */
+  const FEATURED_MAX = 3;
+  const CATS = {
+    food: { en: 'Food & coffee', es: 'Comida y café' }, auto: { en: 'Auto & tires', es: 'Auto y llantas' },
+    health: { en: 'Health & dental', es: 'Salud y dental' }, finance: { en: 'Banking & credit unions', es: 'Bancos y cooperativas de crédito' },
+    gear: { en: 'Uniforms & gear', es: 'Uniformes y equipo' }, print: { en: 'Printing', es: 'Imprenta' },
+    family: { en: 'Family & kids', es: 'Familia y niños' }, fitness: { en: 'Fitness', es: 'Ejercicio' }, other: { en: 'Other', es: 'Otro' }
+  };
+  /* Fictional sample partners for the pitch. Every one is marked SAMPLE. */
+  function seedPartners() {
+    const t = Date.now(), mk = (owner, i, o) => Object.assign({ id: 'pt' + owner + i, owner, url: '#', created: t - (30 - i) * DAY, by: owner === 'council' ? 'Council' : 'President, Local ' + owner,
+      sample: true, featured: false, startAt: null, endAt: null, offerEs: '', ack: true }, o);
+    return [
+      mk('council', 1, { name: 'Hudson & Delaware Credit Union', cat: 'finance', featured: true, clicks: 412, offer: 'Half a point off auto loans for every ATU member in New Jersey.', offerEs: 'Medio punto menos en préstamos de auto para todo miembro de ATU en Nueva Jersey.' }),
+      mk('council', 2, { name: 'Garden Line Union Print', cat: 'print', featured: true, clicks: 133, offer: 'Union-printed flyers and shirts for locals at cost.', offerEs: 'Volantes y camisetas impresos por sindicato, a precio de costo para los locales.' }),
+      mk('council', 3, { name: 'Statewide Tire & Brake', cat: 'auto', clicks: 96, offer: '15% off service at any location. Show your union card.', offerEs: '15% de descuento en servicio en cualquier sucursal. Muestra tu tarjeta sindical.' }),
+      mk('council', 4, { name: 'Shoreline Family Dental', cat: 'health', clicks: 71, offer: 'Free first cleaning for members and their kids.', offerEs: 'Primera limpieza gratis para miembros y sus hijos.' }),
+      mk('823', 1, { name: 'Garage Door Diner', cat: 'food', featured: true, clicks: 188, offer: 'Free coffee with any breakfast before 7am. Show your union card.' }),
+      mk('823', 2, { name: 'Night Shift Uniform Co.', cat: 'gear', clicks: 64, offer: '10% off work boots and rain gear.' }),
+      mk('823', 3, { name: 'Clockwork Barbers', cat: 'other', clicks: 41, offer: '$5 off cuts, Monday to Wednesday.' }),
+      mk('825', 1, { name: 'Layover Coffee Co.', cat: 'food', featured: true, clicks: 97, offer: 'Any size coffee for $1 with your union card.' }),
+      mk('825', 2, { name: 'Two Shifts Pizza', cat: 'food', featured: true, clicks: 120, offer: 'Large pie for $10 after 9pm, for the late runs.' }),
+      mk('825', 3, { name: 'Valley Fit Club', cat: 'fitness', clicks: 38, offer: 'No sign-up fee and $15 a month for members.' })
+    ];
+  }
+  const fresh = () => ({ v: 2, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners() });
 
   /* ---------- storage ---------- */
   let mem = fresh();
@@ -68,7 +102,7 @@
   function load() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (v && v.v === 2) mem = v; else save(mem, true);
+      if (v && v.v === 2) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } } else save(mem, true);
     } catch (e) { /* storage blocked: keep memory copy */ }
     return mem;
   }
@@ -270,6 +304,46 @@
     return Object.keys(p.status).map((n) => reach(p, n)).reduce((a, r) => { Object.keys(r).forEach((k) => { a[k] = (a[k] || 0) + r[k]; }); return a; }, { views: 0, texts: 0, taps: 0, emails: 0, opens: 0 });
   }
 
+  /* ---------- partners ---------- */
+  const ownerName = (o) => o === 'council' ? 'Council' : null;
+  const partnerWindow = (p) => p.startAt && p.startAt > now() ? 'scheduled' : (p.endAt && now() >= p.endAt ? 'ended' : 'active');
+  const byRank = (a, b) => (b.featured - a.featured) || (b.created - a.created);
+  /* What the public sees: active partners only, featured first. */
+  function partners(owner) { return (state().partners || []).filter((p) => p.owner === owner && partnerWindow(p) === 'active').sort(byRank); }
+  /* What the officers manage: everything, including scheduled and ended. */
+  function partnersAdmin(owner) { return (state().partners || []).filter((p) => p.owner === owner).sort(byRank); }
+  const featuredCount = (st, owner) => st.partners.filter((p) => p.owner === owner && p.featured && partnerWindow(p) !== 'ended').length;
+  const partnerActor = (owner, by) => owner === 'council' ? 'Council' : officer(owner, by);
+  function addPartner(owner, o) {
+    const st = state();
+    if (!o.ack) return { error: 'ack' };
+    if (!String(o.name || '').trim() || !String(o.offer || '').trim()) return { error: 'missing' };
+    const featured = !!o.featured && featuredCount(st, owner) < FEATURED_MAX;
+    const url = String(o.url || '').trim();
+    const p = { id: uid('pt'), owner, name: String(o.name).trim().slice(0, 60), offer: String(o.offer).trim().slice(0, 140), offerEs: String(o.offerEs || '').trim().slice(0, 160),
+      url: !url ? '#' : /^https?:\/\//i.test(url) ? url : 'https://' + url, cat: CATS[o.cat] ? o.cat : 'other', featured, startAt: o.startAt || null, endAt: o.endAt || null,
+      created: now(), by: partnerActor(owner, o.by), ack: true, ackAt: now(), clicks: 0, sample: false };
+    st.partners.unshift(p);
+    record(st, p.by, 'added partner', { local: owner === 'council' ? undefined : owner, title: p.name,
+      detail: (owner === 'council' ? 'Statewide partner on the hub and every local site' : 'Member benefit on the Local ' + owner + ' site') + (featured ? ' · featured' : '') + ' · responsibility confirmed' });
+    save(st); return { partner: p, featuredFull: !!o.featured && !featured };
+  }
+  function setFeatured(id, on, by) {
+    const st = state(), p = st.partners.find((x) => x.id === id); if (!p) return { error: 'missing' };
+    if (on && !p.featured && featuredCount(st, p.owner) >= FEATURED_MAX) return { error: 'full' };
+    p.featured = !!on;
+    record(st, partnerActor(p.owner, by), on ? 'featured partner' : 'unfeatured partner', { local: p.owner === 'council' ? undefined : p.owner, title: p.name, detail: on ? 'Moved to a featured card' : 'Moved to the regular list' });
+    save(st); return { partner: p };
+  }
+  function removePartner(id, by) {
+    const st = state(), i = st.partners.findIndex((x) => x.id === id); if (i < 0) return null;
+    const p = st.partners.splice(i, 1)[0];
+    record(st, partnerActor(p.owner, by), 'removed partner', { local: p.owner === 'council' ? undefined : p.owner, title: p.name, detail: 'Taken off the site' });
+    save(st); return p;
+  }
+  /* A click is counted as a total for the partner. No member identity is stored. */
+  function clickPartner(id) { const st = load(), p = (st.partners || []).find((x) => x.id === id); if (p) { p.clicks = (p.clicks || 0) + 1; save(st, true); } }
+
   /* ---------- queries ---------- */
   const posts = () => state().posts;
   const subs = () => state().subs;
@@ -352,10 +426,104 @@
     setInterval(draw, 30000);   // start and end dates
   }
 
+  /* ---------- rendering: member benefits & partners ---------- */
+  const SWATCH = [['#2F6FB5', '#fff'], ['#0F766E', '#fff'], ['#B81E33', '#fff'], ['#23774A', '#fff'], ['#C2185B', '#fff'], ['#E4BE80', '#06101F'], ['#4FA3D9', '#06101F'], ['#F2C14E', '#06101F']];
+  const swatch = (name) => { let h = 0; for (const c of String(name)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return SWATCH[h % SWATCH.length]; };
+  const mono = (name) => String(name).replace(/[^A-Za-z0-9& ]/g, ' ').split(/\s+/).filter((w) => w && w !== '&').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  const PT_EN = { eyebrow: '◆ Member benefits & partners', titleLocal: 'Show your card. Save.', titleHub: 'Statewide partners',
+    ledeLocal: 'Businesses that back Local {n} members. Show your union card to get the deal.',
+    ledeHub: 'Businesses that back every member of all nine locals. Show your union card to get the deal.',
+    featured: 'Featured partner', partner: 'Partner', cta: 'Get the deal', sample: 'Sample',
+    statewide: '◆ Statewide partners · from the ATU NJ State Council', none: 'No partners yet.',
+    fine: 'Partners support the union. Each business sets its own offer. Partners never receive member information.' };
+  function partnerCard(p, t, lang, size) {
+    const [bg, fg] = swatch(p.name);
+    const offer = lang === 'es' && p.offerEs ? p.offerEs : p.offer;
+    const cat = CATS[p.cat] ? CATS[p.cat][lang] || CATS[p.cat].en : '';
+    const ext = p.url && p.url !== '#';
+    const tags = (size === 'big' ? `<span class="pt-tag feat">${esc(t.featured)}</span>` : `<span class="pt-tag">${esc(t.partner)}</span>`) + (p.sample ? `<span class="pt-tag sample">${esc(t.sample)}</span>` : '');
+    return `<a class="pt-card ${size}" href="${esc(ext ? p.url : '#')}"${ext ? ' target="_blank" rel="sponsored noopener"' : ''} data-partner="${esc(p.id)}">
+        <span class="pt-logo" style="background:${bg};color:${fg}" aria-hidden="true">${esc(mono(p.name))}</span>
+        <span class="pt-txt"><span class="pt-tags">${tags}</span><b class="pt-name">${esc(p.name)}</b><span class="pt-offer">${esc(offer)}</span>
+        <span class="pt-foot"><span class="pt-cat">${esc(cat)}</span>${size !== 'mini' ? `<span class="pt-cta">${esc(t.cta)} →</span>` : ''}</span></span></a>`;
+  }
+  /* owner: 'council' (the hub) or a local number. Local sites also get the statewide row. */
+  function partnersHTML(owner, opt) {
+    const o = opt || {}, lang = o.lang || 'en', t = Object.assign({}, PT_EN, o.t || {});
+    const own = partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
+    const isHub = owner === 'council', statewide = isHub ? [] : partners('council');
+    if (!own.length && !statewide.length) return '';
+    return `<div class="pt-wrap">
+      <div class="pt-head"><div class="pt-eyebrow">${esc(t.eyebrow)}</div>
+        <h2 class="pt-title">${esc(isHub ? t.titleHub : t.titleLocal)}</h2>
+        <p class="pt-lede">${esc((isHub ? t.ledeHub : t.ledeLocal).replace('{n}', owner))}</p></div>
+      ${feat.length ? `<div class="pt-feat">${feat.map((p) => partnerCard(p, t, lang, 'big')).join('')}</div>` : ''}
+      ${rest.length ? `<div class="pt-list">${rest.map((p) => partnerCard(p, t, lang, 'row')).join('')}</div>` : ''}
+      ${statewide.length ? `<div class="pt-state"><div class="pt-state-l">${esc(t.statewide)}</div><div class="pt-mini">${statewide.map((p) => partnerCard(p, t, lang, 'mini')).join('')}</div></div>` : ''}
+      <p class="pt-fine">${esc(t.fine)}</p></div>`;
+  }
+  const PCSS = `
+.partners-mount{background:var(--navy-deep,#06101F);border-top:1px solid rgba(255,255,255,.12)}
+.pt-wrap{padding:64px var(--gutter,24px)}
+.pt-eyebrow{font-family:var(--mono,monospace);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim,#8FA2C4)}
+.pt-title{margin:10px 0 0;font-family:var(--display,sans-serif);font-weight:800;font-size:clamp(36px,5vw,56px);line-height:.95;text-transform:uppercase;color:var(--ink,#F2F4F8)}
+.pt-lede{margin:12px 0 0;font-family:var(--body,sans-serif);font-size:16px;line-height:1.55;color:var(--muted,#C5CDDB);max-width:60ch}
+.pt-card{display:flex;gap:16px;align-items:flex-start;text-decoration:none;color:var(--ink,#F2F4F8);background:var(--panel,#13284D);border:1px solid rgba(255,255,255,.14);padding:16px;min-width:0;transition:border-color .15s,transform .15s}
+.pt-card:hover{border-color:var(--ink,#F2F4F8)}
+.pt-card:focus-visible{outline:3px solid #F2C14E;outline-offset:2px}
+.pt-logo{flex:none;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-family:var(--display,sans-serif);font-weight:800;font-size:20px;letter-spacing:.02em}
+.pt-txt{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.pt-tags{display:flex;gap:6px;flex-wrap:wrap}
+.pt-tag{font-family:var(--mono,monospace);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim,#8FA2C4);border:1px solid rgba(255,255,255,.22);padding:2px 6px}
+.pt-tag.feat{color:#06101F;background:#E4BE80;border-color:#E4BE80}
+.pt-tag.sample{color:#06101F;background:#F2C14E;border-color:#F2C14E}
+.pt-name{font-family:var(--display,sans-serif);font-weight:800;font-size:22px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em}
+.pt-offer{font-family:var(--body,sans-serif);font-size:15px;line-height:1.45;color:var(--muted,#C5CDDB)}
+.pt-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;font-family:var(--mono,monospace);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.pt-cat{color:var(--dim,#8FA2C4)}
+.pt-cta{color:#F2F4F8;font-weight:600}
+.pt-feat{margin-top:32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.pt-card.big{flex-direction:column;padding:24px;border-top:4px solid #E4BE80;background:var(--panel,#13284D)}
+.pt-card.big .pt-logo{width:72px;height:72px;font-size:30px}
+.pt-card.big .pt-name{font-size:30px}
+.pt-card.big .pt-offer{font-size:17px;color:var(--ink,#F2F4F8)}
+.pt-list{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.pt-state{margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.14)}
+.pt-state-l{font-family:var(--mono,monospace);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#E4BE80}
+.pt-mini{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
+.pt-card.mini{padding:12px;background:transparent}
+.pt-card.mini .pt-logo{width:36px;height:36px;font-size:15px}
+.pt-card.mini .pt-name{font-size:17px}
+.pt-card.mini .pt-offer{font-size:13px}
+.pt-fine{margin:28px 0 0;font-family:var(--mono,monospace);font-size:11px;letter-spacing:.06em;color:var(--dim,#8FA2C4);max-width:80ch}
+@media (prefers-reduced-motion:reduce){.pt-card{transition:none}}
+`;
+  function ensurePartnerCSS() {
+    if (document.getElementById('partners-css')) return;
+    const st = document.createElement('style'); st.id = 'partners-css'; st.textContent = PCSS; document.head.appendChild(st);
+  }
+  let clickWired = false;
+  function wirePartnerClicks() {
+    if (clickWired) return; clickWired = true;
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('[data-partner]'); if (!a) return;
+      clickPartner(a.dataset.partner);
+      if (a.getAttribute('href') === '#') e.preventDefault();    // sample partners have no real site
+    });
+  }
+  /* Local website: render into sel. opt.t / opt.lang optional. */
+  function mountPartners(sel, owner, opt) {
+    ensurePartnerCSS(); wirePartnerClicks();
+    const draw = () => { const el = document.querySelector(sel); if (el) el.innerHTML = partnersHTML(owner, typeof opt === 'function' ? opt() : opt); };
+    draw(); onChange(draw); setInterval(draw, 60000);
+    return draw;
+  }
+
   window.CouncilFeed = {
     LOCALS, ALL, HANDS_ON, NOTE_MAX, DEMO_HOUR, REMIND_H, ESCALATE_H, VERIFY_DAYS,
     posts, subs, log, contacts, alertSubs, emailSubs, reach, reachTotal, forLocal, windowState, ageLabel, hoursSince,
     send, correct, pull, approve, decline, remove, submit, routeSub, requestVerify, verifyContacts, exportCSV, reset, onChange, mountLocal,
+    CATS, FEATURED_MAX, partners, partnersAdmin, partnerWindow, addPartner, setFeatured, removePartner, clickPartner, partnersHTML, mountPartners, ensurePartnerCSS, wirePartnerClicks, mono, swatch,
     esc, fmtDate, tick: () => { const st = load(); if (settle(st)) save(st); }
   };
 })();

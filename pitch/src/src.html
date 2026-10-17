@@ -726,6 +726,18 @@ textarea.sv-input{min-height:84px;resize:vertical}
 .cc-tbc{color:var(--dim);font-style:italic}
 .cc-due{display:inline-block;margin-left:6px;padding:2px 6px;background:#F2C14E;color:var(--navy-deep);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .cc-due.asked{background:var(--panel);color:var(--muted);margin-left:0}
+.cc-pt-main{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.cc-pt-logo{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:18px}
+.cc-pt.feat{box-shadow:inset 4px 0 0 var(--nj-buff);padding-left:14px}
+.cc-pt .cc-links{grid-column:auto;align-self:start}
+.action-btn[disabled]{opacity:.4;cursor:not-allowed}
+.cc-pt-count{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.04em;margin:8px 0 4px}
+.cc-pt-form{margin-top:28px}
+.cc-check{display:flex;gap:10px;align-items:flex-start;font-family:var(--body);font-size:14px;line-height:1.45;color:var(--ink);cursor:pointer;position:relative}
+.cc-check input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--red)}
+.cc-ack{border:1px solid var(--nj-buff);padding:12px 14px;background:rgba(228,190,128,.08)}
+.cc-pt-locals{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+@media (max-width:720px){.cc-pt .cc-links{grid-column:1 / -1}}
 .cc-mini{display:inline-block;padding:6px 0;font-family:var(--mono);font-size:11px;color:var(--nj-buff);text-decoration:underline}
 .cc-logbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .cc-logbar .sv-field{min-width:220px}
@@ -1267,6 +1279,9 @@ textarea.sv-input{min-height:84px;resize:vertical}
   </div>
 </section>
 
+<!-- ======================= Member benefits & partners (council's statewide list; engine: /council-feed.js) ======================= -->
+<section class="partners-mount" id="partners" aria-label="Member benefits and partners"></section>
+
 <!-- ======================= Languages note ======================= -->
 <div class="lang-note">
   <div class="wrap">
@@ -1574,7 +1589,7 @@ const CONTENT = {
           needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.', needStart: 'Pick when it starts.', badEnd: 'The end date has to be after it starts.',
           sentUrgent: 'Sent. Live now on {n} local sites. Members texted.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
           sentUrgent1: 'Sent. Live now on Local {l}\'s site. Members texted.', sentRegular1: 'Sent to Local {l}. Waiting for approval.', scheduled: 'Scheduled. Locals can approve now; it goes live on {d}.',
-          tabs: { sent: 'Sent', from: 'From locals', dir: 'Directory', log: 'Record' },
+          tabs: { sent: 'Sent', from: 'From locals', dir: 'Directory', partners: 'Partners', log: 'Record' },
           clock: 'Demo clock: 1 second = 1 hour', reset: 'Clear demo', resetDone: 'Demo cleared.',
           empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
           count: 'Approved by {a} of {n}', countUrgent: 'Live on {a} of {n} sites', waiting: 'Waiting: {list}',
@@ -1598,7 +1613,18 @@ const CONTENT = {
           never: 'Never', daysAgo: '{n} days ago', today: 'Today', due: 'Check due', asked: 'Asked {d}', ask: 'Ask to verify', askedMsg: 'Email sent to the Local {n} president.',
           dirNote: 'The approval emails go to these people. Locals confirm their contacts every 90 days; the council can ask anytime.', tbc: 'to confirm',
           logFilter: 'Show', logAll: 'Everything', logCouncil: 'Council actions', download: 'Download record (CSV)', logEmpty: 'Nothing recorded yet.',
-          logCols: ['When', 'Who', 'What', 'Details'] },
+          logCols: ['When', 'Who', 'What', 'Details'],
+          pt: { intro: 'The council\'s statewide partners. They show on the hub and in a statewide row on all nine local sites. Each local keeps its own list in its officer portal. The council can\'t change those, and locals can\'t change this one.',
+                onList: 'On the statewide list ({n}) · {f} of {m} featured', on: 'On the sites', later: 'Starts later', ended: 'Ended', featured: 'Featured', sample: 'Sample',
+                clicks: '{n} clicks', ends: 'Ends {d}', feature: 'Feature', unfeature: 'Unfeature', remove: 'Remove', removeConfirm: 'Click again to remove',
+                add: 'Add a statewide partner', name: 'Business name', url: 'Website (optional)', offer: 'The member deal', offerEs: 'The deal in Spanish (optional)',
+                cat: 'Category', end: 'Ends (optional)', feat: 'Feature this partner (bigger card at the top, up to {m})', featFull: 'All {m} featured spots are taken',
+                ack: 'The council is responsible for this partnership. We found this partner and set the terms. If the partner employs our members, we checked with our attorney first.',
+                submit: 'Add to the hub and every local site', fine: 'Partners show on websites only, never in texts, alerts or emails. Clicks are counted as totals. Partners never receive member information.',
+                need: 'Add the business name and the member deal.', needAck: 'Confirm the council is responsible for this partnership.', past: 'The end date has already passed.',
+                added: '{name} is on the hub and every local site now.', addedFull: ' Featured spots were full, so it went in the regular list.', full: 'All {m} featured spots are taken.',
+                featOn: 'Now featured.', featOff: 'Moved to the regular list.', removed: '{name} is off every site.', view: 'See it on the hub →', locals: 'Each local\'s own list:', localLink: 'Local {n} →',
+                namePh: 'Example: Corner Coffee', offerPh: 'Example: 10% off for ATU members. Show your union card.' } },
     es: { eyebrow: '◆ Consola del consejo · demo en vivo', title: 'Envíalo por toda la línea',
           lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se envían por texto a los miembros. Todo lo demás espera a que el presidente del local o su suplente lo apruebe.',
           steps: ['El consejo envía una publicación', 'El presidente del local recibe un correo y la aprueba', 'Aparece en el sitio web de ese local, y en los textos y correos de los miembros si el local lo decide'],
@@ -1609,7 +1635,7 @@ const CONTENT = {
           needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.', needStart: 'Elige cuándo empieza.', badEnd: 'La fecha final tiene que ser después del inicio.',
           sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Texto enviado a los miembros.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
           sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Texto enviado a los miembros.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.', scheduled: 'Programado. Los locales pueden aprobarlo ya; se publica el {d}.',
-          tabs: { sent: 'Enviados', from: 'De los locales', dir: 'Directorio', log: 'Registro' },
+          tabs: { sent: 'Enviados', from: 'De los locales', dir: 'Directorio', partners: 'Socios', log: 'Registro' },
           clock: 'Reloj de la demo: 1 segundo = 1 hora', reset: 'Borrar demo', resetDone: 'Demo borrada.',
           empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
           count: 'Aprobado por {a} de {n}', countUrgent: 'En vivo en {a} de {n} sitios', waiting: 'En espera: {list}',
@@ -1633,7 +1659,18 @@ const CONTENT = {
           never: 'Nunca', daysAgo: 'hace {n} días', today: 'Hoy', due: 'Revisión pendiente', asked: 'Pedido el {d}', ask: 'Pedir verificación', askedMsg: 'Correo enviado al presidente del Local {n}.',
           dirNote: 'Los correos de aprobación van a estas personas. Los locales confirman sus contactos cada 90 días; el consejo puede pedirlo cuando quiera.', tbc: 'por confirmar',
           logFilter: 'Mostrar', logAll: 'Todo', logCouncil: 'Acciones del consejo', download: 'Descargar registro (CSV)', logEmpty: 'Todavía no hay nada registrado.',
-          logCols: ['Cuándo', 'Quién', 'Qué', 'Detalles'] }
+          logCols: ['Cuándo', 'Quién', 'Qué', 'Detalles'],
+          pt: { intro: 'Los socios estatales del consejo. Aparecen en el hub y en una fila estatal en los sitios de los nueve locales. Cada local tiene su propia lista en su portal de dirigentes. El consejo no puede cambiar esas listas y los locales no pueden cambiar esta.',
+                onList: 'En la lista estatal ({n}) · {f} de {m} destacados', on: 'En los sitios', later: 'Empieza más tarde', ended: 'Terminó', featured: 'Destacado', sample: 'Muestra',
+                clicks: '{n} clics', ends: 'Termina el {d}', feature: 'Destacar', unfeature: 'Quitar de destacados', remove: 'Quitar', removeConfirm: 'Haz clic otra vez para quitarlo',
+                add: 'Agregar un socio estatal', name: 'Nombre del negocio', url: 'Sitio web (opcional)', offer: 'La oferta para miembros', offerEs: 'La oferta en español (opcional)',
+                cat: 'Categoría', end: 'Termina (opcional)', feat: 'Destacar este socio (tarjeta más grande arriba, hasta {m})', featFull: 'Los {m} lugares destacados están ocupados',
+                ack: 'El consejo es responsable de esta alianza. Encontramos a este socio y fijamos las condiciones. Si el socio emplea a nuestros miembros, primero lo consultamos con nuestro abogado.',
+                submit: 'Agregar al hub y a cada sitio local', fine: 'Los socios aparecen solo en los sitios web, nunca en textos, alertas ni correos. Los clics se cuentan solo como totales. Los socios nunca reciben información de los miembros.',
+                need: 'Agrega el nombre del negocio y la oferta para miembros.', needAck: 'Confirma que el consejo es responsable de esta alianza.', past: 'La fecha final ya pasó.',
+                added: '{name} ya está en el hub y en cada sitio local.', addedFull: ' Los lugares destacados estaban llenos, así que quedó en la lista normal.', full: 'Los {m} lugares destacados están ocupados.',
+                featOn: 'Ahora es destacado.', featOff: 'Pasó a la lista normal.', removed: '{name} ya no está en ningún sitio.', view: 'Verlo en el hub →', locals: 'La lista propia de cada local:', localLink: 'Local {n} →',
+                namePh: 'Ejemplo: Café de la Esquina', offerPh: 'Ejemplo: 10% de descuento para miembros de ATU. Muestra tu tarjeta sindical.' } }
   },
   // Bargaining survey. base = sample count of members who put the issue in their top 3.
   survey: {
@@ -2128,7 +2165,7 @@ function renderTabs() {
 }
 
 /* Fixed page text: remember each English text node and attribute once, then swap from strings[lang].static. */
-const DYNAMIC = '#console-form,#console-sent,#survey-body,#newhire-body,#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
+const DYNAMIC = '#partners,#console-form,#console-sent,#survey-body,#newhire-body,#hero-map,.nj-glyph,#posts,#rights-list,#fight-rows,#wins-grid,#cope-counters,#steps,#docs,#safety-steps,#events-list,#benefits-list,#spots,#wall-grid,#locals-list,#map,#tabbar,#toast';
 const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
 const fixedText = [], fixedAttrs = [];
 const norm = (x) => x.replace(/\s+/g, ' ').trim();
@@ -2163,7 +2200,7 @@ function renderAll() {
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
   renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
-  renderSurvey(); renderNewHires(); renderConsoleForm(); renderConsoleSent();
+  renderSurvey(); renderNewHires(); renderConsoleForm(); renderConsoleSent(); renderPartnersSection();
 }
 
 function applyStrings() {
@@ -2183,13 +2220,27 @@ function applyStrings() {
 const cc = { urgent: false, title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false,
              startMode: 'now', startAt: '', endAt: '', tab: 'sent', editing: null, edit: {}, pullArm: null, subNotes: {}, logFilter: 'all' };
 const CF = () => window.CouncilFeed;
+const PARTNERS_UI = {
+  en: { eyebrow: '◆ Member benefits & partners', titleHub: 'Statewide partners', ledeHub: 'Businesses that back every member of all nine locals. Show your union card to get the deal.',
+        featured: 'Featured partner', partner: 'Partner', cta: 'Get the deal', sample: 'Sample', statewide: '◆ Statewide partners · from the ATU NJ State Council',
+        fine: 'Partners support the union. Each business sets its own offer. Partners never receive member information.' },
+  es: { eyebrow: '◆ Beneficios y socios para miembros', titleHub: 'Socios estatales', ledeHub: 'Negocios que apoyan a cada miembro de los nueve locales. Muestra tu tarjeta sindical para obtener la oferta.',
+        featured: 'Socio destacado', partner: 'Socio', cta: 'Ver la oferta', sample: 'Muestra', statewide: '◆ Socios estatales · del Consejo Estatal de ATU NJ',
+        fine: 'Los socios apoyan al sindicato. Cada negocio fija su propia oferta. Los socios nunca reciben información de los miembros.' }
+};
+function renderPartnersSection() {
+  const el = $('#partners'); if (!el || !CF()) return;
+  CF().ensurePartnerCSS(); CF().wirePartnerClicks();
+  el.innerHTML = CF().partnersHTML('council', { lang: state.lang, t: PARTNERS_UI[state.lang] });
+}
 const CU = () => CONTENT.console[state.lang];
 const LOC = () => (state.lang === 'es' ? 'es-US' : 'en-US');
 const when = (ms, withTime) => new Date(ms).toLocaleString(LOC(), withTime === false ? { month: 'short', day: 'numeric', year: 'numeric' } : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 const nf = (n) => Number(n || 0).toLocaleString(LOC());
 const ACTIONS_ES = { 'sent': 'enviado', 'sent urgent': 'urgente enviado', 'approved': 'aprobado', 're-approved': 'reaprobado', 'declined': 'rechazado', 'removed': 'retirado',
   'pulled': 'retirado de todos', 'corrected': 'corregido', 'reminded': 'recordatorio', 'passed to backup': 'pasado al suplente', 'submitted': 'enviado al consejo',
-  'routed submission': 'reenviado por el consejo', 'declined submission': 'pedido rechazado', 'replied': 'respondido', 'asked to verify contacts': 'pidió verificar contactos', 'verified contacts': 'contactos verificados' };
+  'routed submission': 'reenviado por el consejo', 'declined submission': 'pedido rechazado', 'replied': 'respondido', 'asked to verify contacts': 'pidió verificar contactos', 'verified contacts': 'contactos verificados',
+  'added partner': 'socio agregado', 'removed partner': 'socio quitado', 'featured partner': 'socio destacado', 'unfeatured partner': 'socio ya no destacado' };
 
 function renderConsoleForm() {
   const u = CU();
@@ -2316,6 +2367,40 @@ function renderDirTab() {
   }).join('');
   return `<p class="cc-sim" style="margin-top:0">${esc(u.dirNote)}</p><div class="cc-table-wrap"><table class="cc-table"><thead><tr>${u.dirCols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+const ptd = { name: '', offer: '', offerEs: '', url: '', cat: 'finance', featured: false, endAt: '', ack: false, confirm: null };
+function renderPartnersTab() {
+  const u = CU(), v = u.pt, F = CF(), list = F.partnersAdmin('council'), M = F.FEATURED_MAX;
+  const featN = list.filter((p) => p.featured && F.partnerWindow(p) !== 'ended').length, full = featN >= M;
+  const rows = list.map((p) => {
+    const [bg, fg] = F.swatch(p.name), w = F.partnerWindow(p);
+    const offer = state.lang === 'es' && p.offerEs ? p.offerEs : p.offer;
+    return `<article class="cc-post cc-pt${p.featured ? ' feat' : ''}">
+        <div class="cc-pt-main"><span class="cc-pt-logo" style="background:${bg};color:${fg}" aria-hidden="true">${esc(F.mono(p.name))}</span>
+          <div><div class="tt">${esc(p.name)}</div><p class="cc-body" style="margin-top:4px">${esc(offer)}</p>
+          <div class="mt"><span class="cc-tag${w === 'active' ? '' : ' i'}">${esc(w === 'active' ? v.on : w === 'scheduled' ? v.later : v.ended)}</span>${p.featured ? `<span class="cc-due" style="margin:0;background:var(--nj-buff)">${esc(v.featured)}</span>` : ''}${p.sample ? `<span class="cc-due" style="margin:0">${esc(v.sample)}</span>` : ''}<span>${esc((F.CATS[p.cat] || F.CATS.other)[state.lang])}</span><span>${esc(v.clicks.replace('{n}', nf(p.clicks)))}</span>${p.endAt ? `<span>${esc(v.ends.replace('{d}', when(p.endAt, false)))}</span>` : ''}</div></div></div>
+        <div class="cc-links"><button type="button" class="action-btn" data-cc="pt-feature" data-id="${esc(p.id)}"${!p.featured && full ? ' disabled' : ''}>${esc(p.featured ? v.unfeature : v.feature)}</button>
+          <button type="button" class="action-btn${ptd.confirm === p.id ? ' solid' : ''}" data-cc="pt-remove" data-id="${esc(p.id)}">${esc(ptd.confirm === p.id ? v.removeConfirm : v.remove)}</button></div>
+      </article>`;
+  }).join('');
+  const cats = Object.entries(F.CATS).map(([k, c]) => `<option value="${k}"${ptd.cat === k ? ' selected' : ''}>${esc(c[state.lang])}</option>`).join('');
+  return `<p class="cc-sim" style="margin-top:16px">${esc(v.intro)}</p>
+    <div class="cc-pt-count">${esc(v.onList.replace('{n}', list.length).replace('{f}', featN).replace('{m}', M))} · <a class="cc-mini" href="#partners">${esc(v.view)}</a></div>
+    ${rows}
+    <form class="cc-form cc-pt-form" data-form="partner" novalidate>
+      <div class="tt" style="font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase">${esc(v.add)}</div>
+      <div class="cc-when"><label class="sv-field">${esc(v.name)}<input class="sv-input" name="name" maxlength="60" value="${esc(ptd.name)}" placeholder="${esc(v.namePh)}"></label>
+        <label class="sv-field">${esc(v.url)}<input class="sv-input" name="url" inputmode="url" value="${esc(ptd.url)}" placeholder="example.com"></label></div>
+      <label class="sv-field">${esc(v.offer)}<input class="sv-input" name="offer" maxlength="140" value="${esc(ptd.offer)}" placeholder="${esc(v.offerPh)}"></label>
+      <label class="sv-field">${esc(v.offerEs)}<input class="sv-input" name="offerEs" maxlength="160" lang="es" value="${esc(ptd.offerEs)}"></label>
+      <div class="cc-when"><label class="sv-field">${esc(v.cat)}<select class="sv-input" name="cat">${cats}</select></label>
+        <label class="sv-field">${esc(v.end)}<input class="sv-input" type="date" name="endAt" value="${esc(ptd.endAt)}"></label></div>
+      <label class="cc-check"><input type="checkbox" name="featured"${ptd.featured ? ' checked' : ''}${full ? ' disabled' : ''}><span>${esc((full ? v.featFull : v.feat).replace('{m}', M))}</span></label>
+      <label class="cc-check cc-ack"><input type="checkbox" name="ack"${ptd.ack ? ' checked' : ''}><span>${esc(v.ack)}</span></label>
+      <button type="submit" class="btn btn-red">${esc(v.submit)}</button>
+      <p class="cc-sim" style="margin:0">${esc(v.fine)}</p>
+    </form>
+    <div class="cc-pt-locals"><span>${esc(v.locals)}</span>${F.ALL.map((n) => `<a class="cc-mini" href="/preview-${n}/#partners">${esc(v.localLink.replace('{n}', n))}</a>`).join('')}</div>`;
+}
 function renderLogTab() {
   const u = CU(), F = CF();
   let rows = F.log();
@@ -2336,10 +2421,10 @@ function renderConsoleSent() {
   const pendingSubs = F.subs().filter((s) => s.state === 'pending').length;
   const due = F.ALL.filter((n) => F.contacts(n).verifyDue && !F.contacts(n).requestedAt).length;
   const tab = (k, label, badge) => `<button type="button" role="tab" class="cc-tab" data-tab="${k}" aria-selected="${cc.tab === k}">${esc(label)}${badge ? ` <span class="cc-badge">${badge}</span>` : ''}</button>`;
-  const panel = { sent: renderSentTab, from: renderFromTab, dir: renderDirTab, log: renderLogTab }[cc.tab]();
+  const panel = { sent: renderSentTab, from: renderFromTab, dir: renderDirTab, partners: renderPartnersTab, log: renderLogTab }[cc.tab]();
   $('#console-sent').innerHTML = `<div class="cc-sent">
       <div class="cc-sent-head">
-        <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('log', u.tabs.log, 0)}</div>
+        <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('partners', u.tabs.partners, F.partnersAdmin('council').length)}${tab('log', u.tabs.log, 0)}</div>
         <div class="cc-tools"><span class="cc-clock">${esc(u.clock)}</span><button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button></div>
       </div>
       <div class="cc-panel" role="tabpanel">${panel}</div>
@@ -2348,7 +2433,7 @@ function renderConsoleSent() {
 const busy = () => cc.editing || (document.activeElement && document.activeElement.closest && document.activeElement.closest('#console-sent textarea, #console-sent select, #console-sent input'));
 function wireConsole() {
   if (!CF()) return;
-  CF().onChange(() => { if (!busy()) renderConsoleSent(); });
+  CF().onChange(() => { if (!busy()) renderConsoleSent(); renderPartnersSection(); });
   setInterval(() => { CF().tick(); if (!busy() && ['sent', 'log', 'dir'].includes(cc.tab)) renderConsoleSent(); }, 1000);
   const form = () => $('#console-form form');
   document.addEventListener('input', (ev) => {
@@ -2356,10 +2441,12 @@ function wireConsole() {
     if (t.closest('[data-form="council"]') && ['title', 'body', 'titleEs', 'bodyEs', 'startAt', 'endAt'].includes(t.name)) cc[t.name] = t.value;
     if (t.closest('[data-form="correct"]')) cc.edit[t.name] = t.value;
     if (t.dataset.subnote) cc.subNotes[t.dataset.subnote] = t.value;
+    if (t.closest('[data-form="partner"]') && ['name', 'offer', 'offerEs', 'url', 'endAt'].includes(t.name)) ptd[t.name] = t.value;
   });
   document.addEventListener('change', (ev) => {
     const t = ev.target;
     if (t.dataset.logfilter !== undefined) { cc.logFilter = t.value; renderConsoleSent(); return; }
+    if (t.closest('[data-form="partner"]')) { ptd[t.name] = t.type === 'checkbox' ? t.checked : t.value; return; }
     if (!t.closest('[data-form="council"]')) return;
     if (t.name === 'kind') cc.urgent = t.value === 'urgent';
     if (t.name === 't') cc.targets = [...form().querySelectorAll('input[name=t]:checked')].map((i) => i.value);
@@ -2387,6 +2474,11 @@ function wireConsole() {
       toast(a === 'decline-sub' ? u.declinedMsg : (s.kind === 'issue' ? u.handledMsg : u.routed));
       renderConsoleSent();
     }
+    if (a === 'pt-feature') { const p = F.partnersAdmin('council').find((x) => x.id === id); const r = F.setFeatured(id, !p.featured); ptd.confirm = null; toast(r.error === 'full' ? u.pt.full.replace('{m}', F.FEATURED_MAX) : (p.featured ? u.pt.featOn : u.pt.featOff)); renderConsoleSent(); }
+    if (a === 'pt-remove') {
+      if (ptd.confirm !== id) { ptd.confirm = id; setTimeout(() => { if (ptd.confirm === id) { ptd.confirm = null; renderConsoleSent(); } }, 4000); renderConsoleSent(); }
+      else { const p = F.removePartner(id); ptd.confirm = null; toast(u.pt.removed.replace('{name}', p ? p.name : '')); renderConsoleSent(); }
+    }
     if (a === 'verify') { F.requestVerify(b.dataset.n); toast(u.askedMsg.replace('{n}', b.dataset.n)); renderConsoleSent(); }
     if (a === 'csv') {
       const blob = new Blob([F.exportCSV()], { type: 'text/csv' });
@@ -2402,6 +2494,19 @@ function wireConsole() {
       if (!String(e.title || '').trim() || !String(e.body || '').trim()) { toast(u.needTitle); return; }
       const p = CF().correct(f.dataset.id, e);
       cc.editing = null; toast(p && p.urgent ? u.correctedUrgent : u.corrected); renderConsoleSent();
+      return;
+    }
+    if (f.closest('[data-form="partner"]')) {
+      ev.preventDefault();
+      const v = CU().pt;
+      if (!ptd.name.trim() || !ptd.offer.trim()) { toast(v.need); return; }
+      if (!ptd.ack) { toast(v.needAck); return; }
+      const endAt = ptd.endAt ? new Date(ptd.endAt + 'T23:59:59').getTime() : null;
+      if (endAt && endAt < Date.now()) { toast(v.past); return; }
+      const r = CF().addPartner('council', Object.assign({}, ptd, { endAt }));
+      Object.assign(ptd, { name: '', offer: '', offerEs: '', url: '', cat: 'finance', featured: false, endAt: '', ack: false });
+      if (document.activeElement) document.activeElement.blur();
+      toast(v.added.replace('{name}', r.partner.name) + (r.featuredFull ? v.addedFull : '')); renderConsoleSent();
       return;
     }
     if (!f.closest('[data-form="council"]')) return;

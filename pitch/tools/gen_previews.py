@@ -403,6 +403,9 @@ def page(l):
   </div>
 </section>
 
+<!-- Member benefits & partners: each local manages its own list; statewide council partners show in a row (see /council-feed.js) -->
+<section class="partners-mount" id="partners" aria-label="Member benefits and partners"></section>
+
 <!-- Council strip -->
 <section class="council-strip" aria-label="NJ State Council locals">
   <div class="wrap">
@@ -483,7 +486,7 @@ function smsSubmit(ev){{
 }}
 </script>
 <script src="/council-feed.js"></script>
-<script>CouncilFeed.mountLocal('{n}', {{ alert: '#council-alert', pinned: '#council-pinned', grid: '.news-grid' }});</script>
+<script>CouncilFeed.mountLocal('{n}', {{ alert: '#council-alert', pinned: '#council-pinned', grid: '.news-grid' }}); CouncilFeed.mountPartners('#partners', '{n}');</script>
 </body>
 </html>
 '''
