@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06101F">
+<title>NJ Council Hub | ATU New Jersey State Council</title>
+<meta name="description" content="News, events and notices from the ATU New Jersey State Council, delivered to all nine ATU locals.">
+<!--
+  NJ Council Hub: working frontend demo
+  Built by Futreeng LLC for the ATU New Jersey State Council.
+
+  How this file is organized:
+    1. <style>   design tokens, layout, components, responsive rules
+    2. <body>    page markup, section by section (each section has an id)
+    3. <script>  CONTENT (all editable data lives in one block), then rendering and interactions
+
+  Content rules for this demo:
+    - Only Orlando Riley (Chairman, Local 819) and Geraldo Arroyo (VP, Local 822) are named as officers.
+    - Local 819 meetings (Oct 20, Nov 17, Dec 15, 2026, 10 AM and 7 PM) are the only real content.
+    - Everything else is sample content and carries a SAMPLE label.
+-->
+<style>
+/*FONTS*/
+
+/* ---------- 1. Tokens ---------- */
+:root{
+  --navy:#0C1A33;
+  --navy-deep:#06101F;
+  --panel:#13284D;
+  --panel-2:#102344;
+  --red:#D7263D;
+  --red-dark:#B81E33;
+  --ink:#F2F4F8;
+  --muted:#C5CDDB;
+  --dim:#8FA2C4;
+  --line:rgba(255,255,255,.14);
+  --line-soft:rgba(255,255,255,.1);
+  --status:#2F5DA8;
+  --sample:#F2C14E;
+
+  --display:'Barlow Condensed','Arial Narrow',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+
+  --pad:48px;
+  --max:1344px;
+  --gutter:max(var(--pad), calc((100vw - var(--max)) / 2 + var(--pad)));
+}
+
+/* ---------- 2. Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(16px + env(safe-area-inset-top, 0px));background:var(--navy-deep);color-scheme:dark}
+:root{padding-top:env(safe-area-inset-top, 0px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--navy);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--red)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--sample);outline-offset:3px}
+img,svg{display:block;max-width:100%}
+
+.wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
+.section{padding-top:64px;padding-bottom:64px;border-bottom:1px solid var(--line)}
+.deep{background:var(--navy-deep)}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-transform:uppercase}
+.eyebrow.red{color:var(--red)}
+.h2{font-weight:800;font-size:56px;line-height:.95;text-transform:uppercase;margin:10px 0 0}
+.lede{font-family:var(--body);font-size:16px;line-height:1.55;color:var(--muted);max-width:60ch;text-wrap:pretty}
+.mono{font-family:var(--mono)}
+
+.sample{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--navy);background:var(--sample);padding:3px 7px;line-height:1.2;vertical-align:middle;text-transform:uppercase}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;padding:14px 22px;border:2px solid var(--ink);transition:background .15s,color .15s}
+.btn-light{background:var(--ink);color:var(--navy)}
+.btn-light:hover{background:#fff;color:var(--red)}
+.btn-ghost:hover{background:var(--ink);color:var(--navy)}
+.btn-red{background:var(--red);border-color:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-dark);border-color:var(--red-dark);color:#fff}
+.link-mono{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.link-mono:hover{color:var(--ink);text-decoration:underline}
+
+.stripes{background:repeating-linear-gradient(135deg,var(--panel) 0 22px,var(--panel-2) 22px 44px)}
+.ph{position:absolute;left:20px;top:20px;max-width:380px;margin-right:20px;background:rgba(6,16,31,.88);border:1px dashed rgba(255,255,255,.4);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.ph.bottom{top:auto;bottom:16px;left:16px}
+.ph-label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sample)}
+.ph-title{font-family:var(--display);font-weight:800;font-size:22px;line-height:1;text-transform:uppercase;color:var(--ink)}
+.ph-text{font-family:var(--body);font-size:14px;line-height:1.45;color:var(--muted)}
+.ph.compact{left:12px;right:12px;bottom:12px;top:auto;max-width:none;margin:0;padding:10px 12px;gap:4px}
+.ph.compact .ph-title{font-size:18px}
+.ph.compact .ph-text{font-size:12px}
+.logo-mark{display:inline-flex;align-items:center;height:34px;padding:0 8px;background:var(--red);color:#fff;font-weight:800;font-size:22px;letter-spacing:.06em;line-height:1}
+
+/* ---------- 3. Top bar and header ---------- */
+.topbar{background:var(--navy-deep);border-bottom:3px solid var(--red);font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:10px;padding-bottom:10px}
+.officers{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.officers b{color:var(--ink);font-weight:500}
+.officers .role{color:var(--dim)}
+.officers .sep{width:1px;height:14px;background:rgba(255,255,255,.25)}
+.topbar-right{display:flex;gap:16px;align-items:center;white-space:nowrap}
+
+.lang{display:flex;border:1px solid rgba(255,255,255,.35)}
+.lang button{padding:4px 10px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--navy)}
+
+.header{border-bottom:1px solid var(--line)}
+.header .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:18px;padding-bottom:18px}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-name{display:flex;flex-direction:column;line-height:1}
+.brand-name strong{font-weight:800;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
+.brand-name span{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px}
+.nav{display:flex;gap:28px;font-weight:600;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.nav a:hover{color:#fff}
+.header-actions{display:flex;gap:10px;font-family:var(--mono);font-size:13px}
+.header-actions .signin{border:1px solid rgba(255,255,255,.4);padding:10px 14px}
+.header-actions .signin:hover{border-color:var(--ink)}
+.header-actions .steward{background:var(--red);padding:10px 14px;font-weight:600;color:#fff}
+.header-actions .steward:hover{background:var(--red-dark);color:#fff}
+.header .lang{display:none}
+
+/* ---------- 4. Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);min-height:680px}
+.hero-copy{padding:56px var(--pad) 48px var(--gutter);display:flex;flex-direction:column;justify-content:flex-start;gap:28px}
+.hero-copy-inner{max-width:640px}
+.hero h1{font-weight:800;font-size:104px;line-height:.92;text-transform:uppercase;margin:16px 0 0}
+.hero h1 span{display:block;color:var(--red)}
+.hero p{font-family:var(--body);font-size:19px;line-height:1.55;color:var(--muted);max-width:540px;margin:22px 0 0;text-wrap:pretty}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-photo{position:relative;min-height:680px;overflow:hidden}
+.hero-photo .tag{position:absolute;left:0;bottom:0;background:var(--red);padding:14px 22px;font-weight:800;font-size:24px;text-transform:uppercase;letter-spacing:.02em}
+
+/* ---------- 5. Alert band ---------- */
+.alert{background:var(--red)}
+.alert .wrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:32px;padding-top:22px;padding-bottom:22px}
+.alert strong{display:block;font-weight:800;font-size:32px;text-transform:uppercase;line-height:1.05}
+.alert span{font-family:var(--body);font-size:16px}
+.alert .btn{background:var(--ink);color:var(--navy);border-color:var(--ink)}
+.alert .btn:hover{background:#fff;color:var(--red)}
+
+
+/* ---------- 6. About ---------- */
+.about{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;padding-top:56px;padding-bottom:40px}
+.about-copy{font-family:var(--body);font-size:17px;line-height:1.6;color:var(--muted);margin:14px 0 0;max-width:62ch;text-wrap:pretty}
+.officer-cards{display:flex;gap:32px;flex-wrap:wrap;margin-top:24px}
+.officer{display:flex;align-items:center;gap:16px}
+.initials{width:72px;height:72px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;letter-spacing:.04em}
+.officer-text{display:flex;flex-direction:column;gap:2px;border-left:3px solid var(--red);padding-left:12px}
+.officer-text .role{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim)}
+.officer-text .name{font-weight:800;font-size:28px;line-height:1}
+.officer-text .where{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.officer.vp .initials{border-color:var(--ink)}
+.officer.vp .officer-text{border-left-color:var(--ink)}
+.stats{display:grid;grid-template-columns:1fr 1fr;align-content:start;border:1px solid var(--line)}
+.stat{padding:20px 22px;border-bottom:1px solid var(--line)}
+.stat:nth-child(odd){border-right:1px solid var(--line)}
+.stat.wide{grid-column:1 / -1;border-right:0;border-bottom:0}
+.stat .num{font-weight:800;font-size:40px;line-height:1}
+.stat .wide-title{font-weight:800;font-size:26px;line-height:1.1}
+.stat .cap{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px}
+
+/* ---------- 7. Board ---------- */
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.board-head .h2{font-size:40px;margin:0}
+.board-cols,.post{display:grid;grid-template-columns:110px 1fr 200px 140px;align-items:center}
+.board-cols{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.2)}
+.board-cols span:last-child,.post .status{text-align:right}
+.post{padding:20px 0;border-bottom:1px solid var(--line-soft)}
+.post .date{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.post .title{font-weight:700;font-size:26px;line-height:1.1}
+.post .meta{display:flex;gap:10px;align-items:center;margin-top:6px;font-family:var(--body);font-size:14px;color:var(--dim)}
+.post .reach{font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.arrived{display:inline-block;background:var(--status);color:#fff;font-family:var(--mono);font-size:12px;padding:4px 8px}
+
+/* ---------- 8. Two-column sections (rights, benefits) ---------- */
+.split{display:grid;grid-template-columns:1fr 2fr;gap:48px}
+.split-intro{display:flex;flex-direction:column;gap:16px}
+.steward-box{background:var(--ink);color:var(--navy);padding:22px;display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.steward-box strong{font-weight:800;font-size:26px;text-transform:uppercase}
+.steward-box span{font-family:var(--body);font-size:14px;line-height:1.5}
+.steward-box .btn{align-self:flex-start;font-size:16px;padding:10px 16px}
+
+.cards-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+.right{padding:22px 22px 28px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.right:nth-child(3n){border-right:0}
+.right .n{font-family:var(--mono);font-size:12px;color:var(--red)}
+.right .t{font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}
+.right .b{font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted)}
+
+.cards-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.benefit{display:flex;gap:16px;padding:22px;border-bottom:1px solid var(--line)}
+.benefit:nth-child(odd){border-right:1px solid var(--line)}
+.benefit .bar{width:6px;align-self:stretch;max-height:44px;background:var(--red);flex:none}
+.benefit .t{display:block;font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}
+.benefit .b{display:block;font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted);margin-top:6px}
+
+/* ---------- 9. Contract ---------- */
+.contract{display:grid;grid-template-columns:1.4fr 1fr;gap:48px}
+.steps{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:28px}
+.steps-track{position:absolute;left:14px;right:calc(25% - 14px);top:12px;height:6px;background:rgba(255,255,255,.2)}
+.steps-fill{position:absolute;left:14px;top:12px;height:6px;background:var(--red)}
+.step{position:relative;display:flex;flex-direction:column;gap:6px;padding-right:12px}
+.step .ring{width:30px;height:30px;border-radius:50%;border:6px solid var(--red);background:var(--red)}
+.step.current .ring{background:var(--navy)}
+.step.pending .ring{border-color:rgba(255,255,255,.3);background:var(--navy)}
+.step .label{font-weight:800;font-size:22px;text-transform:uppercase;line-height:1;margin-top:8px}
+.step .note{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.contract .lede{margin-top:28px}
+.docs{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.doc{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.doc .t{display:block;font-weight:700;font-size:24px;line-height:1.1}
+.doc .m{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:4px}
+.doc button{border:1px solid rgba(255,255,255,.5);padding:8px 12px;font-family:var(--mono);font-size:13px;white-space:nowrap}
+.doc button:hover{background:var(--ink);color:var(--navy)}
+
+/* ---------- 10. Safety ---------- */
+.safety{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:stretch}
+.safety-photo{min-height:460px}
+.safety-steps{display:flex;flex-direction:column;margin-top:8px}
+.sstep{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.sstep .n{font-weight:800;font-size:44px;line-height:.9;color:var(--red)}
+.sstep .t{display:block;font-weight:700;font-size:26px;line-height:1.1}
+.sstep .b{display:block;font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted);margin-top:4px}
+.safety-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.safety-actions .btn{font-size:16px;padding:12px 18px}
+
+/* ---------- 11. Events ---------- */
+.events-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.event{background:var(--navy);padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:22px;min-height:240px}
+.event .dates{display:flex;flex-wrap:wrap;gap:8px 28px}
+.event .when{display:flex;align-items:baseline;gap:8px}
+.event .day{font-weight:800;font-size:56px;line-height:.9}
+.event .mon{font-weight:700;font-size:20px;text-transform:uppercase;color:var(--red)}
+.event .t{display:block;font-weight:700;font-size:24px;line-height:1.1;margin-top:10px}
+.event .w{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.5;margin-top:8px}
+.event .sample{margin-top:12px}
+.event-foot{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rsvp{border:2px solid var(--ink);padding:8px 14px;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.rsvp[aria-pressed="true"]{background:var(--ink);color:var(--navy)}
+.rsvp:hover{border-color:var(--red)}
+.going{font-family:var(--mono);font-size:12px;color:var(--dim)}
+
+/* ---------- 12. Spotlight and wall ---------- */
+.spots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:28px}
+.spot .photo{position:relative;aspect-ratio:4 / 4.2}
+.spot .badge{position:absolute;left:0;top:0;background:var(--red);font-weight:800;font-size:16px;letter-spacing:.04em;text-transform:uppercase;padding:6px 12px}
+.spot .name{display:block;font-weight:800;font-size:28px;text-transform:uppercase;margin-top:16px;line-height:1}
+.spot .meta{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:6px}
+.spot .b{display:block;font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted);margin-top:8px}
+
+.wall-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.wall-head .h2{margin:0}
+.wall{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:220px 220px;gap:8px}
+.tile{position:relative}
+.tile:first-child{grid-row:1 / 3}
+.tile figcaption{margin:0}
+
+/* ---------- 13. Ride to your local ---------- */
+.ride{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:48px}
+.map{margin-top:24px;border:1px solid rgba(255,255,255,.25);background:var(--navy)}
+.map svg{width:100%;height:auto}
+.map .lbl{font-family:var(--display);font-weight:800;font-size:17px;fill:var(--ink)}
+.map .sub{font-family:var(--mono);font-size:9px;fill:var(--muted)}
+.map a:hover circle.stop-dot{stroke:var(--red)}
+.map a:focus-visible{outline:none}
+.map a:focus-visible circle.stop-dot{stroke:var(--sample);stroke-width:5}
+.locals{display:grid;grid-template-columns:1fr 1fr;align-content:start;border-top:1px solid var(--line)}
+.local{display:flex;gap:16px;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);scroll-margin-top:24px}
+.local:nth-child(odd){border-right:1px solid var(--line)}
+.local:hover{background:var(--panel);color:var(--ink)}
+.local:target{background:var(--panel);box-shadow:inset 4px 0 0 var(--red)}
+.local .badge{width:54px;height:54px;flex:none;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px}
+.local .c{display:block;font-weight:800;font-size:24px;text-transform:uppercase;line-height:1}
+.local .g{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px}
+.local .s{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ---------- 14. Footer ---------- */
+.footer{border-top:6px solid var(--red)}
+.footer .wrap{display:flex;align-items:center;gap:24px;padding-top:40px;padding-bottom:40px}
+.seal{width:96px;height:96px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:22px;line-height:1;letter-spacing:.04em}
+.footer .slogan{display:block;font-weight:800;font-size:34px;text-transform:uppercase;line-height:1}
+.footer .aff{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
+.footer .logo-mark{margin-left:auto;height:40px;font-size:26px}
+.credit{font-family:var(--mono);font-size:11px;color:var(--dim);padding-bottom:28px}
+
+/* ---------- 15. Mobile tab bar and toast ---------- */
+.tabbar{display:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--navy);font-family:var(--body);font-size:15px;padding:12px 18px;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:opacity .2s,transform .2s;z-index:50;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 16. Responsive ---------- */
+@media (max-width:1200px){
+  .hero h1{font-size:88px}
+}
+@media (max-width:1040px){
+  :root{--pad:32px}
+  .header .wrap{flex-wrap:wrap}
+  .officers .sep{display:none}
+  .nav{order:3;width:100%;overflow-x:auto;gap:22px;padding-top:6px;font-size:17px}
+  .hero{grid-template-columns:1fr}
+  .hero-photo{min-height:320px}
+  .about,.contract,.ride{grid-template-columns:minmax(0,1fr)}
+  .contract>*{min-width:0}
+  .split{grid-template-columns:1fr;gap:32px}
+  .safety{grid-template-columns:1fr;gap:32px}
+  .safety-photo{min-height:260px}
+  .board-cols,.post{grid-template-columns:90px 1fr 150px 110px}
+  .spots{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  :root{--pad:18px}
+  body{padding-bottom:64px}
+  .section{padding-top:44px;padding-bottom:44px}
+  .h2{font-size:42px}
+  .topbar .wrap{padding-top:8px;padding-bottom:8px}
+  .officers{gap:6px 14px;font-size:11px}
+  .officers .sep,.topbar-right{display:none}
+  .header .wrap{flex-wrap:nowrap;padding-top:12px;padding-bottom:12px}
+  .header .lang{display:flex}
+  .header .lang button{padding:8px 10px}
+  .nav,.header-actions,.brand-name span{display:none}
+  .brand{gap:10px}
+  .brand-name strong{font-size:22px}
+  .hero-copy{padding:36px var(--pad) 32px}
+  .hero h1{font-size:60px}
+  .hero p{font-size:17px}
+  .hero-actions .btn{flex:1 1 auto}
+  .hero-photo{min-height:260px}
+  .ph{left:14px;top:14px;margin-right:14px;padding:12px 14px}
+  .ph-text{font-size:13px}
+  .wall .ph.compact .ph-text{display:none}
+  .hero-photo .tag{font-size:19px;padding:10px 16px}
+  .alert .wrap{grid-template-columns:1fr;gap:14px}
+  .alert strong{font-size:26px}
+  .alert .btn{width:100%}
+  .about{padding-top:40px}
+  .officer-cards{flex-direction:column;gap:18px}
+  .board-cols{display:none}
+  .post{grid-template-columns:1fr auto;gap:6px 12px;padding:16px 0}
+  .post .date{grid-column:1;grid-row:1;font-size:12px}
+  .post .status{grid-column:2;grid-row:1}
+  .post > div,.post .reach{grid-column:1 / -1}
+  .post .title{font-size:22px}
+  .post .reach{font-size:15px;color:var(--muted)}
+  .cards-3,.cards-2{grid-template-columns:1fr}
+  .right,.benefit{border-right:0!important}
+  .steps .label{font-size:14px;letter-spacing:-.01em;overflow-wrap:anywhere}
+  .step{padding-right:6px}
+  .step .note{font-size:10px}
+  .event{min-height:0}
+  .events{grid-template-columns:1fr}
+  .spots{grid-template-columns:1fr}
+  .spot .photo{aspect-ratio:16 / 9}
+  .map .lbl{font-size:22px}
+  .map .sub{font-size:12px}
+  .wall{grid-template-columns:1fr 1fr;grid-template-rows:200px 140px 140px}
+  .tile:first-child{grid-column:1 / 3;grid-row:auto}
+  .locals{grid-template-columns:1fr}
+  .local{border-right:0!important}
+  .footer .wrap{flex-wrap:wrap}
+  .footer .slogan{font-size:26px}
+  .footer .logo-mark{margin-left:0}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--navy-deep);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 12px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+  .tabbar a::before{content:"";width:24px;height:3px;background:transparent}
+  .tabbar a.active{color:var(--ink)}
+  .tabbar a.active::before{background:var(--red)}
+  .toast{bottom:84px}
+}
+
+/* ---------- 17. Design system additions (unification + new sections) ---------- */
+:root{ --local-accent: var(--red); }
+.accent-bar{display:inline-block;width:48px;height:4px;background:var(--local-accent);margin:0 0 14px}
+.action-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.action-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:2px solid var(--local-accent);color:var(--ink);background:transparent;transition:background .15s,color .15s;cursor:pointer}
+.action-btn:hover{background:var(--local-accent);color:#fff}
+.action-btn.solid{background:var(--local-accent);color:#fff}
+.action-btn.solid:hover{filter:brightness(1.1)}
+
+/* SMS signup - hero inline + banner + footer */
+.sms-card{background:var(--navy-deep);border:2px solid var(--local-accent);padding:20px 22px;display:flex;flex-direction:column;gap:10px;margin-top:20px;max-width:460px}
+.sms-card .sms-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--local-accent);text-transform:uppercase}
+.sms-card .sms-title{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.05;text-transform:uppercase}
+.sms-card .sms-sub{font-family:var(--body);font-size:13px;line-height:1.45;color:var(--muted)}
+.sms-form{display:flex;gap:8px;margin-top:6px}
+.sms-input{flex:1;min-width:0;background:var(--navy);color:var(--ink);border:1px solid rgba(255,255,255,.3);padding:12px 14px;font-family:var(--mono);font-size:14px;letter-spacing:.04em}
+.sms-input::placeholder{color:var(--dim)}
+.sms-input:focus{outline:none;border-color:var(--local-accent)}
+.sms-btn{background:var(--local-accent);color:#fff;border:2px solid var(--local-accent);font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 18px;white-space:nowrap;cursor:pointer}
+.sms-btn:hover{filter:brightness(1.1)}
+.sms-note{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.sms-footer{background:var(--local-accent);color:#fff;padding:28px 0}
+.sms-footer .wrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px}
+.sms-footer strong{display:block;font-family:var(--display);font-weight:800;font-size:32px;text-transform:uppercase;line-height:1.05}
+.sms-footer span.sub{font-family:var(--body);font-size:15px;opacity:.95}
+.sms-footer .sms-form{min-width:360px}
+.sms-footer .sms-input{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff}
+.sms-footer .sms-input::placeholder{color:rgba(255,255,255,.7)}
+.sms-footer .sms-btn{background:#fff;color:var(--local-accent);border-color:#fff}
+
+/* Contract scoreboard - THE FIGHT */
+.fight{background:var(--navy-deep)}
+.fight-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.fight-head .counter{font-family:var(--mono);font-size:14px;color:var(--sample);letter-spacing:.08em;text-transform:uppercase}
+.fight-head .counter b{color:var(--ink);font-weight:800;font-size:28px;letter-spacing:.04em;display:block;margin-top:4px}
+.fight-grid{display:grid;grid-template-columns:160px 1fr 1fr 140px;background:var(--line);gap:1px;border:1px solid var(--line)}
+.fight-head-row,.fight-row,#fight-rows{display:contents}
+.fight-cell{background:var(--navy);padding:16px 18px;font-family:var(--body);font-size:14px;color:var(--muted);line-height:1.4;display:flex;align-items:center}
+.fight-head-row .fight-cell{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;background:var(--navy-deep);padding:12px 18px}
+.fight-cell.topic{font-family:var(--display);font-weight:800;font-size:20px;text-transform:uppercase;color:var(--ink);letter-spacing:.02em;line-height:1}
+.fight-cell.offer{color:var(--muted)}
+.fight-cell.demand{color:var(--ink)}
+.fight-cell.status{align-items:center;justify-content:flex-start}
+.fight-status{display:inline-block;padding:4px 10px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.fs-impasse{background:var(--red);color:#fff}
+.fs-rejected{background:#8B1E2E;color:#fff}
+.fs-stalled{background:#5A4215;color:var(--sample)}
+.fs-counter{background:var(--status);color:#fff}
+.fs-offered{background:#1F6E3C;color:#fff}
+.fight-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:24px;flex-wrap:wrap}
+
+/* Wins board */
+.wins{background:var(--navy)}
+.wins-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.wins-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.win{background:var(--navy-deep);padding:24px;display:flex;flex-direction:column;gap:12px;position:relative;min-height:220px}
+.win::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--local-accent)}
+.win .win-stat{font-family:var(--display);font-weight:800;font-size:40px;line-height:.95;color:var(--ink);letter-spacing:.02em}
+.win .win-unit{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:-4px}
+.win .win-title{font-family:var(--body);font-weight:600;font-size:16px;line-height:1.4;color:var(--ink);flex:1}
+.win .win-meta{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;padding-top:10px;border-top:1px solid var(--line)}
+.win .win-meta b{color:var(--local-accent);font-weight:700}
+
+/* Organizing ladder */
+.ladder{background:var(--navy-deep)}
+.ladder-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.rung{background:var(--navy);padding:22px 20px;display:flex;flex-direction:column;gap:10px;position:relative;min-height:200px}
+.rung .rung-num{font-family:var(--mono);font-size:12px;color:var(--local-accent);letter-spacing:.1em}
+.rung .rung-title{font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;line-height:1;color:var(--ink)}
+.rung .rung-body{font-family:var(--body);font-size:13px;line-height:1.5;color:var(--muted);flex:1}
+.rung .rung-step{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--sample);text-transform:uppercase;margin-top:6px}
+.rung-arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--local-accent);clip-path:polygon(0 0,100% 50%,0 100%);z-index:2}
+.rung:last-child .rung-arrow{display:none}
+.ladder-cta{background:var(--navy);border:2px solid var(--local-accent);padding:28px;margin-top:24px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.ladder-cta strong{display:block;font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1.05}
+.ladder-cta span.sub{font-family:var(--body);font-size:14px;color:var(--muted);display:block;margin-top:6px}
+.ladder-cta .sms-form{min-width:380px}
+
+/* COPE / political action */
+.cope{background:var(--navy)}
+.cope-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.cope-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:24px}
+.cope-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.cope-local{background:var(--navy-deep);padding:16px 14px;display:flex;flex-direction:column;gap:4px}
+.cope-local .cl-num{font-family:var(--display);font-weight:800;font-size:22px;color:var(--ink);line-height:1}
+.cope-local .cl-city{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.cope-local .cl-bar{height:6px;background:var(--panel);margin:6px 0 2px;position:relative;overflow:hidden}
+.cope-local .cl-fill{position:absolute;left:0;top:0;bottom:0;background:var(--local-accent)}
+.cope-local .cl-pct{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.cope-local .cl-pct b{color:var(--ink);font-weight:700}
+.cope-action{background:var(--navy-deep);border:2px solid var(--local-accent);padding:28px;display:flex;flex-direction:column;gap:14px}
+.cope-action .ca-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--local-accent);text-transform:uppercase}
+.cope-action h3{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;margin:0;line-height:1.05}
+.cope-action .ca-script{background:var(--navy);border-left:3px solid var(--sample);padding:14px 16px;font-family:var(--body);font-size:14px;line-height:1.55;color:var(--muted);font-style:italic}
+.cope-action .ca-script b{color:var(--ink);font-style:normal;font-weight:600}
+.cope-action .ca-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+
+/* Expanded council governance */
+.gov{background:var(--navy-deep)}
+.gov-head{margin-bottom:28px}
+.gov-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;margin-top:12px}
+.gov-col h3{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;margin:0 0 14px;border-bottom:2px solid var(--local-accent);padding-bottom:8px}
+.gov-list{display:flex;flex-direction:column;gap:12px;font-family:var(--body);font-size:14px;line-height:1.4}
+.gov-list .row{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
+.gov-list .row:last-child{border-bottom:0}
+.gov-list .row .r-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.gov-list .row .r-value{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink);text-transform:uppercase;letter-spacing:.02em}
+.gov-list .row .r-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+/* Measurement teaser */
+.measure{background:var(--navy);border-top:2px solid var(--local-accent)}
+.measure-wrap{padding-top:48px;padding-bottom:48px}
+.measure-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.measure-head .h2{font-size:38px}
+.measure-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.metric{background:var(--navy-deep);padding:22px 18px;display:flex;flex-direction:column;gap:4px}
+.metric .m-num{font-family:var(--display);font-weight:800;font-size:36px;color:var(--ink);line-height:1}
+.metric .m-label{font-family:var(--mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;line-height:1.3}
+.metric .m-trend{font-family:var(--mono);font-size:11px;color:#5ec98a;margin-top:6px;letter-spacing:.04em}
+.metric .m-trend.flat{color:var(--dim)}
+.measure-foot{margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+
+/* Languages note (settings footer strip) */
+.lang-note{background:var(--navy-deep);padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.lang-note .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.lang-note .ln-l{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.lang-note .ln-l b{color:var(--sample)}
+.lang-note .ln-r{display:flex;gap:8px;flex-wrap:wrap}
+.lang-chip{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);background:var(--panel);padding:5px 10px;text-transform:uppercase;border:1px solid var(--line)}
+.lang-chip.soon{opacity:.55}
+
+/* Preview ribbon (used on preview-823, preview-825) */
+.preview-ribbon{background:var(--sample);color:var(--navy);padding:10px 0;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-align:center;font-weight:600}
+.preview-ribbon b{font-weight:800}
+.preview-ribbon a{color:var(--navy);text-decoration:underline;margin-left:12px}
+
+/* Council strip (shown on previews) */
+.council-strip{background:var(--navy-deep);padding:22px 0;border-top:3px solid var(--local-accent)}
+.council-strip .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.council-strip .cs-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.council-strip .cs-locals{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.council-strip .cs-local{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--muted);padding:4px 10px;border:1px solid var(--line);text-transform:uppercase}
+.council-strip .cs-local.self{color:#fff;background:var(--local-accent);border-color:var(--local-accent)}
+.council-strip .cs-local:hover{color:var(--ink);border-color:var(--muted)}
+
+/* Responsive adjustments for new sections */
+@media (max-width:1040px){
+  .fight-grid{grid-template-columns:1fr}
+  .fight-head-row{display:none}
+  .fight-cell{padding:12px 16px}
+  .fight-cell.topic{background:var(--navy-deep);font-size:18px;padding-top:16px}
+  .fight-row .fight-cell::before{content:attr(data-l) " · ";font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-right:8px}
+  .fight-row .fight-cell.topic::before,.fight-row .fight-cell.status::before{display:none}
+  .wins-grid{grid-template-columns:1fr 1fr}
+  .ladder-grid{grid-template-columns:1fr 1fr}
+  .rung-arrow{display:none}
+  .ladder-cta{grid-template-columns:1fr}
+  .ladder-cta .sms-form{min-width:0}
+  .cope-grid{grid-template-columns:1fr}
+  .gov-cols{grid-template-columns:1fr}
+  .measure-grid{grid-template-columns:repeat(2,1fr)}
+  .sms-footer .wrap{grid-template-columns:1fr}
+  .sms-footer .sms-form{min-width:0}
+}
+@media (max-width:720px){
+  .fight-head .counter b{font-size:22px}
+  .wins-grid{grid-template-columns:1fr}
+  .ladder-grid{grid-template-columns:1fr}
+  .cope-counters{grid-template-columns:1fr 1fr}
+  .measure-grid{grid-template-columns:1fr 1fr}
+  .sms-card{padding:16px 18px}
+  .sms-card .sms-title{font-size:20px}
+  .sms-form{flex-direction:column}
+  .sms-btn{padding:12px}
+  .ladder-cta{padding:20px}
+  .ladder-cta strong{font-size:22px}
+  .cope-action{padding:22px}
+  .cope-action h3{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= Top bar ======================= -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="officers">
+      <span><span class="role">CHAIRMAN</span>&nbsp;&nbsp;<b>Orlando Riley</b> · Local 819</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span><span class="role">VICE PRESIDENT</span>&nbsp;&nbsp;<b>Geraldo Arroyo</b> · Local 822</span>
+    </div>
+    <div class="topbar-right">
+      <span>Nearly 10,000 NJ Transit workers</span>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= Header ======================= -->
+<header class="header" id="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="NJ Council Hub home">
+      <span class="logo-mark" aria-hidden="true">ATU</span>
+      <span class="brand-name"><strong>NJ Council Hub</strong><span>ATU New Jersey State Council</span></span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#fight" data-i18n="nav0">The Fight</a>
+      <a href="#wins" data-i18n="nav1">Wins</a>
+      <a href="#contract" data-i18n="nav2">Contract</a>
+      <a href="#ladder" data-i18n="nav3">Get Involved</a>
+      <a href="#cope" data-i18n="nav4">COPE</a>
+      <a href="#locals" data-i18n="nav5">Locals</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="signin" data-soon>Sign in</button>
+      <a class="steward" href="#steward">☎ <span data-i18n="steward">Call a steward</span></a>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ======================= Hero ======================= -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <div class="hero-copy-inner">
+      <div class="eyebrow">NJ State Council → 9 locals · all stops</div>
+      <h1 id="hero-title"><span style="color:inherit" data-i18n="h1a">Every message.</span><span data-i18n="h1b">Every stop.</span></h1>
+      <p data-i18n="sub">The council posts once. It runs the whole line, landing on all nine ATU local websites across New Jersey.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-light" href="#board" data-i18n="board">Now broadcasting</a>
+      <a class="btn btn-ghost" href="#locals" data-i18n="findLocal">Find your local</a>
+    </div>
+    <form class="sms-card" data-sms="hero" onsubmit="return smsSubmit(event)">
+      <span class="sms-eyebrow">◆ Join the alert line <span class="sample" style="margin-left:6px">Sample</span></span>
+      <span class="sms-title">When we need you, we text you.</span>
+      <span class="sms-sub">When management shuts off the bulletin boards, this is how we reach 10,000 members in an hour. Phone number only. We never share it.</span>
+      <div class="sms-form">
+        <input class="sms-input" type="tel" placeholder="(555) 555-5555" inputmode="tel" autocomplete="tel" aria-label="Phone number">
+        <button class="sms-btn" type="submit">Sign up</button>
+      </div>
+      <span class="sms-note">Standard message rates may apply · Reply STOP to opt out</span>
+    </form>
+  </div>
+  <div class="hero-photo stripes" role="img" aria-label="Photo placeholder: operators in front of their buses at the garage">
+    <div class="ph"><span class="ph-label">Photo placeholder</span><span class="ph-title">Hero photo</span><span class="ph-text">Operators standing in front of their buses at a garage. This will be replaced with a real photo from one of the locals: wide landscape shot, at least 1600px across.</span></div>
+    <div class="tag">Union strong · Transit strong</div>
+  </div>
+</section>
+
+<!-- ======================= Alert ======================= -->
+<div class="alert">
+  <div class="wrap">
+    <div>
+      <strong data-i18n="alertT">Assaulted or threatened on your route?</strong>
+      <span data-i18n="alertB">Report it now. Your union has your back.</span>
+    </div>
+    <a class="btn" href="#safety"><span data-i18n="alertCta">Report an incident</span> →</a>
+  </div>
+</div>
+
+<!-- ======================= Contract Scoreboard - THE FIGHT ======================= -->
+<section class="fight section" id="fight" aria-labelledby="fight-title">
+  <div class="wrap">
+    <div class="fight-head">
+      <div>
+        <div class="eyebrow red">◆ The fight · right now <span class="sample">Sample</span></div>
+        <h2 class="h2" id="fight-title">What's at stake</h2>
+        <p class="lede" style="margin-top:14px">NJ Transit's contract with the ATU New Jersey State Council. What the union is demanding, what management is offering, where the fight stands.</p>
+      </div>
+      <div class="counter" aria-label="Days without a settled contract">
+        Days without a settled barrier upgrade
+        <b id="fight-counter">847</b>
+      </div>
+    </div>
+    <div class="fight-grid" role="table" aria-label="Contract demands versus offers">
+      <div class="fight-head-row" role="row">
+        <div class="fight-cell" role="columnheader">Topic</div>
+        <div class="fight-cell" role="columnheader">Union demand</div>
+        <div class="fight-cell" role="columnheader">NJT offer</div>
+        <div class="fight-cell" role="columnheader">Status</div>
+      </div>
+      <div id="fight-rows"></div>
+    </div>
+    <div class="fight-foot">
+      <div class="mono" style="font-size:12px;color:var(--dim)">Updated as the council posts bargaining bulletins</div>
+      <div class="action-row">
+        <a class="action-btn solid" href="#contract">Read the bargaining updates →</a>
+        <a class="action-btn" href="#cope">Call your rep in Trenton →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= About ======================= -->
+<section class="wrap about" aria-labelledby="about-title">
+  <div>
+    <h2 class="eyebrow" id="about-title" style="margin:0">About the council</h2>
+    <p class="about-copy">The ATU New Jersey State Council brings together the Amalgamated Transit Union locals that represent NJ Transit bus workers across the state: operators, mechanics and the people who keep New Jersey moving. The council coordinates bargaining, legislative work in Trenton and member advocacy for all nine locals.</p>
+    <div class="officer-cards">
+      <div class="officer">
+        <div class="initials" aria-hidden="true">OR</div>
+        <div class="officer-text"><span class="role">CHAIRMAN</span><span class="name">Orlando Riley</span><span class="where">ATU Local 819 · Newark</span></div>
+      </div>
+      <div class="officer vp">
+        <div class="initials" aria-hidden="true">GA</div>
+        <div class="officer-text"><span class="role">VICE PRESIDENT</span><span class="name">Geraldo Arroyo</span><span class="where">ATU Local 822</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">~10,000</div><div class="cap">NJ Transit workers represented</div></div>
+    <div class="stat"><div class="num">9</div><div class="cap">Locals statewide</div></div>
+    <div class="stat wide"><div class="wide-title">NJ Transit's largest union</div><div class="cap">Amalgamated Transit Union · AFL-CIO/CLC · since 1892</div></div>
+  </div>
+</section>
+
+<!-- ======================= Board ======================= -->
+<section class="deep section" id="board" aria-labelledby="board-title">
+  <div class="wrap">
+    <div class="board-head">
+      <h2 class="h2" id="board-title" data-i18n="board">Now broadcasting</h2>
+      <span class="mono" style="font-size:13px;color:var(--dim)">Updated as council posts</span>
+    </div>
+    <div class="board-cols" aria-hidden="true"><span>POSTED</span><span>MESSAGE</span><span>DESTINATION</span><span>STATUS</span></div>
+    <div id="posts"></div>
+  </div>
+</section>
+
+<!-- ======================= Rights ======================= -->
+<section class="section" id="rights" aria-labelledby="rights-title">
+  <div class="wrap split">
+    <div class="split-intro">
+      <div class="eyebrow">On the job <span class="sample">Sample</span></div>
+      <h2 class="h2" id="rights-title" style="margin:0" data-i18n="rights">Know your rights</h2>
+      <p class="lede" style="margin:0">Short answers for the situations operators run into most. When in doubt, don't sign anything and call your steward first.</p>
+      <div class="steward-box" id="steward">
+        <strong>☎ <span data-i18n="steward">Call a steward</span></strong>
+        <span>Pick your local and garage to reach the steward on duty.</span>
+        <button type="button" class="btn btn-red" data-soon>Find my steward →</button>
+      </div>
+    </div>
+    <div class="cards-3" id="rights-list"></div>
+  </div>
+</section>
+
+<!-- ======================= Contract ======================= -->
+<section class="section" id="contract" aria-labelledby="contract-title">
+  <div class="wrap contract">
+    <div>
+      <div class="eyebrow">NJ Transit bus agreement <span class="sample">Sample</span></div>
+      <h2 class="h2" id="contract-title" data-i18n="contract">Contract hub</h2>
+      <div class="steps" id="steps"></div>
+      <p class="lede">Ratification voting is underway at every local. Read the summary, check your garage's voting times, and bring your union card.</p>
+    </div>
+    <div class="docs" id="docs"></div>
+  </div>
+</section>
+
+<!-- ======================= Wins board ======================= -->
+<section class="wins section" id="wins" aria-labelledby="wins-title">
+  <div class="wrap">
+    <div class="wins-head">
+      <div>
+        <div class="eyebrow">◆ Receipts <span class="sample">Sample</span></div>
+        <h2 class="h2" id="wins-title">What the union delivered</h2>
+        <p class="lede" style="margin-top:14px">Union contracts are not promises. They are receipts. Here is what the nine locals and the council have won for members this year.</p>
+      </div>
+      <div class="action-row">
+        <a class="action-btn" href="#board">All council bulletins →</a>
+      </div>
+    </div>
+    <div class="wins-grid" id="wins-grid"></div>
+  </div>
+</section>
+
+<!-- ======================= Safety ======================= -->
+<section class="deep section" id="safety" aria-labelledby="safety-title">
+  <div class="wrap safety">
+    <div class="safety-photo stripes" role="img" aria-label="Photo placeholder: operator at the wheel, driver barrier visible" style="position:relative"><div class="ph"><span class="ph-label">Photo placeholder</span><span class="ph-title">Operator safety photo</span><span class="ph-text">An operator at the wheel with the driver safety barrier visible. This will be replaced with a real photo taken at an NJ Transit garage, with the operator's permission.</span></div></div>
+    <div>
+      <div class="eyebrow red">Every operator home safe <span class="sample">Sample</span></div>
+      <h2 class="h2" id="safety-title" data-i18n="safety">Operator safety</h2>
+      <div class="safety-steps" id="safety-steps"></div>
+      <div class="safety-actions">
+        <button type="button" class="btn btn-red" data-soon><span data-i18n="alertCta">Report an incident</span> →</button>
+        <button type="button" class="btn btn-ghost" data-soon>Safety alerts</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= Events ======================= -->
+<section class="section" id="events" aria-labelledby="events-title">
+  <div class="wrap">
+    <div class="events-head">
+      <div>
+        <div class="eyebrow">Show up · speak up</div>
+        <h2 class="h2" id="events-title" data-i18n="events">Events &amp; actions</h2>
+      </div>
+      <button type="button" class="link-mono" data-soon>Full calendar →</button>
+    </div>
+    <div class="events" id="events-list"></div>
+  </div>
+</section>
+
+<!-- ======================= Organizing ladder ======================= -->
+<section class="ladder section" id="ladder" aria-labelledby="ladder-title">
+  <div class="wrap">
+    <div class="eyebrow">◆ Build the local <span class="sample">Sample</span></div>
+    <h2 class="h2" id="ladder-title">Get involved</h2>
+    <p class="lede" style="margin-top:14px">Every strong local is built the same way: members become supporters, supporters become activists, activists become stewards, stewards become officers. Pick the next rung.</p>
+    <div class="ladder-grid" role="list">
+      <div class="rung" role="listitem">
+        <span class="rung-num">01</span>
+        <span class="rung-title">Member</span>
+        <span class="rung-body">Pay your dues, vote in elections, come to the monthly meeting at your local.</span>
+        <span class="rung-step">You are here if you're reading this →</span>
+        <span class="rung-arrow" aria-hidden="true"></span>
+      </div>
+      <div class="rung" role="listitem">
+        <span class="rung-num">02</span>
+        <span class="rung-title">Supporter</span>
+        <span class="rung-body">Sign up for the alert line, show up to rallies, wear your union pin on the job.</span>
+        <span class="rung-step">Takes 30 seconds →</span>
+        <span class="rung-arrow" aria-hidden="true"></span>
+      </div>
+      <div class="rung" role="listitem">
+        <span class="rung-num">03</span>
+        <span class="rung-title">Activist</span>
+        <span class="rung-body">Join a committee, help with phone banks, hand out leaflets at your garage, talk to new hires about the union.</span>
+        <span class="rung-step">Two hours a month →</span>
+        <span class="rung-arrow" aria-hidden="true"></span>
+      </div>
+      <div class="rung" role="listitem">
+        <span class="rung-num">04</span>
+        <span class="rung-title">Steward</span>
+        <span class="rung-body">Run for garage steward. Represent your crew in grievances. Training provided.</span>
+        <span class="rung-step">Elected by your garage →</span>
+        <span class="rung-arrow" aria-hidden="true"></span>
+      </div>
+      <div class="rung" role="listitem">
+        <span class="rung-num">05</span>
+        <span class="rung-title">Officer</span>
+        <span class="rung-body">Run for an office at your local or on the state council. Shape the next contract.</span>
+        <span class="rung-step">Elections every 3 years →</span>
+      </div>
+    </div>
+    <form class="ladder-cta" data-sms="ladder" onsubmit="return smsSubmit(event)">
+      <div>
+        <strong>I want to do more.</strong>
+        <span class="sub">Drop your number and your steward will reach out about the next rung. No commitment, no spam.</span>
+      </div>
+      <div class="sms-form">
+        <input class="sms-input" type="tel" placeholder="(555) 555-5555" inputmode="tel" autocomplete="tel" aria-label="Phone number">
+        <button class="sms-btn" type="submit">Count me in</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ======================= COPE / political action ======================= -->
+<section class="cope section deep" id="cope" aria-labelledby="cope-title">
+  <div class="wrap">
+    <div class="cope-head">
+      <div>
+        <div class="eyebrow red">◆ Political power <span class="sample">Sample</span></div>
+        <h2 class="h2" id="cope-title">COPE &amp; the Trenton fight</h2>
+        <p class="lede" style="margin-top:14px">Transit funding, assault laws, pension protection: every one is decided in Trenton. ATU-COPE is how transit workers pay for a seat at that table. Dollar-per-check, member-controlled, no corporate money.</p>
+      </div>
+    </div>
+    <div class="cope-grid">
+      <div>
+        <div class="mono" style="font-size:12px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">COPE participation by local</div>
+        <div class="cope-counters" id="cope-counters"></div>
+        <div class="action-row" style="margin-top:16px">
+          <button type="button" class="action-btn solid" data-soon>Sign up for COPE →</button>
+          <button type="button" class="action-btn" data-soon>How COPE works →</button>
+        </div>
+      </div>
+      <div class="cope-action">
+        <span class="ca-eyebrow">◆ Active campaign</span>
+        <h3>Call your senator today</h3>
+        <p style="font-family:var(--body);font-size:14px;color:var(--muted);line-height:1.5;margin:0">S-2140 (Operator Safety Act) raises assault on a transit worker to a second-degree offense and requires automatic 90-day paid leave. It's stuck in Senate Judiciary. One phone call per operator moves it.</p>
+        <div class="ca-script">
+          "Hi, I'm <b>[your name]</b>, a bus operator with ATU Local <b>[your local]</b>. I'm a constituent. I'm asking the senator to move S-2140, the Operator Safety Act, out of Judiciary this session. Transit workers are getting assaulted on the job and we need this bill to pass. Thank you."
+        </div>
+        <div class="ca-row">
+          <button type="button" class="action-btn solid" data-soon>Find my senator →</button>
+          <button type="button" class="action-btn" data-soon>Script in Spanish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= Benefits ======================= -->
+<section class="section" id="benefits" aria-labelledby="benefits-title">
+  <div class="wrap split">
+    <div class="split-intro">
+      <div class="eyebrow">What you've earned <span class="sample">Sample</span></div>
+      <h2 class="h2" id="benefits-title" style="margin:0" data-i18n="benefits">Benefits &amp; retirees</h2>
+      <p class="lede" style="margin:0">Retired members stay members. Retiree chapters meet monthly at several locals.</p>
+    </div>
+    <div class="cards-2" id="benefits-list"></div>
+  </div>
+</section>
+
+<!-- ======================= Member spotlight ======================= -->
+<section class="section" id="spotlight" aria-labelledby="spot-title">
+  <div class="wrap">
+    <div class="eyebrow">The people who move New Jersey <span class="sample">Sample</span></div>
+    <h2 class="h2" id="spot-title" data-i18n="spot">Member spotlight</h2>
+    <div class="spots" id="spots"></div>
+  </div>
+</section>
+
+<!-- ======================= Photo wall ======================= -->
+<section class="deep section" id="wall" aria-labelledby="wall-title">
+  <div class="wrap">
+    <div class="wall-head">
+      <h2 class="h2" id="wall-title" data-i18n="wall">From the locals</h2>
+      <button type="button" class="link-mono" data-soon>Locals: share your photos →</button>
+    </div>
+    <div class="wall" id="wall-grid"></div>
+  </div>
+</section>
+
+<!-- ======================= Council governance ======================= -->
+<section class="gov section" id="governance" aria-labelledby="gov-title">
+  <div class="wrap">
+    <div class="gov-head">
+      <div class="eyebrow">◆ Who runs the council <span class="sample">Officers listed are public; committees and delegates are Sample</span></div>
+      <h2 class="h2" id="gov-title">Council governance</h2>
+      <p class="lede" style="margin-top:14px">The ATU New Jersey State Council is a federation of nine locals, governed by elected officers and standing committees. Members elect delegates at each local. Delegates elect the executive board.</p>
+    </div>
+    <div class="gov-cols">
+      <div class="gov-col">
+        <h3>Executive board</h3>
+        <div class="gov-list">
+          <div class="row">
+            <span class="r-label">Chairman</span>
+            <span class="r-value">Orlando Riley</span>
+            <span class="r-sub">ATU Local 819 · Newark</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Vice President</span>
+            <span class="r-value">Geraldo Arroyo</span>
+            <span class="r-sub">ATU Local 822</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Secretary-Treasurer <span class="sample">Sample</span></span>
+            <span class="r-value">Name pending</span>
+            <span class="r-sub">To be confirmed by the council</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Recording Secretary <span class="sample">Sample</span></span>
+            <span class="r-value">Name pending</span>
+            <span class="r-sub">To be confirmed by the council</span>
+          </div>
+        </div>
+      </div>
+      <div class="gov-col">
+        <h3>Standing committees <span class="sample">Sample</span></h3>
+        <div class="gov-list">
+          <div class="row">
+            <span class="r-label">Bargaining</span>
+            <span class="r-value">Chair: TBD</span>
+            <span class="r-sub">Leads NJ Transit contract negotiations</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Legislative</span>
+            <span class="r-value">Chair: TBD</span>
+            <span class="r-sub">Trenton advocacy, transit funding, COPE</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Safety</span>
+            <span class="r-value">Chair: TBD</span>
+            <span class="r-sub">Operator assaults, barrier upgrades, incident review</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Communications</span>
+            <span class="r-value">Chair: TBD</span>
+            <span class="r-sub">This hub, member mobilization, press</span>
+          </div>
+          <div class="row">
+            <span class="r-label">Scholarship &amp; retirees</span>
+            <span class="r-value">Chair: TBD</span>
+            <span class="r-sub">Member and family scholarships, retiree chapters</span>
+          </div>
+        </div>
+      </div>
+      <div class="gov-col">
+        <h3>Delegates per local <span class="sample">Sample</span></h3>
+        <div class="gov-list">
+          <div class="row"><span class="r-label">Local 540 · Trenton</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 819 · Newark</span><span class="r-value">3 delegates</span></div>
+          <div class="row"><span class="r-label">Local 820 · Union City</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 821 · Jersey City</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 822 · Plainfield</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 823 · Newark (Ironbound)</span><span class="r-value">3 delegates</span></div>
+          <div class="row"><span class="r-label">Local 824 · New Brunswick</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 825 · Oradell</span><span class="r-value">2 delegates</span></div>
+          <div class="row"><span class="r-label">Local 880 · Camden</span><span class="r-value">2 delegates</span></div>
+        </div>
+        <div class="action-row" style="margin-top:16px">
+          <button type="button" class="action-btn" data-soon>Council bylaws (PDF) →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= Ride to your local ======================= -->
+<section class="section" id="locals" aria-labelledby="locals-title">
+  <div class="wrap ride">
+    <div>
+      <h2 class="h2" id="locals-title" style="margin:0" data-i18n="ride">Ride to your local</h2>
+      <p class="lede" style="margin:12px 0 0">Each local runs its own site, officers and meetings. Council posts show up there automatically.</p>
+      <div style="margin-top:18px;padding:16px 18px;background:var(--panel);border-left:4px solid var(--sample);display:flex;flex-direction:column;gap:8px">
+        <span class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--sample);text-transform:uppercase">◆ Phase 2 preview</span>
+        <span style="font-family:var(--display);font-weight:800;font-size:20px;line-height:1.1;text-transform:uppercase">What the whole federation looks like unified</span>
+        <span class="mono" style="font-size:12px;color:var(--muted)">Two existing locals rebuilt in the council design system:</span>
+        <div class="action-row">
+          <a class="action-btn solid" href="/preview-823/">Preview Local 823 &rarr;</a>
+          <a class="action-btn solid" href="/preview-825/">Preview Local 825 &rarr;</a>
+        </div>
+      </div>
+      <div class="map" id="map"></div>
+    </div>
+    <div class="locals" id="locals-list"></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================= SMS footer banner ======================= -->
+<section class="sms-footer" aria-labelledby="sms-footer-title">
+  <div class="wrap">
+    <div>
+      <strong id="sms-footer-title">Join the alert line. <span class="sample" style="vertical-align:middle">Sample</span></strong>
+      <span class="sub">The council texts you when it matters: contract votes, Trenton actions, safety alerts, strike votes. Phone number only. We never share it. Reply STOP any time.</span>
+    </div>
+    <form class="sms-form" data-sms="footer" onsubmit="return smsSubmit(event)">
+      <input class="sms-input" type="tel" placeholder="(555) 555-5555" inputmode="tel" autocomplete="tel" aria-label="Phone number">
+      <button class="sms-btn" type="submit">Join the line</button>
+    </form>
+  </div>
+</section>
+
+<!-- ======================= Measurement teaser ======================= -->
+<section class="measure" aria-labelledby="measure-title">
+  <div class="wrap measure-wrap">
+    <div class="measure-head">
+      <div>
+        <div class="eyebrow">◆ Officer dashboard · preview <span class="sample">Sample</span></div>
+        <h2 class="h2" id="measure-title">You can't improve what you can't measure.</h2>
+        <p class="lede" style="margin-top:14px">Behind the member portal, officers see what landed and what didn't. A separate build.</p>
+      </div>
+    </div>
+    <div class="measure-grid" aria-label="Officer dashboard metrics">
+      <div class="metric"><span class="m-num">1,247</span><span class="m-label">Alert line signups</span><span class="m-trend">▲ 47 this week</span></div>
+      <div class="metric"><span class="m-num">78%</span><span class="m-label">Average post open rate</span><span class="m-trend">▲ 6pts vs last month</span></div>
+      <div class="metric"><span class="m-num">214</span><span class="m-label">RSVPs for Lobby Day</span><span class="m-trend">▲ 38 this week</span></div>
+      <div class="metric"><span class="m-num">23</span><span class="m-label">New COPE signups</span><span class="m-trend">▲ 23 this month</span></div>
+      <div class="metric"><span class="m-num">4</span><span class="m-label">Posts reaching all 9 locals</span><span class="m-trend flat">- same as last week</span></div>
+    </div>
+    <p class="measure-foot">Private · For council officers and local presidents only · Updated hourly</p>
+  </div>
+</section>
+
+<!-- ======================= Languages note ======================= -->
+<div class="lang-note">
+  <div class="wrap">
+    <div class="ln-l">◆ Languages · <b>English and Spanish today.</b> More coming in Phase 2.</div>
+    <div class="ln-r" aria-label="Planned language support">
+      <span class="lang-chip">English</span>
+      <span class="lang-chip">Español</span>
+      <span class="lang-chip soon">Português (soon)</span>
+      <span class="lang-chip soon">Kreyòl (soon)</span>
+      <span class="lang-chip soon">한국어 (soon)</span>
+      <span class="lang-chip soon">Tagalog (soon)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= Footer ======================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="seal" aria-hidden="true">ATU<br>NJ</div>
+    <div>
+      <span class="slogan" data-i18n="slogan">An injury to one is an injury to all.</span>
+      <span class="aff">ATU New Jersey State Council · Affiliated with the AFL-CIO/CLC</span>
+    </div>
+    <span class="logo-mark" aria-label="Amalgamated Transit Union">ATU</span>
+  </div>
+  <div class="wrap credit">Working demo built by Futreeng LLC. Items marked SAMPLE are placeholder content.</div>
+</footer>
+
+<!-- ======================= Mobile tab bar ======================= -->
+<nav class="tabbar" aria-label="Sections" id="tabbar"></nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   CONTENT
+   Edit the data below to change what the page shows.
+   sample: true  -> shows a SAMPLE label (placeholder content)
+   sample: false -> real content (only the Local 819 meetings for now)
+   ===================================================================== */
+const CONTENT = {
+  strings: {
+    en: {
+      nav: ['The Fight','Wins','Contract','Get Involved','COPE','Locals'],
+      tabs: ['Home','Fight','Wins','Involved','Locals'],
+      steward: 'Call a steward', h1a: 'Every message.', h1b: 'Every stop.',
+      sub: 'The council posts once. It runs the whole line, landing on all nine ATU local websites across New Jersey.',
+      findLocal: 'Find your local', board: 'Now broadcasting',
+      alertT: 'Assaulted or threatened on your route?', alertB: 'Report it now. Your union has your back.', alertCta: 'Report an incident',
+      rights: 'Know your rights', contract: 'Contract hub', safety: 'Operator safety', events: 'Events & actions',
+      benefits: 'Benefits & retirees', spot: 'Member spotlight', wall: 'From the locals', ride: 'Ride to your local',
+      slogan: 'An injury to one is an injury to all.', going: "I'm going", rsvp: 'RSVP', goingCount: 'going',
+      soon: 'This part of the hub is coming in a later build.',
+      smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.'
+    },
+    es: {
+      nav: ['La Lucha','Victorias','Contrato','Participa','COPE','Locales'],
+      tabs: ['Inicio','Lucha','Victorias','Participa','Locales'],
+      steward: 'Llama a un delegado', h1a: 'Cada mensaje.', h1b: 'Cada parada.',
+      sub: 'El consejo publica una vez. El mensaje recorre toda la línea y llega a los nueve sitios web de los locales de ATU en Nueva Jersey.',
+      findLocal: 'Busca tu local', board: 'En transmisión',
+      alertT: '¿Agredido o amenazado en tu ruta?', alertB: 'Repórtalo ahora. Tu sindicato te respalda.', alertCta: 'Reportar un incidente',
+      rights: 'Conoce tus derechos', contract: 'Centro del contrato', safety: 'Seguridad del operador', events: 'Eventos y acciones',
+      benefits: 'Beneficios y jubilados', spot: 'Miembro destacado', wall: 'Desde los locales', ride: 'Viaja a tu local',
+      slogan: 'Una injuria a uno es una injuria a todos.', going: 'Voy', rsvp: 'Confirmar', goingCount: 'van',
+      soon: 'Esta parte del sitio llegará en una versión posterior.',
+      smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.'
+    }
+  },
+
+  // The nine locals. url: replace '' with each local's real website when known.
+  // copeMembers: total active members. copeIn: sample COPE participation count.
+  locals: [
+    { num: '540', city: 'Trenton',       ll: [40.2171, -74.7429], garages: 'Garages: to confirm', url: '', copeMembers: 420,  copeIn: 71  },
+    { num: '819', city: 'Newark',        ll: [40.7357, -74.1724], garages: 'Garages: to confirm', url: '', copeMembers: 2100, copeIn: 412 },
+    { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: 'Garages: to confirm', url: '', copeMembers: 1180, copeIn: 198 },
+    { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: 'Garages: to confirm', url: '', copeMembers: 980,  copeIn: 142 },
+    { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: 'Garages: to confirm', url: '', copeMembers: 1240, copeIn: 310 },
+    { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: 'Garages: to confirm', url: '', copeMembers: 870,  copeIn: 189 },
+    { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: 'Garages: to confirm', url: '', copeMembers: 740,  copeIn: 94  },
+    { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: 'Garages: to confirm', url: '', copeMembers: 610,  copeIn: 155 },
+    { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: 'Garages: to confirm', url: '', copeMembers: 1860, copeIn: 445 }
+  ],
+  terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
+
+  // Contract scoreboard: what the union demands, what NJT offers, and where it stands.
+  // Status: impasse | rejected | stalled | counter | offered
+  fight: [
+    { topic: 'Wages',           demand: '24% raise over 4 years, catch-up for inflation',       offer: '11% over 4 years, no catch-up',                  status: 'impasse',  statusLabel: 'At impasse' },
+    { topic: 'Driver barriers', demand: 'Full-cab barriers on 100% of fleet by end of 2027',    offer: 'Pilot program at two garages',                   status: 'offered',  statusLabel: 'Offered, insufficient' },
+    { topic: 'Assault pay',     demand: 'Automatic 90-day paid leave on verified operator assault', offer: 'Case-by-case review by HR',                 status: 'rejected', statusLabel: 'NJT rejected' },
+    { topic: 'Pension',         demand: 'No changes to defined-benefit plan for any member',    offer: 'Freeze DB; 401(k) for new hires',                status: 'counter',  statusLabel: 'Counter on the table' },
+    { topic: 'Bathroom access', demand: 'A working restroom within 10 minutes of every layover', offer: 'Form a joint "facilities working group"',       status: 'stalled',  statusLabel: 'Stalled since Mar' },
+    { topic: 'Scheduling',      demand: '10-hour rest between runs, no split shifts without member consent', offer: 'Keep existing contract language', status: 'rejected', statusLabel: 'NJT rejected' }
+  ],
+
+  // Wins the council and locals delivered this year. Each has a stat (number) + unit + title + local + month.
+  wins: [
+    { stat: '$47K',  unit: 'In back pay',                 title: 'Twelve operators misclassified on the 1 line recovered their wages after a 7-month grievance push.',    local: 'Local 819',    month: 'Oct 2026' },
+    { stat: '12',    unit: 'Cameras installed',           title: 'Management agreed to install incident cameras at Kearny Point after sustained member pressure.',           local: 'Local 823',    month: 'Sep 2026' },
+    { stat: '171',   unit: 'Route · bus swap stopped',    title: 'Council blocked NJT\'s plan to replace full-barrier buses with partial-barrier units on the 171 corridor.', local: 'All 9 locals', month: 'Aug 2026' },
+    { stat: '3',     unit: 'Layovers won',                title: 'Restroom access forced at three Plainfield layover points after member petition and council escalation.', local: 'Local 822',    month: 'Jul 2026' },
+    { stat: '$2.40', unit: 'Hazard pay per hour',         title: 'Secured hazard pay for Oradell operators working the 2026 flood response window.',                        local: 'Local 825',    month: 'Jun 2026' },
+    { stat: '$1B',   unit: 'Per year · dedicated',        title: 'Council + NJ AFL-CIO pushed the NJ Corporate Transit Fee through the Legislature, locking in transit funding.', local: 'Statewide', month: 'May 2026' }
+  ],
+
+  posts: [
+    { date: 'Oct 15', title: 'Contract ratification votes: schedule for every local', tag: 'Contracts',   reach: 'All 9 locals',  sample: true, action: 'Find my vote time →' },
+    { date: 'Oct 12', title: 'Operator assault reporting: updated procedure',          tag: 'Safety',      reach: 'All 9 locals',  sample: true, action: 'Read the procedure →' },
+    { date: 'Oct 08', title: 'Lobby Day at the State House, November 18',              tag: 'Legislation', reach: 'All 9 locals',  sample: true, action: 'RSVP for Lobby Day →' },
+    { date: 'Oct 02', title: 'Council scholarship applications are open',              tag: 'Members',     reach: '819, 821, 880', sample: true, action: 'Start application →' }
+  ],
+
+  rights: [
+    { title: 'Representation', body: 'If a meeting could lead to discipline, you can ask for a union rep before answering questions.', action: 'Call a steward now →' },
+    { title: 'Don’t sign on the spot', body: 'You can take time to review any statement or form. Talk to your steward first.', action: 'Who\'s on duty? →' },
+    { title: 'Hours & rest', body: 'Know the limits on hours behind the wheel and the rest you’re owed between runs.', action: 'See the limits →' },
+    { title: 'Assault on the job', body: 'Report every incident. You’re entitled to medical care and union support afterward.', action: 'Report an assault →' },
+    { title: 'Injured on duty', body: 'Report injuries right away and keep copies. Ask about light duty and IOD pay.', action: 'Start IOD paperwork →' },
+    { title: 'Filing a grievance', body: 'Deadlines are short. Bring dates, run numbers and witnesses to your steward.', action: 'File a grievance →' }
+  ],
+
+  // state: done | current | pending
+  contractSteps: [
+    { label: 'Bargaining', note: 'Complete', state: 'done' },
+    { label: 'Tentative agreement', note: 'Reached', state: 'done' },
+    { label: 'Ratification vote', note: 'In progress', state: 'current' },
+    { label: 'Ratified', note: 'Pending', state: 'pending' }
+  ],
+  docs: [
+    { title: 'Tentative agreement summary', meta: 'PDF · English / Español', action: 'Read' },
+    { title: 'Voting times by garage', meta: 'All 9 locals', action: 'View' },
+    { title: 'Current agreement', meta: 'Full contract text', action: 'PDF' },
+    { title: 'Bargaining updates', meta: 'Council bulletins', action: 'All →' }
+  ],
+
+  safetySteps: [
+    { title: 'Get safe, call it in', body: 'Secure the bus and contact dispatch. Call 911 if anyone is hurt.' },
+    { title: 'Report to your union', body: 'File the incident with your local the same day, even if no one was injured.' },
+    { title: 'Get checked out', body: 'See a doctor and keep every record. You may be entitled to assault pay.' },
+    { title: 'We follow up', body: 'Your steward tracks the case and pushes for prosecution and protections.' }
+  ],
+
+  // Local 819 meetings are the only real events. One event can list several dates.
+  // base = sample RSVP count (0 hides the count).
+  events: [
+    { id: 'l819', dates: [['20', 'Oct'], ['17', 'Nov'], ['15', 'Dec']], title: 'Local 819 union meetings', where: 'Local 819 · Two sessions each day: 10:00 am and 7:00 pm', base: 0,   sample: false, action: 'Add to calendar →' },
+    { id: 'lobby', dates: [['18', 'Nov']],                              title: 'Lobby Day at the State House',  where: 'Trenton · buses from each local hall, 7:00 am',       base: 214, sample: true,  action: 'Reserve your seat →' }
+  ],
+
+  benefits: [
+    { title: 'Pension', body: 'How your pension works, estimating your benefit and planning your retirement date.', action: 'Estimate my pension →' },
+    { title: 'Health & welfare', body: 'Medical, dental and vision for members and families.', action: 'See what\'s covered →' },
+    { title: 'Scholarships', body: 'Council and ATU International scholarships for members and their children.', action: 'Apply this year →' },
+    { title: 'Retiree chapters', body: 'Stay connected: monthly meetings, events and legislative action.', action: 'Find my chapter →' }
+  ],
+
+  spotlights: [
+    { badge: 'Retirement', name: 'Member name', meta: 'Local 819 · 32 years', body: 'A short note from the member and their local on a career behind the wheel.', photo: 'Portrait of the retiring operator, ideally with their bus or at their garage. Replace with a real photo once the member agrees to be featured.' },
+    { badge: 'Operator of the month', name: 'Member name', meta: 'Local 824 · 11 years', body: 'Recognized by riders and co-workers for going above and beyond on the route.', photo: 'Portrait of the operator of the month. Replace with a real photo once the member agrees to be featured.' },
+    { badge: '25 years', name: 'Member name', meta: 'Local 880 · Maintenance', body: 'Milestones for the mechanics and shop crews who keep the fleet running.', photo: 'Photo of the mechanic or shop crew at work in the garage. Replace with a real photo once the member agrees to be featured.' }
+  ],
+
+  // Photo wall: each tile describes the photo a local will send in.
+  wall: [
+    { title: 'Rally at the State House', text: 'Members rallying in Trenton. Photos submitted by the locals will appear here.' },
+    { title: 'Local 819 union meeting', text: 'A shot from a Local 819 meeting.' },
+    { title: 'Garage cookout', text: 'Members at a garage cookout.' },
+    { title: 'Retiree breakfast', text: 'Retirees at a chapter breakfast.' },
+    { title: 'Labor Day parade', text: 'Locals marching on Labor Day.' }
+  ]
+};
+
+/* =====================================================================
+   RENDERING
+   ===================================================================== */
+const state = { lang: 'en', rsvp: {} };
+const $ = (sel) => document.querySelector(sel);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const SAMPLE = '<span class="sample">Sample</span>';
+const pad2 = (n) => String(n).padStart(2, '0');
+const localHref = (l) => l.url || '#local-' + l.num;
+const isExternal = (l) => !!l.url;
+const t = () => CONTENT.strings[state.lang];
+
+function renderPosts() {
+  $('#posts').innerHTML = CONTENT.posts.map((p) => `
+    <article class="post">
+      <span class="date">${esc(p.date)}</span>
+      <div>
+        <div class="title">${esc(p.title)}</div>
+        <div class="meta">${p.sample ? SAMPLE : ''}${esc(p.tag)}</div>
+        ${p.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(p.action)}</button></div>` : ''}
+      </div>
+      <span class="reach">${esc(p.reach)}</span>
+      <span class="status"><span class="arrived">ARRIVED</span></span>
+    </article>`).join('');
+}
+
+function renderRights() {
+  $('#rights-list').innerHTML = CONTENT.rights.map((r, i) => `
+    <div class="right">
+      <span class="n">${pad2(i + 1)}</span>
+      <span class="t">${esc(r.title)}</span>
+      <span class="b">${esc(r.body)}</span>
+      ${r.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(r.action)}</button></div>` : ''}
+    </div>`).join('');
+}
+
+function renderFight() {
+  $('#fight-rows').innerHTML = CONTENT.fight.map((f) => `
+    <div class="fight-row" role="row">
+      <div class="fight-cell topic" role="cell">${esc(f.topic)}</div>
+      <div class="fight-cell demand" role="cell" data-l="Union demand">${esc(f.demand)}</div>
+      <div class="fight-cell offer" role="cell" data-l="NJT offer">${esc(f.offer)}</div>
+      <div class="fight-cell status" role="cell"><span class="fight-status fs-${esc(f.status)}">${esc(f.statusLabel)}</span></div>
+    </div>`).join('');
+}
+
+function renderWins() {
+  $('#wins-grid').innerHTML = CONTENT.wins.map((w) => `
+    <article class="win">
+      <span class="win-stat">${esc(w.stat)}</span>
+      <span class="win-unit">${esc(w.unit)}</span>
+      <span class="win-title">${esc(w.title)}</span>
+      <span class="win-meta"><b>${esc(w.local)}</b><span>${esc(w.month)}</span></span>
+    </article>`).join('');
+}
+
+function renderCope() {
+  $('#cope-counters').innerHTML = CONTENT.locals.map((l) => {
+    const pct = Math.round((l.copeIn / l.copeMembers) * 100);
+    return `
+    <div class="cope-local">
+      <span class="cl-num">${l.num}</span>
+      <span class="cl-city">${esc(l.city)}</span>
+      <div class="cl-bar"><div class="cl-fill" style="width:${pct}%"></div></div>
+      <span class="cl-pct"><b>${l.copeIn} of ${l.copeMembers}</b><span>${pct}%</span></span>
+    </div>`;
+  }).join('');
+}
+
+function renderContract() {
+  const steps = CONTENT.contractSteps;
+  const doneIdx = Math.max(0, steps.map((s) => s.state).lastIndexOf('done'));
+  const curIdx = steps.findIndex((s) => s.state === 'current');
+  const reach = curIdx >= 0 ? curIdx : doneIdx;
+  $('#steps').innerHTML = `<div class="steps-track"></div><div class="steps-fill" style="width:${reach * 25}%"></div>` +
+    steps.map((s) => `<div class="step ${s.state}"><span class="ring"></span><span class="label">${esc(s.label)}</span><span class="note">${esc(s.note)}</span></div>`).join('');
+  $('#docs').innerHTML = CONTENT.docs.map((d) => `
+    <div class="doc"><div><span class="t">${esc(d.title)}</span><span class="m">${esc(d.meta)}</span></div><button type="button" data-soon>${esc(d.action)}</button></div>`).join('');
+}
+
+function renderSafety() {
+  $('#safety-steps').innerHTML = CONTENT.safetySteps.map((s, i) => `
+    <div class="sstep"><span class="n">${i + 1}</span><div><span class="t">${esc(s.title)}</span><span class="b">${esc(s.body)}</span></div></div>`).join('');
+}
+
+function renderEvents() {
+  const s = t();
+  $('#events-list').innerHTML = CONTENT.events.map((e) => {
+    const on = !!state.rsvp[e.id];
+    const count = e.base + (on ? 1 : 0);
+    return `
+    <article class="event">
+      <div>
+        <div class="dates">${e.dates.map(([d, m]) => `<div class="when"><span class="day">${esc(d)}</span><span class="mon">${esc(m)}</span></div>`).join('')}</div>
+        ${e.sample ? SAMPLE : ''}
+        <span class="t">${esc(e.title)}</span>
+        <span class="w">${esc(e.where)}</span>
+      </div>
+      <div class="event-foot">
+        <button type="button" class="rsvp" data-rsvp="${e.id}" aria-pressed="${on}">${on ? '✓ ' + esc(s.going) : esc(s.rsvp)}</button>
+        <span class="going">${e.base ? count + ' ' + esc(s.goingCount) : ''}</span>
+      </div>
+      ${e.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(e.action)}</button></div>` : ''}
+    </article>`;
+  }).join('');
+}
+
+function renderBenefits() {
+  $('#benefits-list').innerHTML = CONTENT.benefits.map((b) => `
+    <div class="benefit">
+      <span class="bar"></span>
+      <div>
+        <span class="t">${esc(b.title)}</span>
+        <span class="b">${esc(b.body)}</span>
+        ${b.action ? `<div class="action-row"><button type="button" class="action-btn" data-soon>${esc(b.action)}</button></div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function renderSpots() {
+  $('#spots').innerHTML = CONTENT.spotlights.map((p) => `
+    <article class="spot">
+      <div class="photo stripes" role="img" aria-label="Photo placeholder: ${esc(p.photo)}"><span class="badge">${esc(p.badge)}</span>
+        <div class="ph bottom"><span class="ph-label">Photo placeholder</span><span class="ph-title">Member photo</span><span class="ph-text">${esc(p.photo)}</span></div></div>
+      <span class="name">${esc(p.name)}</span><span class="meta">${esc(p.meta)}</span><span class="b">${esc(p.body)}</span>
+    </article>`).join('');
+}
+
+function renderWall() {
+  $('#wall-grid').innerHTML = CONTENT.wall.map((w) => `
+    <figure class="tile stripes" style="margin:0" aria-label="Photo placeholder: ${esc(w.title)}">
+      <figcaption class="ph compact"><span class="ph-label">Photo placeholder&nbsp;&nbsp;${SAMPLE}</span><span class="ph-title">${esc(w.title)}</span><span class="ph-text">${esc(w.text)}</span></figcaption>
+    </figure>`).join('');
+}
+
+function renderLocals() {
+  $('#locals-list').innerHTML = CONTENT.locals.map((l) => `
+    <a class="local" id="local-${l.num}" href="${localHref(l)}" ${isExternal(l) ? 'target="_blank" rel="noopener"' : ''}>
+      <span class="badge">${l.num}</span>
+      <span><span class="c">${esc(l.city)}</span><span class="g">${esc(l.garages)}</span><span class="s">Local ${l.num} site →</span></span>
+    </a>`).join('');
+}
+
+/* Route map: a simple projected SVG of the nine locals, no map library or tiles needed. */
+function renderMap() {
+  const W = 520, H = 560, PAD = 70;
+  const pts = CONTENT.locals.map((l) => l.ll).concat([CONTENT.terminal.ll]);
+  const lats = pts.map((p) => p[0]), lngs = pts.map((p) => p[1]);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats), minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  const kx = Math.cos(((minLat + maxLat) / 2) * Math.PI / 180);
+  const scale = Math.min((W - PAD * 2) / ((maxLng - minLng) * kx), (H - PAD * 2) / (maxLat - minLat));
+  const offX = (W - (maxLng - minLng) * kx * scale) / 2, offY = (H - (maxLat - minLat) * scale) / 2;
+  const P = ([lat, lng]) => [offX + (lng - minLng) * kx * scale, offY + (maxLat - lat) * scale];
+  const leftSide = new Set(['822', '824', '880', '819']);
+  const [tx, ty] = P(CONTENT.terminal.ll);
+
+  let dots = '';
+  for (let x = 12; x < W; x += 24) for (let y = 12; y < H; y += 24) dots += `<circle cx="${x}" cy="${y}" r="1" fill="rgba(255,255,255,.12)"/>`;
+
+  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line x1="${tx}" y1="${ty}" x2="${x}" y2="${y}" stroke="#D7263D" stroke-width="4" stroke-linecap="round"/>`; }).join('');
+
+  const stops = CONTENT.locals.map((l) => {
+    const [x, y] = P(l.ll);
+    const down = l.num === '540';
+    const left = leftSide.has(l.num);
+    const anchor = down ? 'middle' : (left ? 'end' : 'start');
+    const lx = down ? x : (left ? x - 14 : x + 14);
+    const nudge = { '820': -8, '821': 8 }[l.num] || 0;
+    const ly = (down ? y + 30 : y + 2) + nudge;
+    return `<a href="${localHref(l)}" aria-label="Local ${l.num}, ${esc(l.city)}">
+      <circle class="stop-dot" cx="${x}" cy="${y}" r="7" fill="#0C1A33" stroke="#F2F4F8" stroke-width="4"/>
+      <text class="lbl" x="${lx}" y="${ly}" text-anchor="${anchor}">${l.num}</text>
+      <text class="sub" x="${lx}" y="${ly + 12}" text-anchor="${anchor}">${esc(l.city)}</text>
+    </a>`;
+  }).join('');
+
+  const term = `<circle cx="${tx}" cy="${ty}" r="10" fill="#D7263D" stroke="#F2F4F8" stroke-width="4"/>
+    <text class="lbl" x="${tx - 18}" y="${ty + 2}" text-anchor="end">COUNCIL</text>
+    <text class="sub" x="${tx - 18}" y="${ty + 14}" text-anchor="end">Terminal · Trenton</text>`;
+
+  $('#map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Map of the nine ATU locals in New Jersey, connected to the council in Trenton">${dots}${lines}${stops}${term}</svg>`;
+}
+
+function renderTabs() {
+  const hrefs = ['#top', '#fight', '#wins', '#ladder', '#locals'];
+  $('#tabbar').innerHTML = t().tabs.map((label, i) => `<a href="${hrefs[i]}"${i === 0 ? ' class="active"' : ''}>${esc(label)}</a>`).join('');
+}
+
+function applyStrings() {
+  const s = t();
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.dataset.i18n;
+    const m = key.match(/^nav(\d)$/);
+    el.textContent = m ? s.nav[+m[1]] : s[key];
+  });
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === state.lang)));
+  renderEvents(); renderTabs();
+}
+
+/* =====================================================================
+   INTERACTIONS
+   ===================================================================== */
+let toastTimer;
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+document.addEventListener('click', (ev) => {
+  const lang = ev.target.closest('[data-lang]');
+  if (lang) { state.lang = lang.dataset.lang; applyStrings(); return; }
+  const rsvp = ev.target.closest('[data-rsvp]');
+  if (rsvp) { const id = rsvp.dataset.rsvp; state.rsvp[id] = !state.rsvp[id]; renderEvents(); document.querySelector(`[data-rsvp="${id}"]`).focus(); return; }
+  if (ev.target.closest('[data-soon]')) { toast(t().soon); }
+});
+
+/* Highlight the active tab on phones as you scroll. */
+function watchTabs() {
+  const map = { top: 0, fight: 1, wins: 2, ladder: 3, locals: 4 };
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const i = map[en.target.id];
+      document.querySelectorAll('#tabbar a').forEach((a, j) => a.classList.toggle('active', j === i));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  Object.keys(map).forEach((id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+}
+
+/* SMS form submit handler - placeholder for the demo. */
+function smsSubmit(ev) {
+  ev.preventDefault();
+  const form = ev.target;
+  const input = form.querySelector('.sms-input');
+  const val = (input.value || '').replace(/\D/g, '');
+  if (val.length < 10) { toast('Enter a 10-digit phone number.'); input.focus(); return false; }
+  input.value = '';
+  toast(t().smsOk);
+  return false;
+}
+
+renderPosts(); renderRights(); renderContract(); renderSafety();
+renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
+renderFight(); renderWins(); renderCope();
+applyStrings(); watchTabs();
+</script>
+</body>
+</html>
