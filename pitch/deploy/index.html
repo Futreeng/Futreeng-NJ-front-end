@@ -569,6 +569,20 @@ img,svg{display:block;max-width:100%}
 .hero-nj{background:radial-gradient(circle at 60% 35%,#13284D 0,var(--navy-deep) 70%)}
 .hero-map{position:absolute;inset:24px 24px 64px}
 .hero-map svg{width:100%;height:100%;display:block}
+.hero-map .routes line{stroke:#D7263D;stroke-width:6;stroke-linecap:round;transition:opacity .2s,stroke-width .2s}
+.hero-map.hovering .routes line{opacity:.25}
+.hero-map.hovering .routes line.on{opacity:1;stroke-width:8}
+.hero-map .leader{fill:none;stroke:rgba(242,244,248,.45);stroke-width:1.5}
+.hero-map .dot{fill:#0C1A33;stroke:#F2F4F8;stroke-width:5;transition:stroke .2s}
+.hero-map .num{font-family:var(--display);font-weight:800;font-size:26px;fill:var(--ink);transform-box:fill-box;transform-origin:center;transition:transform .2s cubic-bezier(.2,.8,.2,1.2),fill .2s}
+.hero-map .city{font-family:var(--mono);font-size:12px;fill:var(--muted);opacity:0;transition:opacity .2s}
+.hero-map .term{font-family:var(--display);font-weight:800;font-size:20px;fill:var(--ink)}
+.hero-map .stop{cursor:pointer;outline:none}
+.hero-map .stop:hover .num,.hero-map .stop:focus-visible .num{transform:scale(1.5);fill:var(--accent-text)}
+.hero-map .stop:hover .dot,.hero-map .stop:focus-visible .dot{stroke:#D7263D}
+.hero-map .stop:hover .city,.hero-map .stop:focus-visible .city{opacity:1}
+.hero-map .stop:focus-visible .dot{stroke:var(--sample)}
+@media (prefers-reduced-motion:reduce){.hero-map .num,.hero-map .routes line,.hero-map .city{transition:none}}
 .map .region{font-family:var(--mono);font-size:10px;letter-spacing:.3em;fill:var(--nj-buff);opacity:.75}
 .map .leader{fill:none;stroke:rgba(242,244,248,.5);stroke-width:1.5}
 @media (max-width:720px){.brand .nj-glyph{height:32px}.seal .nj-glyph{height:52px}.hero-photo.hero-nj{min-height:460px}.hero-map{inset:16px 16px 56px}}
@@ -654,7 +668,7 @@ img,svg{display:block;max-width:100%}
       <span class="sms-note">Standard message rates may apply · Reply STOP to opt out</span>
     </form>
   </div>
-  <div class="hero-photo hero-nj" aria-hidden="true">
+  <div class="hero-photo hero-nj">
     <div class="hero-map" id="hero-map"></div>
     <div class="tag">Union strong · Transit strong</div>
   </div>
@@ -1687,15 +1701,53 @@ function renderGlyphs() {
 
 /* Hero art: the state, the council in Trenton, a red line to every local. */
 function renderHeroMap() {
-  const W = 600, H = 780;
-  const P = njProjector(W, H, { l: 40, r: 40, t: 20, b: 20 });
+  const W = 600, H = 780, COLX = 468;
+  const P = njProjector(W, H, { l: 20, r: 150, t: 20, b: 20 });
   const [tx, ty] = P(CONTENT.terminal.ll);
-  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line x1="${tx.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join('');
-  const stops = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#0C1A33" stroke="#F2F4F8" stroke-width="5"/>`; }).join('');
-  $('#hero-map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  const column = ['825', '820', '821', '819', '823'];          // crowded Newark / Hudson cluster, top to bottom
+  const place = { '822': 'left', '824': 'below', '880': 'left', '540': 'below' };
+  const colTop = P(CONTENT.locals.find((l) => l.num === '825').ll)[1] - 6;
+  const f = (v) => v.toFixed(1);
+
+  const lines = CONTENT.locals.map((l) => { const [x, y] = P(l.ll); return `<line data-n="${l.num}" x1="${f(tx)}" y1="${f(ty)}" x2="${f(x)}" y2="${f(y)}"/>`; }).join('');
+
+  const stops = CONTENT.locals.map((l) => {
+    const [x, y] = P(l.ll);
+    const ci = column.indexOf(l.num);
+    let lx, ly, anchor, leader = '';
+    if (ci >= 0) {
+      lx = COLX; ly = colTop + ci * 52; anchor = 'start';
+      leader = `<polyline class="leader" points="${f(x + 10)},${f(y)} ${COLX - 34},${f(ly - 9)} ${COLX - 10},${f(ly - 9)}"/>`;
+    } else if (place[l.num] === 'below') {
+      lx = x + 8; ly = y + 36; anchor = 'start';
+    } else {
+      lx = x - 16; ly = y - 6; anchor = 'end';
+    }
+    return `<a class="stop" data-n="${l.num}" href="#local-${l.num}" aria-label="Local ${l.num}, ${esc(l.city)}">${leader}
+      <circle class="dot" cx="${f(x)}" cy="${f(y)}" r="9"/>
+      <text class="num" x="${f(lx)}" y="${f(ly)}" text-anchor="${anchor}">${l.num}</text>
+      <text class="city" x="${f(lx)}" y="${f(ly + 15)}" text-anchor="${anchor}">${esc(l.city)}</text>
+    </a>`;
+  }).join('');
+
+  $('#hero-map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${esc(t().mapLabel)}">
     <path d="${njPath(P)}" fill="rgba(255,255,255,.05)" stroke="var(--nj-buff)" stroke-width="2" stroke-linejoin="round" stroke-opacity=".8"/>
-    <g stroke="#D7263D" stroke-width="6" stroke-linecap="round">${lines}</g>${stops}
-    <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="13" fill="#D7263D" stroke="#F2F4F8" stroke-width="5"/></svg>`;
+    <g class="routes">${lines}</g>${stops}
+    <circle cx="${f(tx)}" cy="${f(ty)}" r="13" fill="#D7263D" stroke="#F2F4F8" stroke-width="5"/>
+    <text class="term" x="${f(tx - 20)}" y="${f(ty + 5)}" text-anchor="end">${esc(t().council)}</text></svg>`;
+}
+
+/* Hero map hover: light up the hovered local's route line and dim the rest. */
+function wireHeroMap() {
+  const box = $('#hero-map');
+  const set = (n) => {
+    box.classList.toggle('hovering', !!n);
+    box.querySelectorAll('line[data-n]').forEach((ln) => ln.classList.toggle('on', ln.dataset.n === n));
+  };
+  box.addEventListener('pointerover', (e) => { const a = e.target.closest('.stop'); if (a) set(a.dataset.n); });
+  box.addEventListener('pointerout', (e) => { const a = e.target.closest('.stop'); if (a && !a.contains(e.relatedTarget)) set(null); });
+  box.addEventListener('focusin', (e) => { const a = e.target.closest('.stop'); if (a) set(a.dataset.n); });
+  box.addEventListener('focusout', () => set(null));
 }
 
 /* Route map: the nine locals at their real locations on a New Jersey outline. No map library or tiles needed.
@@ -1786,7 +1838,7 @@ function translateFixed() {
 function renderAll() {
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
-  renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs();
+  renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
 }
 
 function applyStrings() {
@@ -1849,9 +1901,9 @@ function smsSubmit(ev) {
   return false;
 }
 
-renderGlyphs(); renderHeroMap();
+renderGlyphs();
 collectFixed();
-applyStrings(); watchTabs();
+applyStrings(); watchTabs(); wireHeroMap();
 </script>
 </body>
 </html>
