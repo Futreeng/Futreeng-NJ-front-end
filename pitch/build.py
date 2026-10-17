@@ -9,8 +9,9 @@ s = (src / 'src.html').read_text(encoding='utf-8')
 assert '—' not in s, 'em dash in src.html'
 assert '<style>\n/*FONTS*/' in s, 'font marker missing'
 (out / 'index.html').write_text(s.replace('<style>\n/*FONTS*/', link, 1), encoding='utf-8')
-for n in ('823', '825'):
-    p = (src / f'preview-{n}.html').read_text(encoding='utf-8')
+for f in sorted(src.glob('preview-*.html')):
+    n = f.stem.split('-')[1]
+    p = f.read_text(encoding='utf-8')
     assert '—' not in p, f'em dash in preview-{n}'
     (out / f'preview-{n}').mkdir(exist_ok=True)
     (out / f'preview-{n}' / 'index.html').write_text(p, encoding='utf-8')

@@ -31,7 +31,7 @@ button{font:inherit;cursor:pointer}
 .who b{display:block;font-size:15px}
 .who div > span{display:block;font-size:12px;color:var(--muted)}
 .switches{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
 .seg a,.seg button{border:0;background:transparent;color:var(--ink);padding:9px 12px;min-height:40px;text-decoration:none;font-size:13px;display:inline-flex;align-items:center}
 .seg [aria-current="true"],.seg [aria-pressed="true"]{background:var(--navy);color:#fff}
 .layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;max-width:1240px;margin:20px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-height:640px}
@@ -107,7 +107,7 @@ legend{font-weight:700;margin-bottom:8px}
 <header class="app-bar">
   <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
   <div class="switches">
-    <span>Local</span><nav class="seg" aria-label="Choose local"><a href="?local=823" data-l="823">823</a><a href="?local=825" data-l="825">825</a></nav>
+    <span>Local</span><nav class="seg" aria-label="Choose local" id="local-switch"></nav>
     <span>Signed in as</span><div class="seg" role="group" aria-label="Signed in as"><button type="button" data-role="president">President</button><button type="button" data-role="backup">Backup</button></div>
   </div>
 </header>
@@ -136,6 +136,7 @@ legend{font-weight:700;margin-bottom:8px}
   const other = () => role === 'president' ? SITE.backup : SITE.president;
   const roleLabel = () => role === 'president' ? 'President, ' + SITE.name : 'Backup approver, ' + SITE.name;
 
+  document.getElementById('local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
   function header() {
     $('#who-name').textContent = me();
     $('#who-role').textContent = roleLabel();

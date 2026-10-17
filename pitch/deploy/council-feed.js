@@ -17,15 +17,26 @@
   const KEY = 'njch.council.v1';
   const NOTE_MAX = 140;
 
-  /* Locals with a demo website and inbox. Everyone else approves on a timer (simulated). */
+  /* Every local has a preview site and an approval inbox (/inbox/?local=NNN).
+     823 and 825 are the hands-on demo locals; the others approve on a timer (simulated)
+     so the council's approval count moves during the pitch. Names marked "to confirm" are placeholders. */
+  const TBC = { president: 'President (to confirm)', backup: 'Vice President (to confirm)' };
   const SITES = {
+    '540': Object.assign({ name: 'ATU Local 540', city: 'Trenton', site: '/preview-540/', accent: '#2F6FB5' }, TBC),
+    '819': Object.assign({ name: 'ATU Local 819', city: 'Newark', site: '/preview-819/', accent: '#D7263D' }, TBC),
+    '820': Object.assign({ name: 'ATU Local 820', city: 'Union City', site: '/preview-820/', accent: '#0F766E' }, TBC),
+    '821': Object.assign({ name: 'ATU Local 821', city: 'Jersey City', site: '/preview-821/', accent: '#E36A2E' }, TBC),
+    '822': Object.assign({ name: 'ATU Local 822', city: 'Plainfield', site: '/preview-822/', accent: '#23774A' }, TBC),
     '823': { name: 'ATU Local 823', city: 'Newark (Ironbound)', site: '/preview-823/', accent: '#D7263D',
              president: 'Elijah Spates Jr.', backup: 'Vice President' },
+    '824': Object.assign({ name: 'ATU Local 824', city: 'New Brunswick', site: '/preview-824/', accent: '#C2185B' }, TBC),
     '825': { name: 'ATU Local 825', city: 'Oradell · Westwood', site: '/preview-825/', accent: '#C9A14A',
-             president: 'Retheena Goodwin', backup: 'Chris Haskins' }
+             president: 'Retheena Goodwin', backup: 'Chris Haskins' },
+    '880': Object.assign({ name: 'ATU Local 880', city: 'Camden', site: '/preview-880/', accent: '#4FA3D9' }, TBC)
   };
-  const ALL = ['540', '819', '820', '821', '822', '823', '824', '825', '880'];
-  const NEVER_SIM = '880';   // one local stays "waiting" so the demo looks real
+  const ALL = Object.keys(SITES);
+  const HANDS_ON = ['823', '825'];   // approved by hand in the demo
+  const NEVER_SIM = '880';           // one local stays "waiting" so the demo looks real
 
   let mem = [];
   const listeners = new Set();
@@ -59,7 +70,7 @@
     const status = {};
     (targets && targets.length ? targets : ALL).forEach((n, i) => {
       if (urgent) status[n] = { state: 'live', notified: true, at: t };
-      else if (SITES[n] || n === NEVER_SIM) status[n] = { state: 'pending' };
+      else if (HANDS_ON.includes(n) || n === NEVER_SIM) status[n] = { state: 'pending' };
       else status[n] = { state: 'pending', simAt: t + 4000 + i * 2600 };
     });
     const post = { id: uid(), created: t, urgent: !!urgent, title: String(title).trim(), body: String(body).trim(),
@@ -71,6 +82,7 @@
     const posts = read(); const p = posts.find((x) => x.id === id);
     if (!p || !p.status[n]) return null;
     Object.assign(p.status[n], patch, { at: now() });
+    delete p.status[n].simAt;
     write(posts); return p;
   }
   const approve = (id, n, { placement, note, by }) => {
@@ -148,5 +160,5 @@
     draw(); onChange(draw);
   }
 
-  window.CouncilFeed = { SITES, ALL, NOTE_MAX, all, send, approve, decline, remove, reset, onChange, forLocal, mountLocal, esc, fmtDate };
+  window.CouncilFeed = { SITES, ALL, HANDS_ON, NOTE_MAX, all, send, approve, decline, remove, reset, onChange, forLocal, mountLocal, esc, fmtDate };
 })();

@@ -1173,11 +1173,12 @@ textarea.sv-input{min-height:84px;resize:vertical}
       <div style="margin-top:18px;padding:16px 18px;background:var(--panel);border-left:4px solid var(--sample);display:flex;flex-direction:column;gap:8px">
         <span class="mono" style="font-size:11px;letter-spacing:.1em;color:var(--sample);text-transform:uppercase">◆ Phase 2 preview</span>
         <span style="font-family:var(--display);font-weight:800;font-size:20px;line-height:1.1;text-transform:uppercase">What the whole federation looks like unified</span>
-        <span class="mono" style="font-size:12px;color:var(--muted)">Two existing locals rebuilt in the council design system:</span>
+        <span class="mono" style="font-size:12px;color:var(--muted)">All nine locals in the council design system. 823 and 825 are rebuilt from their live sites; the rest use sample content.</span>
         <div class="action-row">
           <a class="action-btn solid" href="/preview-823/">Preview Local 823 &rarr;</a>
           <a class="action-btn solid" href="/preview-825/">Preview Local 825 &rarr;</a>
         </div>
+        <span class="mono" style="font-size:12px;color:var(--muted)">Or pick any local on the map or the list.</span>
       </div>
       <div class="map" id="map"></div>
     </div>
@@ -1453,7 +1454,8 @@ const CONTENT = {
         "Each local runs its own site, officers and meetings. Council posts show up there automatically.": "Cada local maneja su propio sitio, sus dirigentes y sus reuniones. Las publicaciones del consejo aparecen allí automáticamente.",
         "◆ Phase 2 preview": "◆ Vista previa de la Fase 2",
         "What the whole federation looks like unified": "Así se ve toda la federación unificada",
-        "Two existing locals rebuilt in the council design system:": "Dos locales existentes, rehechos con el diseño del consejo:",
+        "All nine locals in the council design system. 823 and 825 are rebuilt from their live sites; the rest use sample content.": "Los nueve locales con el diseño del consejo. El 823 y el 825 se rehicieron a partir de sus sitios reales; los demás usan contenido de muestra.",
+        "Or pick any local on the map or the list.": "O elige cualquier local en el mapa o en la lista.",
         "Preview Local 823 →": "Ver el Local 823 →",
         "Preview Local 825 →": "Ver el Local 825 →",
         "Join the alert line.": "Únete a la línea de alertas.",
@@ -1504,15 +1506,15 @@ const CONTENT = {
   // The nine locals. url: replace '' with each local's real website when known.
   // copeMembers: total active members. copeIn: sample COPE participation count.
   locals: [
-    { num: '540', city: 'Trenton',       ll: [40.2171, -74.7429], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 420,  copeIn: 71  },
-    { num: '819', city: 'Newark',        ll: [40.7357, -74.1724], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 2100, copeIn: 412 },
-    { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1180, copeIn: 198 },
-    { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 980,  copeIn: 142 },
-    { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1240, copeIn: 310 },
+    { num: '540', city: 'Trenton',       ll: [40.2171, -74.7429], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-540/', copeMembers: 420,  copeIn: 71  },
+    { num: '819', city: 'Newark',        ll: [40.7357, -74.1724], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-819/', copeMembers: 2100, copeIn: 412 },
+    { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-820/', copeMembers: 1180, copeIn: 198 },
+    { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-821/', copeMembers: 980,  copeIn: 142 },
+    { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-822/', copeMembers: 1240, copeIn: 310 },
     { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-823/', copeMembers: 870,  copeIn: 189 },
-    { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 740,  copeIn: 94  },
+    { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-824/', copeMembers: 740,  copeIn: 94  },
     { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-825/', copeMembers: 610,  copeIn: 155 },
-    { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1860, copeIn: 445 }
+    { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-880/', copeMembers: 1860, copeIn: 445 }
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
 
@@ -2135,7 +2137,7 @@ function renderConsoleSent() {
       const st = p.status[n]; const key = st.state === 'approved' && st.placement === 'pinned' ? 'pinned' : st.state;
       return `<span class="cc-chip ${key}"${st.by === 'simulated' ? ' title="simulated"' : ''}><b>${n}</b>${esc(u.states[key])}</span>`;
     }).join('');
-    const links = ns.filter((n) => S[n]).map((n) => `<a class="action-btn" href="/inbox/?local=${n}">${esc(u.inbox.replace('{n}', n))}</a><a class="action-btn" href="${S[n].site}">${esc(u.site.replace('{n}', n))}</a>`).join('');
+    const links = ns.filter((n) => CF().HANDS_ON.includes(n)).map((n) => `<a class="action-btn" href="/inbox/?local=${n}">${esc(u.inbox.replace('{n}', n))}</a><a class="action-btn" href="${S[n].site}">${esc(u.site.replace('{n}', n))}</a>`).join('');
     const title = state.lang === 'es' && p.titleEs ? p.titleEs : p.title;
     return `<article class="cc-post">
         <div><div class="tt">${esc(title)}</div>
