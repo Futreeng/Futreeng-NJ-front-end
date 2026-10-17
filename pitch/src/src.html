@@ -1452,9 +1452,9 @@ const CONTENT = {
     { num: '820', city: 'Union City',    ll: [40.7795, -74.0238], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1180, copeIn: 198 },
     { num: '821', city: 'Jersey City',   ll: [40.7178, -74.0431], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 980,  copeIn: 142 },
     { num: '822', city: 'Plainfield',    ll: [40.6337, -74.4074], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1240, copeIn: 310 },
-    { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 870,  copeIn: 189 },
+    { num: '823', city: 'Elizabeth',     ll: [40.6640, -74.2107], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-823/', copeMembers: 870,  copeIn: 189 },
     { num: '824', city: 'New Brunswick', ll: [40.4862, -74.4518], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 740,  copeIn: 94  },
-    { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 610,  copeIn: 155 },
+    { num: '825', city: 'Oradell',       ll: [40.9587, -74.0371], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '/preview-825/', copeMembers: 610,  copeIn: 155 },
     { num: '880', city: 'Camden',        ll: [39.9259, -75.1196], garages: { en: 'Garages: to confirm', es: 'Garajes: por confirmar' }, url: '', copeMembers: 1860, copeIn: 445 }
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
@@ -1692,7 +1692,7 @@ const L = (v) => (v && typeof v === 'object' && !Array.isArray(v)) ? (v[state.la
 const sampleChip = () => `<span class="sample">${esc(t().sample)}</span>`;
 const pad2 = (n) => String(n).padStart(2, '0');
 const localHref = (l) => l.url || '#local-' + l.num;
-const isExternal = (l) => !!l.url;
+const isExternal = (l) => /^https?:/.test(l.url || '');   // site paths like /preview-823/ open in the same tab
 const t = () => CONTENT.strings[state.lang];
 
 function renderPosts() {
@@ -1871,7 +1871,7 @@ function renderHeroMap() {
     } else {
       lx = x - 16; ly = y - 6; anchor = 'end';
     }
-    return `<a class="stop" data-n="${l.num}" href="#local-${l.num}" aria-label="Local ${l.num}, ${esc(l.city)}">${leader}
+    return `<a class="stop" data-n="${l.num}" href="${localHref(l)}" aria-label="Local ${l.num}, ${esc(l.city)}">${leader}
       <circle class="dot" cx="${f(x)}" cy="${f(y)}" r="9"/>
       <text class="num" x="${f(lx)}" y="${f(ly)}" text-anchor="${anchor}">${l.num}</text>
       <text class="city" x="${f(lx)}" y="${f(ly + 15)}" text-anchor="${anchor}">${esc(l.city)}</text>
