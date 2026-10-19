@@ -1,9 +1,9 @@
 // Emergency off-switch: pause everything, pause one local, resume.
 const { test, expect } = require('@playwright/test');
-const { watchErrors, sendFromHub, approveInInbox, openSite } = require('./helpers');
+const { watchErrors, sendFromHub, approveInInbox, openSite, openConsole } = require('./helpers');
 
 async function openEmergency(page) {
-  await page.goto('/#console');
+  await openConsole(page);
   await page.locator('[data-tab="emergency"]').click();
   await expect(page.locator('.cc-em')).toBeVisible();
 }
@@ -25,7 +25,8 @@ test('pause everything empties every local site and the public hub; resume bring
   await pauseAll.click();
   await expect(page.locator('.cc-em-status')).toContainText('Everything is paused');
 
-  // Public hub: only the notice (the console stays for the demo).
+  // Public hub: only the notice.
+  await page.goto('/');
   await expect(page.locator('#pause-notice')).toBeVisible();
   await expect(page.locator('.hero')).toBeHidden();
   await expect(page.locator('.sms-footer')).toBeHidden();
@@ -39,6 +40,8 @@ test('pause everything empties every local site and the public hub; resume bring
 
   await openEmergency(page);
   await page.locator('[data-cc="resume-all"]').click();
+  await expect(page.locator('.cc-em-status')).toContainText('Everything is live');
+  await page.goto('/');
   await expect(page.locator('#pause-notice')).toBeHidden();
   await expect(page.locator('.hero')).toBeVisible();
 
@@ -58,6 +61,7 @@ test('pause one local empties only that local\'s site', async ({ page }) => {
   await openEmergency(page);
   await page.locator('[data-cc="pause-local"][data-n="823"]').click();
   await expect(page.locator('.cc-em-local.off')).toHaveCount(1);
+  await page.goto('/');
   await expect(page.locator('#pause-notice')).toBeHidden(); // hub itself stays up
 
   let s = await openSite(page, '823');

@@ -2,6 +2,7 @@
 // including the council console tabs, the off-switch, and Spanish mode.
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
+const { openConsole } = require('./helpers');
 
 async function scan(page, label) {
   const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
@@ -10,7 +11,7 @@ async function scan(page, label) {
   expect(summary).toEqual([]);
 }
 
-const PAGES = ['/', '/inbox/?local=823', '/inbox/?local=825&role=secretary', '/portal/?local=825', '/portal/?local=823#contacts',
+const PAGES = ['/', '/console/', '/join/', '/portal/?local=825#members', '/inbox/?local=823', '/inbox/?local=825&role=secretary', '/portal/?local=825', '/portal/?local=823#contacts',
   '/preview-823/', '/preview-825/', '/preview-540/', '/preview-880/'];
 
 for (const path of PAGES) {
@@ -22,7 +23,7 @@ for (const path of PAGES) {
 }
 
 test('no serious accessibility problems in the council console tabs', async ({ page }) => {
-  await page.goto('/#console');
+  await openConsole(page);
   for (const tab of ['sent', 'from', 'dir', 'partners', 'log', 'emergency']) {
     await page.locator(`[data-tab="${tab}"]`).click();
     await scan(page, `console ${tab}`);
@@ -30,10 +31,11 @@ test('no serious accessibility problems in the council console tabs', async ({ p
 });
 
 test('no serious accessibility problems while everything is paused', async ({ page }) => {
-  await page.goto('/#console');
+  await openConsole(page);
   await page.locator('[data-tab="emergency"]').click();
   await page.locator('[data-cc="pause-all"]').click();
   await page.locator('[data-cc="pause-all"]').click();
+  await page.goto('/');
   await expect(page.locator('#pause-notice')).toBeVisible();
   await scan(page, 'hub paused');
 });

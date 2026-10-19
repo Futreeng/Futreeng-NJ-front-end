@@ -9,13 +9,17 @@ s = (src / 'src.html').read_text(encoding='utf-8')
 assert '—' not in s, 'em dash in src.html'
 assert '<style>\n/*FONTS*/' in s, 'font marker missing'
 (out / 'index.html').write_text(s.replace('<style>\n/*FONTS*/', link, 1), encoding='utf-8')
+# The council console is the same page in console mode, at /console/ (behind the council sign-in).
+assert '\n<body>\n' in s, 'body tag missing'
+(out / 'console').mkdir(exist_ok=True)
+(out / 'console' / 'index.html').write_text(s.replace('<style>\n/*FONTS*/', link, 1).replace('\n<body>\n', '\n<body data-page="console">\n', 1), encoding='utf-8')
 for f in sorted(src.glob('preview-*.html')):
     n = f.stem.split('-')[1]
     p = f.read_text(encoding='utf-8')
     assert '—' not in p, f'em dash in preview-{n}'
     (out / f'preview-{n}').mkdir(exist_ok=True)
     (out / f'preview-{n}' / 'index.html').write_text(p, encoding='utf-8')
-for name, dest in (('council-feed.js', 'council-feed.js'), ('inbox.html', 'inbox/index.html'), ('portal.html', 'portal/index.html')):
+for name, dest in (('council-feed.js', 'council-feed.js'), ('inbox.html', 'inbox/index.html'), ('portal.html', 'portal/index.html'), ('join.html', 'join/index.html')):
     t = (src / name).read_text(encoding='utf-8')
     assert '\u2014' not in t, f'em dash in {name}'
     (out / dest).parent.mkdir(exist_ok=True)

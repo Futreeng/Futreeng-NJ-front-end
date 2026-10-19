@@ -16,6 +16,8 @@ test('a live backend plugged in through NJCH_LIVE_BACKEND drives the local site'
         contacts: (n) => ({ name: 'ATU Local ' + n, num: n }), partners: none, partnersAdmin: none,
         reach: () => ({}), reachTotal: () => ({}), alertSubs: () => 0, emailSubs: () => 0,
         paused: () => ({ all: false, allAt: null, locals: {} }), isPaused: () => false,
+        session: () => ({ role: null }), canSeeMembers: () => false, members: none,
+        signIn: nothing, signOut: nothing, requestMembership: nothing, approveMember: nothing, declineMember: nothing, removeMember: nothing,
         send: nothing, correct: nothing, pull: nothing, routeSub: nothing, requestVerify: nothing, pauseAll: nothing, pauseLocal: nothing,
         approve: nothing, decline: nothing, remove: nothing, submit: nothing, verifyContacts: nothing,
         addPartner: nothing, setFeatured: nothing, removePartner: nothing, clickPartner: nothing,

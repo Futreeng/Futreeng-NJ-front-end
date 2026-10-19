@@ -107,7 +107,7 @@ legend{font-weight:700;margin-bottom:8px}
 </style>
 </head>
 <body>
-<div class="demo-ribbon">Demo · This is the email a local president receives <a href="/#console">← Council console</a><a id="portal-link" href="/portal/">Officer portal →</a></div>
+<div class="demo-ribbon">Demo · This is the email a local president receives <a href="/console/">← Council console</a><a id="portal-link" href="/portal/">Officer portal →</a></div>
 <header class="app-bar">
   <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
   <div class="switches">
@@ -201,7 +201,7 @@ legend{font-weight:700;margin-bottom:8px}
   function preview(p, s, liveNote) {
     const v = s.version && s.state !== 'pending' ? s.version : p;
     const note = s.state === 'approved' ? s.note : (s.state === 'pending' ? liveNote : '');
-    const badge = p.origin ? (p.kind === 'solidarity' ? '◆ Solidarity request · Local ' + p.origin : '◆ From Local ' + p.origin) : '◆ From the State Council';
+    const badge = (p.origin ? (p.kind === 'solidarity' ? '◆ Solidarity request · Local ' + p.origin : '◆ From Local ' + p.origin) : '◆ From the State Council') + (p.visibility === 'members' ? ' · Members only (shows to your logged-in members)' : '');
     return `<div class="site-preview">
         <span class="badge">${esc(badge)}</span>
         <h3>${esc(v.title)}</h3><p>${esc(v.body)}</p>
@@ -259,7 +259,7 @@ legend{font-weight:700;margin-bottom:8px}
   function renderRead() {
     const m = messages().find((x) => x.id === selected);
     if (!m) {
-      $('#read').innerHTML = `<div class="empty"><b>No messages yet</b>When the State Council sends a post to ${esc(C().name)}, the email lands here.<br><br><a href="/#console">Send one from the council console →</a></div>`;
+      $('#read').innerHTML = `<div class="empty"><b>No messages yet</b>When the State Council sends a post to ${esc(C().name)}, the email lands here.<br><br><a href="/console/">Send one from the council console →</a></div>`;
       return;
     }
     const c = C();

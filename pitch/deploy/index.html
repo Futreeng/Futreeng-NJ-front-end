@@ -700,6 +700,16 @@ textarea.sv-input{min-height:84px;resize:vertical}
 .cc-em-local.off i{color:var(--red)}
 .pause-notice{margin:0;padding:48px var(--gutter,24px);background:var(--red);color:#fff;font-family:var(--body);font-size:17px}
 .pause-notice strong{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);text-transform:uppercase;line-height:1}
+.members-lock{display:none}
+body.members-locked [data-members] > :not(.members-lock){display:none}
+body.members-locked .members-lock{display:block}
+.ml-box{border:2px dashed var(--line);padding:28px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.ml-box p{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--muted);max-width:60ch}
+.ml-actions{display:flex;gap:10px;flex-wrap:wrap}
+body.page-console main > :not(#console):not(#pause-notice),body.page-console .sms-footer,body.page-console .measure,body.page-console #partners,body.page-console .lang-note,body.page-console #tabbar,body.page-console .nav{display:none}
+.cc-gate{display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:60ch}.cc-gate p{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--muted)}
+.cc-vis{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media (max-width:720px){.cc-vis{grid-template-columns:1fr}}
+.credit a{color:inherit;text-decoration:underline}
 body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-footer,body.paused-all .measure,body.paused-all #partners,body.paused-all .lang-note{display:none}
 .cc-post{border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px}
 .cc-post.pulled{opacity:.6}
@@ -814,7 +824,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
       <a href="#locals" data-i18n="nav5">Locals</a>
     </nav>
     <div class="header-actions">
-      <button type="button" class="signin" data-soon>Sign in</button>
+      <a class="signin" id="members-link" href="/join/#login">Members</a>
       <a class="steward" href="#steward">☎ <span data-i18n="steward">Call a steward</span></a>
     </div>
     <div class="lang" role="group" aria-label="Language">
@@ -902,7 +912,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 </section>
 
 <!-- ======================= Bargaining survey ======================= -->
-<section class="deep section" id="survey" aria-labelledby="survey-title">
+<section class="deep section" id="survey" data-members aria-labelledby="survey-title">
   <div class="wrap sv" id="survey-body"></div>
 </section>
 
@@ -970,7 +980,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 </section>
 
 <!-- ======================= Contract ======================= -->
-<section class="section" id="contract" aria-labelledby="contract-title">
+<section class="section" id="contract" data-members aria-labelledby="contract-title">
   <div class="wrap contract">
     <div>
       <div class="eyebrow">NJ Transit bus agreement <span class="sample">Sample</span></div>
@@ -1085,7 +1095,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 </section>
 
 <!-- ======================= COPE / political action ======================= -->
-<section class="cope section deep" id="cope" aria-labelledby="cope-title">
+<section class="cope section deep" id="cope" data-members aria-labelledby="cope-title">
   <div class="wrap">
     <div class="cope-head">
       <div>
@@ -1132,7 +1142,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 </section>
 
 <!-- ======================= Member spotlight ======================= -->
-<section class="section" id="spotlight" aria-labelledby="spot-title">
+<section class="section" id="spotlight" data-members aria-labelledby="spot-title">
   <div class="wrap">
     <div class="eyebrow">The people who move New Jersey <span class="sample">Sample</span></div>
     <h2 class="h2" id="spot-title" data-i18n="spot">Member spotlight</h2>
@@ -1141,7 +1151,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 </section>
 
 <!-- ======================= Photo wall ======================= -->
-<section class="deep section" id="wall" aria-labelledby="wall-title">
+<section class="deep section" id="wall" data-members aria-labelledby="wall-title">
   <div class="wrap">
     <div class="wall-head">
       <h2 class="h2" id="wall-title" data-i18n="wall">From the locals</h2>
@@ -1323,7 +1333,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
     </div>
     <span class="logo-mark" aria-label="Amalgamated Transit Union">ATU</span>
   </div>
-  <div class="wrap credit">Working demo built by FutreEng LLC. Items marked SAMPLE are placeholder content.</div>
+  <div class="wrap credit">Working demo built by FutreEng LLC. Items marked SAMPLE are placeholder content. <a href="/console/" id="console-link">Council console</a></div>
 </footer>
 
 <!-- ======================= Mobile tab bar ======================= -->
@@ -1352,6 +1362,7 @@ const CONTENT = {
       benefits: 'Benefits & retirees', spot: 'Member spotlight', wall: 'From the locals', ride: 'Ride to your local',
       slogan: 'An injury to one is an injury to all.', going: "I'm going", rsvp: 'RSVP', goingCount: 'going',
       soon: 'This part of the hub is coming in a later build.',
+      mem: { link: 'Members', you: 'Member · Local {n}', lockT: 'Members only', lockB: 'Log in to your local\'s members\' area to see this. New here? Ask to join, and your local\'s secretary will confirm you\'re a member.', login: 'Member log in', join: 'Ask to join', console: 'Council console' },
       smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.',
       newHireLink: 'New to NJ Transit? Start with your first 90 days →', phone: 'Phone number',
       phoneErr: 'Enter a 10-digit phone number.', sample: 'Sample', arrived: 'ARRIVED',
@@ -1372,6 +1383,7 @@ const CONTENT = {
       benefits: 'Beneficios y jubilados', spot: 'Miembro destacado', wall: 'Desde los locales', ride: 'Viaja a tu local',
       slogan: 'Una injuria a uno es una injuria a todos.', going: 'Voy', rsvp: 'Confirmar', goingCount: 'van',
       soon: 'Esta parte del sitio llegará en una versión posterior.',
+      mem: { link: 'Miembros', you: 'Miembro · Local {n}', lockT: 'Solo para miembros', lockB: 'Inicia sesión en el área de miembros de tu local para ver esto. ¿Eres nuevo? Pide unirte y el secretario de tu local confirmará que eres miembro.', login: 'Acceso de miembros', join: 'Pedir unirme', console: 'Consola del consejo' },
       smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.',
       newHireLink: '¿Nuevo en NJ Transit? Empieza con tus primeros 90 días →', phone: 'Número de teléfono',
       phoneErr: 'Escribe un número de teléfono de 10 dígitos.', sample: 'Muestra', arrived: 'ENTREGADO',
@@ -1560,6 +1572,8 @@ const CONTENT = {
         "한국어 (soon)": "한국어 (pronto)",
         "Tagalog (soon)": "Tagalog (pronto)",
         "ATU New Jersey State Council · Affiliated with the AFL-CIO/CLC": "Consejo Estatal de ATU en Nueva Jersey · Afiliado a la AFL-CIO/CLC",
+        "Members": "Miembros",
+        "Council console": "Consola del consejo",
         "Working demo built by FutreEng LLC. Items marked SAMPLE are placeholder content.": "Demo funcional creada por FutreEng LLC. Lo marcado como MUESTRA es contenido provisional.",
         "Language": "Idioma",
         "NJ Council Hub home": "Inicio de NJ Council Hub",
@@ -1602,6 +1616,8 @@ const CONTENT = {
           titleL: 'Headline', bodyL: 'Message', esToggle: 'Add the Spanish version (optional)', titleEsL: 'Headline in Spanish', bodyEsL: 'Message in Spanish',
           startL: 'Starts', startNow: 'Now', startLater: 'Later', endL: 'Ends (optional)', endHint: 'Comes down off every site after this day.',
           targetsL: 'Send to', allLocals: 'All 9 locals', send: 'Send as council',
+          visL: 'Who can see it', visPublic: 'Public', visPublicSub: 'Anyone, including people outside the union', visMembers: 'Members only', visMembersSub: 'Logged-in members of each local', membersTag: 'Members only',
+          gateT: 'Council sign-in', gateB: 'The council console is only for State Council admins. In the real system you sign in with your email, password and a code from your authenticator app.', gateBtn: 'Sign in as council admin (demo)', signOut: 'Sign out',
           needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.', needStart: 'Pick when it starts.', badEnd: 'The end date has to be after it starts.',
           sentUrgent: 'Sent. Live now on {n} local sites. Members texted.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
           sentUrgent1: 'Sent. Live now on Local {l}\'s site. Members texted.', sentRegular1: 'Sent to Local {l}. Waiting for approval.', scheduled: 'Scheduled. Locals can approve now; it goes live on {d}.',
@@ -1655,6 +1671,8 @@ const CONTENT = {
           titleL: 'Titular', bodyL: 'Mensaje', esToggle: 'Agregar la versión en español (opcional)', titleEsL: 'Titular en español', bodyEsL: 'Mensaje en español',
           startL: 'Empieza', startNow: 'Ahora', startLater: 'Más tarde', endL: 'Termina (opcional)', endHint: 'Se retira de todos los sitios después de este día.',
           targetsL: 'Enviar a', allLocals: 'Los 9 locales', send: 'Enviar como consejo',
+          visL: 'Quién puede verlo', visPublic: 'Público', visPublicSub: 'Cualquier persona, incluso fuera del sindicato', visMembers: 'Solo miembros', visMembersSub: 'Miembros de cada local con sesión iniciada', membersTag: 'Solo miembros',
+          gateT: 'Acceso del consejo', gateB: 'La consola es solo para los administradores del Consejo Estatal. En el sistema real inicias sesión con tu correo, tu contraseña y un código de tu app de autenticación.', gateBtn: 'Entrar como administrador del consejo (demo)', signOut: 'Cerrar sesión',
           needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.', needStart: 'Elige cuándo empieza.', badEnd: 'La fecha final tiene que ser después del inicio.',
           sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Texto enviado a los miembros.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
           sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Texto enviado a los miembros.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.', scheduled: 'Programado. Los locales pueden aprobarlo ya; se publica el {d}.',
@@ -2227,6 +2245,7 @@ function translateFixed() {
 }
 
 function renderAll() {
+  applyPause(); applyMembers();
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
   renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
@@ -2246,8 +2265,31 @@ function applyStrings() {
   renderAll(); watchTabsRefresh();
 }
 
+/* ---------- Pages: the public hub (/) and the council console (/console/), built from this one file ---------- */
+const PAGE = document.body.dataset.page === 'console' ? 'console' : 'hub';
+if (PAGE === 'console') document.body.classList.add('page-console');
+else { const c = document.getElementById('console'); if (c) c.remove(); }   // the console never ships on the public page
+
+/* Members-only sections: locked for visitors; open for approved members and the council. */
+function applyMembers() {
+  const F = CF(), m = t().mem; if (!F) return;
+  const sess = F.session(), open = F.canSeeMembers(null);
+  document.body.classList.toggle('members-locked', !open);
+  document.querySelectorAll('[data-members]').forEach((sec) => {
+    let lock = sec.querySelector(':scope > .members-lock');
+    if (!lock) { lock = document.createElement('div'); lock.className = 'members-lock'; sec.prepend(lock); }
+    const h = sec.getAttribute('aria-labelledby') && document.getElementById(sec.getAttribute('aria-labelledby'));
+    const title = h ? h.textContent : '';
+    lock.innerHTML = `<div class="wrap"><div class="ml-box"><span class="eyebrow">◆ ${esc(m.lockT)}</span><h2 class="h2">${esc(title)}</h2><p>${esc(m.lockB)}</p>
+      <div class="ml-actions"><a class="btn btn-red" href="/join/#login">${esc(m.login)}</a><a class="btn btn-ghost" href="/join/">${esc(m.join)}</a></div></div></div>`;
+  });
+  const link = $('#members-link');
+  if (link) { link.textContent = sess.role === 'member' ? m.you.replace('{n}', sess.local) : m.link; link.href = sess.role === 'member' ? '/join/' : '/join/#login'; }
+  const cl = $('#console-link'); if (cl) cl.textContent = m.console;
+}
+
 /* ---------- Council workspace (demo): council <-> locals. Engine: /council-feed.js ---------- */
-const cc = { urgent: false, title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false,
+const cc = { urgent: false, visibility: 'public', title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false,
              startMode: 'now', startAt: '', endAt: '', tab: 'sent', editing: null, edit: {}, pullArm: null, subNotes: {}, logFilter: 'all' };
 const CF = () => window.CouncilFeed;
 const PARTNERS_UI = {
@@ -2273,8 +2315,15 @@ const ACTIONS_ES = { 'sent': 'enviado', 'sent urgent': 'urgente enviado', 'appro
   'added partner': 'socio agregado', 'removed partner': 'socio quitado', 'featured partner': 'socio destacado', 'unfeatured partner': 'socio ya no destacado',
   'paused everything': 'pausó todo', 'resumed everything': 'reanudó todo', 'paused local': 'pausó un local', 'resumed local': 'reanudó un local' };
 
+const councilIn = () => CF() && CF().session().role === 'council';
 function renderConsoleForm() {
+  if (!$('#console-form')) return;
   const u = CU();
+  if (!councilIn()) {
+    $('#console-form').innerHTML = `<div class="cc-gate"><div class="eyebrow red">${esc(u.eyebrow)}</div><h2 class="h2" id="cc-title">${esc(u.gateT)}</h2>
+      <p>${esc(u.gateB)}</p><button type="button" class="btn btn-red" data-cc="signin">${esc(u.gateBtn)}</button></div>`;
+    return;
+  }
   const chip = (n) => `<label><input type="checkbox" name="t" value="${n}"${cc.targets.includes(n) ? ' checked' : ''}><span>${n}</span></label>`;
   $('#console-form').innerHTML = `
     <div>
@@ -2294,6 +2343,12 @@ function renderConsoleForm() {
         <label class="sv-field">${esc(u.titleEsL)}<input class="sv-input" name="titleEs" maxlength="90" lang="es" value="${esc(cc.titleEs)}"></label>
         <label class="sv-field">${esc(u.bodyEsL)}<textarea class="sv-input" name="bodyEs" maxlength="400" lang="es">${esc(cc.bodyEs)}</textarea></label>
       </details>
+      <div class="sv-field" role="radiogroup" aria-label="${esc(u.visL)}">${esc(u.visL)}
+          <div class="cc-type cc-vis">
+            <label><input type="radio" name="visibility" value="public"${cc.visibility === 'members' ? '' : ' checked'}><span class="opt"><b>${esc(u.visPublic)}</b><span>${esc(u.visPublicSub)}</span></span></label>
+            <label><input type="radio" name="visibility" value="members"${cc.visibility === 'members' ? ' checked' : ''}><span class="opt"><b>${esc(u.visMembers)}</b><span>${esc(u.visMembersSub)}</span></span></label>
+          </div>
+        </div>
       <div class="cc-when">
         <div class="sv-field" role="group" aria-label="${esc(u.startL)}">${esc(u.startL)}
           <div class="cc-seg">
@@ -2351,7 +2406,7 @@ function renderSentTab() {
         <button type="button" class="action-btn${cc.pullArm === p.id ? ' solid' : ''}" data-cc="pull" data-id="${p.id}">${esc(cc.pullArm === p.id ? u.pullConfirm : u.pull)}</button>${links}</div>`;
     return `<article class="cc-post${ws === 'pulled' ? ' pulled' : ''}">
         <div><div class="tt">${esc(title)}</div>
-          <div class="mt"><span class="cc-tag${p.urgent ? ' u' : ''}">${esc(p.urgent ? u.urgent : u.regular)}</span>${origin}<span>${esc(when(p.created))}</span>${win ? `<span class="cc-win ${ws}">${esc(win)}</span>` : ''}${p.edits && p.edits.length ? `<span>${esc(u.edited.replace('{n}', p.edits.length))}</span>` : ''}</div></div>
+          <div class="mt"><span class="cc-tag${p.urgent ? ' u' : ''}">${esc(p.urgent ? u.urgent : u.regular)}</span>${p.visibility === 'members' ? `<span class="cc-tag">${esc(u.membersTag)}</span>` : ''}${origin}<span>${esc(when(p.created))}</span>${win ? `<span class="cc-win ${ws}">${esc(win)}</span>` : ''}${p.edits && p.edits.length ? `<span>${esc(u.edited.replace('{n}', p.edits.length))}</span>` : ''}</div></div>
         <div class="cc-count">${esc((p.urgent ? u.countUrgent : u.count).replace('{a}', ok.length).replace('{n}', ns.length))}${wait.length ? `<span>${esc(u.waiting.replace('{list}', wait.join(', ')))}</span>` : ''}</div>
         <div class="cc-chips">${ns.map((n) => statusChip(p, n)).join('')}</div>
         <div class="cc-reach"><b>${esc(u.reach)}</b><span>${nf(r.views)} ${esc(u.views)}</span><span>${nf(r.texts)} ${esc(u.texts)} · ${nf(r.taps)} ${esc(u.taps)}</span><span>${nf(r.emails)} ${esc(u.emails)} · ${nf(r.opens)} ${esc(u.opens)}</span></div>
@@ -2473,7 +2528,8 @@ function applyPause() {
 }
 function renderConsoleSent() {
   applyPause();
-  if (!CF()) return;
+  if (!CF() || !$('#console-sent')) return;
+  if (!councilIn()) { $('#console-sent').innerHTML = ''; return; }
   const u = CU(), F = CF();
   const pendingSubs = F.subs().filter((s) => s.state === 'pending').length;
   const due = F.ALL.filter((n) => F.contacts(n).verifyDue && !F.contacts(n).requestedAt).length;
@@ -2483,7 +2539,7 @@ function renderConsoleSent() {
   $('#console-sent').innerHTML = `<div class="cc-sent">
       <div class="cc-sent-head">
         <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('partners', u.tabs.partners, F.partnersAdmin('council').length)}${tab('log', u.tabs.log, 0)}${tab('emergency', u.tabs.emergency, pzBadge)}</div>
-        <div class="cc-tools"><span class="cc-clock">${esc(u.clock)}</span><button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button></div>
+        <div class="cc-tools"><span class="cc-clock">${esc(u.clock)}</span><button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button><button type="button" class="cc-reset" data-cc="signout">${esc(u.signOut)}</button></div>
       </div>
       <div class="cc-panel" role="tabpanel">${panel}</div>
     </div>`;
@@ -2491,7 +2547,8 @@ function renderConsoleSent() {
 const busy = () => cc.editing || (document.activeElement && document.activeElement.closest && document.activeElement.closest('#console-sent textarea, #console-sent select, #console-sent input'));
 function wireConsole() {
   if (!CF()) return;
-  CF().onChange(() => { applyPause(); if (!busy()) renderConsoleSent(); renderPartnersSection(); });
+  CF().onChange(() => { applyPause(); applyMembers(); if (PAGE === 'console' && !busy()) { renderConsoleForm(); renderConsoleSent(); } renderPartnersSection(); });
+  if (PAGE !== 'console') return;   // the console only runs on /console/
   setInterval(() => { CF().tick(); if (!busy() && ['sent', 'log', 'dir'].includes(cc.tab)) renderConsoleSent(); }, 1000);
   const form = () => $('#console-form form');
   document.addEventListener('input', (ev) => {
@@ -2507,6 +2564,7 @@ function wireConsole() {
     if (t.closest('[data-form="partner"]')) { ptd[t.name] = t.type === 'checkbox' ? t.checked : t.value; return; }
     if (!t.closest('[data-form="council"]')) return;
     if (t.name === 'kind') cc.urgent = t.value === 'urgent';
+    if (t.name === 'visibility') cc.visibility = t.value === 'members' ? 'members' : 'public';
     if (t.name === 't') cc.targets = [...form().querySelectorAll('input[name=t]:checked')].map((i) => i.value);
     if (t.name === 'startMode') { cc.startMode = t.value; renderConsoleForm(); }
     if (['startAt', 'endAt'].includes(t.name)) cc[t.name] = t.value;
@@ -2518,6 +2576,8 @@ function wireConsole() {
     if (tb) { cc.tab = tb.dataset.tab; cc.pullArm = null; renderConsoleSent(); const again = document.querySelector(`[data-tab="${cc.tab}"]`); if (again) again.focus(); return; }
     const b = ev.target.closest('[data-cc]'); if (!b) return;
     const u = CU(), F = CF(), id = b.dataset.id, a = b.dataset.cc;
+    if (a === 'signin') { await F.signIn({ role: 'council' }); renderConsoleForm(); renderConsoleSent(); const h = $('#cc-title'); if (h) h.focus && h.scrollIntoView({ block: 'start' }); return; }
+    if (a === 'signout') { await F.signOut(); renderConsoleForm(); renderConsoleSent(); return; }
     if (a === 'all') { form().querySelectorAll('input[name=t]').forEach((i) => { i.checked = true; }); cc.targets = CONTENT.locals.map((l) => l.num); }
     if (a === 'reset') { await F.reset(); Object.assign(cc, { editing: null, pullArm: null, subNotes: {} }); toast(u.resetDone); renderConsoleSent(); }
     if (a === 'correct') { const p = F.posts().find((x) => x.id === id); cc.editing = id; cc.edit = { title: p.title, body: p.body, titleEs: p.titleEs, bodyEs: p.bodyEs }; renderConsoleSent(); const f = document.querySelector('.cc-edit input'); if (f) f.focus(); }
@@ -2588,11 +2648,11 @@ function wireConsole() {
     if (cc.startMode === 'later') { if (!cc.startAt) { toast(u.needStart); return; } startAt = new Date(cc.startAt).getTime(); }
     if (cc.endAt) endAt = new Date(cc.endAt + 'T23:59:59').getTime();
     if (endAt && endAt <= (startAt || Date.now())) { toast(u.badEnd); return; }
-    await CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice(), startAt, endAt });
+    await CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, visibility: cc.visibility, targets: cc.targets.slice(), startAt, endAt });
     const one = cc.targets.length === 1;
     toast(startAt && startAt > Date.now() ? u.scheduled.replace('{d}', when(startAt))
       : (cc.urgent ? (one ? u.sentUrgent1 : u.sentUrgent) : (one ? u.sentRegular1 : u.sentRegular)).replace('{n}', cc.targets.length).replace('{l}', cc.targets[0]));
-    Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false, startMode: 'now', startAt: '', endAt: '', tab: 'sent' });
+    Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false, visibility: 'public', startMode: 'now', startAt: '', endAt: '', tab: 'sent' });
     renderConsoleForm(); renderConsoleSent();
   });
 }

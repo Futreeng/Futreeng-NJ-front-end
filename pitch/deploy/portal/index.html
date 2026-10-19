@@ -145,6 +145,11 @@ textarea.input{min-height:100px;resize:vertical}
 .pt-admin .meta{margin-top:6px;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--dim)}
 .pt-admin .meta .pill{margin-top:0}
 .b[disabled]{opacity:.45;cursor:not-allowed}
+.mh{margin:18px 0 8px;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.mrow span{display:block;font-size:13px;color:var(--muted)}
+.mrow span.chip{display:inline-block;margin-left:6px;font-size:11px}
+.mrow .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:0}
 .pt-admin .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .pt-admin .acts .b{min-height:38px;padding:8px 12px;font-size:13px}
 .ack{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 14px;border:1px solid #F1DC9A;background:#FFF8E1;border-radius:8px;font-size:14px;cursor:pointer}
@@ -158,7 +163,7 @@ select.input{appearance:auto}
 </style>
 </head>
 <body>
-<div class="demo-ribbon">Demo · Local officer portal <a href="/#console">← Council console</a><a id="inbox-link" href="/inbox/">Officer email →</a></div>
+<div class="demo-ribbon">Demo · Local officer portal <a href="/console/">← Council console</a><a id="inbox-link" href="/inbox/">Officer email →</a></div>
 <header class="app-bar">
   <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
   <div class="switches">
@@ -179,7 +184,7 @@ select.input{appearance:auto}
   const params = new URLSearchParams(location.search);
   const LOCAL = CF.ALL.includes(params.get('local')) ? params.get('local') : '823';
   let role = 'president';
-  let tab = ['send', 'sent', 'partners', 'contacts'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'send';
+  let tab = ['send', 'sent', 'members', 'partners', 'contacts'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'send';
   const draft = { kind: 'share', title: '', body: '', targets: [] };
   let contactDraft = null;
   const ptDraft = { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false };
@@ -203,7 +208,7 @@ select.input{appearance:auto}
     document.querySelectorAll('[data-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
     const mine = CF.subs().filter((x) => x.from === LOCAL).length;
     const t = (k, label, n) => `<button type="button" class="ptab" role="tab" data-tab="${k}" aria-selected="${tab === k}">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`;
-    $('#ptabs').innerHTML = t('send', 'Send to the council') + t('sent', 'Sent by your local', mine) + t('partners', 'Partners', CF.partnersAdmin(LOCAL).length) + t('contacts', 'Contacts', C().requestedAt || C().verifyDue ? '!' : 0);
+    $('#ptabs').innerHTML = t('send', 'Send to the council') + t('sent', 'Sent by your local', mine) + t('members', 'Members', CF.members(LOCAL).filter((m) => m.state === 'pending').length) + t('partners', 'Partners', CF.partnersAdmin(LOCAL).length) + t('contacts', 'Contacts', C().requestedAt || C().verifyDue ? '!' : 0);
   }
 
   function sendPanel() {
@@ -244,6 +249,21 @@ select.input{appearance:auto}
         ${x.councilNote ? `<div class="reply"><b>Council:</b> ${esc(x.councilNote)}</div>` : ''}
         ${p ? chipsFor(p) : ''}</div>`;
     }).join('');
+  }
+  /* Member sign-ups: only the secretary approves; the president can see the list. */
+  function membersPanel() {
+    const all = CF.members(LOCAL), pending = all.filter((m) => m.state === 'pending'), approved = all.filter((m) => m.state === 'approved');
+    const sec = role === 'secretary';
+    const when = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const row = (m, actions) => `<div class="mrow"><div><b>${esc(m.name)}</b>${m.sample ? ' <span class="chip">sample</span>' : ''}<span>Member no. ${esc(m.number)}${m.contact ? ' · ' + esc(m.contact) : ''} · asked ${esc(when(m.created))}</span></div><div class="actions">${actions}</div></div>`;
+    const dis = sec ? '' : ' disabled';
+    return `<h2>Members' area sign-ups</h2>
+      <p class="lead">Members ask to join on the hub. ${sec ? 'Check each one against your membership list before you approve. Approved members can see members-only posts and pages.' : 'Only your secretary approves sign-ups. Switch to Secretary to try it.'}</p>
+      <h3 class="mh">Waiting for approval (${pending.length})</h3>
+      ${pending.length ? pending.map((m) => row(m, `<button type="button" class="b ok" data-mem="approve" data-id="${esc(m.id)}"${dis}>Approve</button><button type="button" class="b no" data-mem="decline" data-id="${esc(m.id)}"${dis}>Decline</button>`)).join('') : '<p class="lead">Nobody is waiting.</p>'}
+      <h3 class="mh">Approved members (${approved.length})</h3>
+      ${approved.length ? approved.map((m) => row(m, `<button type="button" class="b no" data-mem="remove" data-id="${esc(m.id)}"${dis}>Remove access</button>`)).join('') : '<p class="lead">No approved members yet.</p>'}
+      <p class="lead" style="margin-top:18px">In the real system, sign-ups and the membership list stay private to your local's officers and are never shown on any website.</p>`;
   }
   function contactsPanel() {
     const c = C();
@@ -304,11 +324,19 @@ select.input{appearance:auto}
   }
   function render() {
     header();
-    $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : tab === 'partners' ? partnersPanel() : contactsPanel();
+    $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : tab === 'members' ? membersPanel() : tab === 'partners' ? partnersPanel() : contactsPanel();
   }
 
   document.addEventListener('click', async (e) => {
     const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
+    const mb = e.target.closest('[data-mem]');
+    if (mb) {
+      const fn = { approve: CF.approveMember, decline: CF.declineMember, remove: CF.removeMember }[mb.dataset.mem];
+      const r = await fn(mb.dataset.id, { by: role });
+      render();
+      toast(r.error === 'secretary-only' ? 'Only the secretary can do that.' : { approve: 'Approved. They can log in now.', decline: 'Declined.', remove: 'Access removed.' }[mb.dataset.mem]);
+      return;
+    }
     const pa = e.target.closest('[data-pt]');
     if (pa) {
       const id = pa.dataset.id;
