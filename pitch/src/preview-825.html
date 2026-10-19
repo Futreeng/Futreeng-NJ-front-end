@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06101F">
+<title>Preview · ATU Local 825 in Council Design | NJ Council Hub</title>
+<meta name="description" content="Preview mockup of ATU Local 825 (Oradell + Westwood) in the unified NJ State Council design system. Not the live local site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* Shared stylesheet for preview pages. Mirrors the hub design system. */
+:root{
+  --navy:#0C1A33; --navy-deep:#06101F; --panel:#13284D; --panel-2:#102344;
+  --red:#D7263D; --red-dark:#B81E33; --gold:#C9A14A; --gold-dark:#A4842F;
+  --ink:#F2F4F8; --muted:#C5CDDB; --dim:#8FA2C4;
+  --line:rgba(255,255,255,.14); --line-soft:rgba(255,255,255,.1);
+  --status:#2F5DA8; --sample:#F2C14E;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --pad:48px; --max:1344px; --gutter:max(var(--pad), calc((100vw - var(--max)) / 2 + var(--pad)));
+  --local-accent: var(--red);
+  --accent-text: #F25C70; /* small-text accent, 4.5:1 on navy */
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--navy-deep);color-scheme:dark}
+body{margin:0;background:var(--navy);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--local-accent)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--sample);outline-offset:3px}
+img,svg{display:block;max-width:100%}
+.wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
+.section{padding-top:64px;padding-bottom:64px;border-bottom:1px solid var(--line)}
+.deep{background:var(--navy-deep)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-transform:uppercase}
+.eyebrow.red{color:var(--local-accent)}
+.h2{font-weight:800;font-size:52px;line-height:.95;text-transform:uppercase;margin:10px 0 0}
+.lede{font-family:var(--body);font-size:16px;line-height:1.55;color:var(--muted);max-width:62ch;text-wrap:pretty}
+.mono{font-family:var(--mono)}
+.sample{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--navy);background:var(--sample);padding:3px 7px;line-height:1.2;vertical-align:middle;text-transform:uppercase}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;padding:14px 22px;border:2px solid var(--ink);transition:background .15s,color .15s}
+.btn-light{background:var(--ink);color:var(--navy)}
+.btn-light:hover{background:#fff;color:var(--local-accent)}
+.btn-ghost:hover{background:var(--ink);color:var(--navy)}
+.btn-accent{background:var(--local-accent);border-color:var(--local-accent);color:#fff}
+.btn-accent:hover{filter:brightness(1.1);color:#fff}
+.action-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:2px solid var(--local-accent);color:var(--ink);background:transparent;transition:background .15s,color .15s;cursor:pointer}
+.action-btn:hover{background:var(--local-accent);color:#fff}
+.action-btn.solid{background:var(--local-accent);color:#fff}
+.action-btn.solid:hover{filter:brightness(1.1)}
+.stripes{background:repeating-linear-gradient(135deg,var(--panel) 0 22px,var(--panel-2) 22px 44px)}
+.logo-mark{display:inline-flex;align-items:center;height:34px;padding:0 8px;background:var(--local-accent);color:#fff;font-weight:800;font-size:22px;letter-spacing:.06em;line-height:1}
+
+/* Preview ribbon */
+.preview-ribbon{background:var(--sample);color:var(--navy);padding:12px 0;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-align:center;font-weight:600}
+.preview-ribbon b{font-weight:800}
+.preview-ribbon a{color:var(--navy);text-decoration:underline;margin-left:12px}
+
+/* Top bar */
+.topbar{background:var(--navy-deep);border-bottom:3px solid var(--local-accent);font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:10px var(--pad)}
+.topbar .wrap{padding-left:var(--gutter);padding-right:var(--gutter)}
+.topbar-left{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.topbar-left .dot{width:8px;height:8px;border-radius:50%;background:var(--local-accent);display:inline-block}
+.topbar-right{display:flex;gap:14px;align-items:center}
+
+/* Header */
+.header{border-bottom:1px solid var(--line)}
+.header .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:18px;padding-bottom:18px}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-name{display:flex;flex-direction:column;line-height:1}
+.brand-name .eyebrow-txt{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.brand-name strong{font-weight:800;font-size:26px;letter-spacing:.04em;text-transform:uppercase;margin-top:4px}
+.brand-name span.tag{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px}
+.nav{display:flex;gap:24px;font-weight:600;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.nav a:hover{color:#fff}
+.header-actions{display:flex;gap:10px;font-family:var(--mono);font-size:13px}
+.header-actions .signin{border:1px solid rgba(255,255,255,.4);padding:10px 14px}
+.header-actions .steward{background:var(--local-accent);padding:10px 14px;font-weight:600;color:#fff}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);min-height:600px}
+.hero-copy{padding:56px var(--pad) 48px var(--gutter);display:flex;flex-direction:column;gap:24px}
+.hero h1{font-weight:800;font-size:120px;line-height:.9;text-transform:uppercase;margin:12px 0 0;letter-spacing:-.01em}
+.hero h1 .accent{color:var(--local-accent)}
+.hero h1 .dot{color:var(--local-accent)}
+.hero p{font-family:var(--body);font-size:19px;line-height:1.55;color:var(--muted);max-width:560px;margin:0;text-wrap:pretty}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-photo{position:relative;min-height:600px;overflow:hidden}
+.hero-photo .ph{position:absolute;left:20px;top:20px;max-width:380px;background:rgba(6,16,31,.88);border:1px dashed rgba(255,255,255,.4);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.hero-photo .ph-label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sample)}
+.hero-photo .ph-title{font-family:var(--display);font-weight:800;font-size:22px;line-height:1;text-transform:uppercase}
+.hero-photo .ph-text{font-family:var(--body);font-size:14px;line-height:1.45;color:var(--muted)}
+.hero-photo .tag{position:absolute;left:0;bottom:0;background:var(--local-accent);padding:14px 22px;font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em;color:#fff}
+
+/* SMS card */
+.sms-card{background:var(--navy-deep);border:2px solid var(--local-accent);padding:20px 22px;display:flex;flex-direction:column;gap:10px;max-width:460px}
+.sms-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--local-accent);text-transform:uppercase}
+.sms-title{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.05;text-transform:uppercase}
+.sms-sub{font-family:var(--body);font-size:13px;line-height:1.45;color:var(--muted)}
+.sms-form{display:flex;gap:8px;margin-top:6px}
+.sms-input{flex:1;min-width:0;background:var(--navy);color:var(--ink);border:1px solid rgba(255,255,255,.3);padding:12px 14px;font-family:var(--mono);font-size:14px;letter-spacing:.04em}
+.sms-input::placeholder{color:var(--dim)}
+.sms-input:focus{outline:none;border-color:var(--local-accent)}
+.sms-btn{background:var(--local-accent);color:#fff;border:2px solid var(--local-accent);font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 18px;white-space:nowrap;cursor:pointer}
+.sms-note{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+
+/* Alert */
+.alert{background:var(--local-accent)}
+.alert .wrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:32px;padding-top:22px;padding-bottom:22px}
+.alert strong{display:block;font-weight:800;font-size:30px;text-transform:uppercase;line-height:1.05;color:#fff}
+.alert span{font-family:var(--body);font-size:15px;color:#fff}
+.alert .btn{background:var(--ink);color:var(--navy);border-color:var(--ink)}
+
+/* About */
+.about{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;padding-top:56px;padding-bottom:40px}
+.about-copy{font-family:var(--body);font-size:17px;line-height:1.6;color:var(--muted);margin:14px 0 0;max-width:62ch;text-wrap:pretty}
+.officer-cards{display:flex;gap:24px;flex-wrap:wrap;margin-top:24px}
+.officer{display:flex;align-items:center;gap:16px}
+.initials{width:68px;height:68px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--local-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;letter-spacing:.04em}
+.officer-text{display:flex;flex-direction:column;gap:2px;border-left:3px solid var(--local-accent);padding-left:12px}
+.officer-text .role{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim)}
+.officer-text .name{font-weight:800;font-size:22px;line-height:1}
+.officer-text .where{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;align-content:start;border:1px solid var(--line)}
+.stat{padding:20px 22px;border-bottom:1px solid var(--line)}
+.stat:nth-child(odd){border-right:1px solid var(--line)}
+.stat.wide{grid-column:1 / -1;border-right:0;border-bottom:0}
+.stat .num{font-weight:800;font-size:38px;line-height:1}
+.stat .wide-title{font-weight:800;font-size:24px;line-height:1.1}
+.stat .cap{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px}
+
+/* Meeting banner */
+.meeting{background:var(--navy-deep)}
+.meeting .wrap{display:grid;grid-template-columns:2fr 2fr auto;gap:32px;align-items:center;padding-top:36px;padding-bottom:36px}
+.meeting .m-label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--local-accent);text-transform:uppercase}
+.meeting .m-head{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;text-transform:uppercase;margin-top:6px}
+.meeting .m-times{display:flex;gap:14px;margin-top:12px;font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.04em}
+.meeting .m-times span{background:var(--panel);padding:6px 12px}
+.meeting .m-detail-label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.meeting .m-detail-val{font-weight:800;font-size:22px;text-transform:uppercase;margin-top:6px}
+.meeting .m-detail-sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+
+/* News */
+.news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.news-card{background:var(--navy-deep);padding:0;display:flex;flex-direction:column}
+.news-img{height:140px;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,var(--panel) 0 22px,var(--panel-2) 22px 44px);display:flex;align-items:center;justify-content:center}
+.news-img .lab{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-align:center;padding:0 12px}
+.news-body{padding:20px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.news-meta{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.news-tag{background:var(--local-accent);color:#fff;padding:3px 8px;font-weight:600}
+.news-tag.advisory{background:var(--status)}
+.news-tag.event{background:#1F6E3C}
+.news-title{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-transform:none;margin:0}
+.news-excerpt{font-family:var(--body);font-size:14px;color:var(--muted);line-height:1.5;margin:0}
+.news-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;margin-top:auto}
+.news-foot b{color:var(--local-accent);font-weight:700}
+
+/* Garages */
+.garages{background:var(--navy-deep)}
+.garage-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}
+.garage{background:var(--navy);border-left:4px solid var(--local-accent);padding:28px;display:flex;flex-direction:column;gap:14px}
+.garage .g-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.garage .g-top .active{color:#5ec98a}
+.garage .g-name{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.garage .g-addr{font-family:var(--body);font-size:15px;color:var(--muted);line-height:1.5}
+.garage .g-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--line);padding-top:14px}
+.garage .g-stat .lbl{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;display:block}
+.garage .g-stat .val{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink);display:block;margin-top:4px}
+.garage .g-cta{font-family:var(--mono);font-size:12px;color:var(--local-accent);letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+
+/* Tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.tool-card{background:var(--navy-deep);padding:24px;display:flex;flex-direction:column;gap:12px;min-height:180px}
+.tool-num{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--local-accent)}
+.tool-title{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase}
+.tool-desc{font-family:var(--body);font-size:14px;color:var(--muted);line-height:1.5;flex:1}
+.tool-foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+
+/* SMS footer banner */
+.sms-footer{background:var(--local-accent);color:#fff;padding:28px 0}
+.sms-footer .wrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px}
+.sms-footer strong{display:block;font-family:var(--display);font-weight:800;font-size:30px;text-transform:uppercase;line-height:1.05}
+.sms-footer span.sub{font-family:var(--body);font-size:15px;opacity:.95}
+.sms-footer .sms-form{min-width:360px}
+.sms-footer .sms-input{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff}
+.sms-footer .sms-input::placeholder{color:rgba(255,255,255,.7)}
+.sms-footer .sms-btn{background:#fff;color:var(--local-accent);border-color:#fff}
+
+/* Council strip */
+.council-strip{background:var(--navy-deep);padding:28px 0;border-top:3px solid var(--local-accent)}
+.council-strip .wrap{display:flex;flex-direction:column;gap:14px}
+.cs-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.cs-label b{color:var(--sample);font-weight:700}
+.cs-locals{display:flex;gap:8px;flex-wrap:wrap}
+.cs-local{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.04em;color:var(--muted);padding:8px 12px;border:1px solid var(--line);text-transform:uppercase;transition:all .15s}
+.cs-local b{color:var(--ink);font-weight:800;margin-right:6px}
+.cs-local:hover{color:var(--ink);border-color:var(--muted)}
+.cs-local.self{color:#fff;background:var(--local-accent);border-color:var(--local-accent)}
+.cs-local.self b{color:#fff}
+
+/* Footer */
+.footer{border-top:6px solid var(--local-accent)}
+.footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding-top:48px;padding-bottom:32px}
+.footer h3,.footer h4{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;color:var(--ink)}
+.footer ul{list-style:none;margin:0;padding:0;font-family:var(--body);font-size:14px;color:var(--muted);line-height:2}
+.footer ul a:hover{color:var(--ink);text-decoration:underline}
+.footer .seal{width:72px;height:72px;flex:none;border-radius:50%;background:var(--panel);border:2px solid var(--local-accent);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:18px;line-height:1}
+.footer-brand{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.footer-brand-txt{display:flex;flex-direction:column}
+.footer-brand-name{font-family:var(--display);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.footer-brand-sub{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.footer-tag{font-family:var(--body);font-size:14px;color:var(--muted);line-height:1.5;max-width:40ch}
+.footer-bottom{border-top:1px solid var(--line);padding:18px var(--pad);display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;flex-wrap:wrap;gap:14px}
+.footer-bottom{padding-left:var(--gutter);padding-right:var(--gutter)}
+
+/* Responsive */
+@media (max-width:1040px){
+  :root{--pad:32px}
+  .hero{grid-template-columns:1fr}
+  .hero-photo{min-height:320px}
+  .hero h1{font-size:88px}
+  .about{grid-template-columns:1fr}
+  .meeting .wrap{grid-template-columns:1fr}
+  .news-grid{grid-template-columns:1fr 1fr}
+  .garage-grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sms-footer .wrap{grid-template-columns:1fr}
+  .sms-footer .sms-form{min-width:0}
+  .footer .wrap{grid-template-columns:1fr 1fr}
+  .nav{order:3;width:100%;overflow-x:auto;gap:18px;padding-top:6px;font-size:15px}
+  .header .wrap{flex-wrap:wrap}
+}
+@media (max-width:720px){
+  :root{--pad:18px}
+  body{padding-bottom:0}
+  .section{padding-top:44px;padding-bottom:44px}
+  .h2{font-size:38px}
+  .nav,.header-actions{display:none}
+  .hero h1{font-size:62px}
+  .hero p{font-size:17px}
+  .alert .wrap{grid-template-columns:1fr;gap:14px}
+  .alert strong{font-size:24px}
+  .alert .btn{width:100%}
+  .news-grid{grid-template-columns:1fr}
+  .tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tool-card{padding:18px;min-height:150px}
+  .tool-title{font-size:21px;overflow-wrap:anywhere}
+  .footer .wrap{grid-template-columns:1fr}
+  .sms-form{flex-direction:column}
+  .sms-btn{padding:12px}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+
+/* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
+.eyebrow.red,.sms-card .sms-eyebrow,.meeting .m-label,.news-foot b,.garage .g-cta,.tool-num{color:var(--accent-text)}
+@media (max-width:720px){
+  .action-btn{min-height:44px}
+  .footer ul a{display:inline-block;padding:6px 0}
+  .preview-ribbon a{display:inline-block;padding:10px 0}
+  .topbar .wrap{flex-direction:column;align-items:flex-start;gap:6px}
+  .topbar-left>span:nth-child(2),.topbar-right>span:nth-child(2){display:none}
+  .topbar-left{gap:4px 12px}
+}
+
+/* Local 825 accent (gold) */
+:root{ --local-accent: var(--gold); --local-dark: var(--gold-dark); --accent-text: var(--gold); }
+/* White on gold is 2.4:1; use deep navy (7.9:1) for text sitting on gold fills */
+.logo-mark,.btn-accent,.btn-accent:hover,.sms-btn,.hero-photo .tag,.alert strong,.alert span,.news-tag:not(.advisory):not(.event),.sms-footer,.sms-footer strong,.sms-footer span.sub,.cs-local.self,.cs-local.self b,.action-btn.solid,.action-btn:hover,.header-actions .steward{color:var(--navy-deep)}
+.sms-footer .sms-btn{background:var(--navy-deep);border-color:var(--navy-deep);color:#fff}
+.sms-footer .sms-input{background:rgba(6,16,31,.08);border-color:rgba(6,16,31,.45);color:var(--navy-deep)}
+.sms-footer .sms-input::placeholder{color:rgba(6,16,31,.65)}
+</style>
+</head>
+<body>
+
+<!-- Preview ribbon -->
+<div class="preview-ribbon" role="banner">
+  ◆ Preview · <b>What Local 825 would look like in the unified council design system.</b>
+  Not the live site. <a href="https://atu-825-connect.vercel.app/" target="_blank" rel="noopener">See the live Local 825 Connect →</a>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="topbar-left">
+      <span><span class="dot" aria-hidden="true"></span> ATU New Jersey State Council</span>
+      <span>·</span>
+      <span>Local 825 · Bergen County, NJ</span>
+    </div>
+    <div class="topbar-right">
+      <span>Member Login</span>
+      <span>·</span>
+      <span>☎ 201·225·3039</span>
+    </div>
+  </div>
+</div>
+
+<!-- Urgent council alerts land here (see /council-feed.js) -->
+<div id="council-alert"></div>
+
+<!-- Header -->
+<header class="header" id="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="ATU Local 825 home">
+      <span class="logo-mark" aria-hidden="true">ATU</span>
+      <span class="brand-name">
+        <span class="eyebrow-txt">Amalgamated Transit Union</span>
+        <strong>Local 825</strong>
+        <span class="tag">Oradell · Westwood · Bergen County NJ</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#about">Home</a>
+      <a href="#news">News</a>
+      <a href="#tools">Pick Schedules</a>
+      <a href="#tools">Routes</a>
+      <a href="#about">Officers</a>
+      <a href="#tools">Resources</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="signin">Sign in</button>
+      <a class="steward" href="#about">☎ Call a steward</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- Hero -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <div class="eyebrow">Labor union · ATU 825 · Operators · Mechanics · Maintenance</div>
+    <h1 id="hero-title"><span class="accent">Unity<span class="dot">.</span></span></h1>
+    <p>Unity, to be real, must stand the severest strain without breaking. Necessity unites. In union there is strength. Yes we can.</p>
+    <div class="hero-actions">
+      <a class="btn btn-accent" href="#tools">Read the contract →</a>
+      <a class="btn btn-ghost" href="#tools">File a grievance</a>
+    </div>
+    <form class="sms-card" onsubmit="return smsSubmit(event)">
+      <span class="sms-eyebrow">◆ Join the 825 alert line <span class="sample" style="margin-left:6px">Sample</span></span>
+      <span class="sms-title">Floods, pulls, GMMs - we text you.</span>
+      <span class="sms-sub">Oradell flood line, pick notices, GMM reminders. Phone number only. We never share it.</span>
+      <div class="sms-form">
+        <input class="sms-input" type="tel" placeholder="(555) 555-5555" inputmode="tel" autocomplete="tel" aria-label="Phone number">
+        <button class="sms-btn" type="submit">Sign up</button>
+      </div>
+      <span class="sms-note">Standard message rates may apply · Reply STOP to opt out</span>
+    </form>
+  </div>
+  <div class="hero-photo stripes" role="img" aria-label="Photo placeholder: Local 825 operators">
+    <div class="ph">
+      <span class="ph-label">Photo placeholder</span>
+      <span class="ph-title">Hero photo</span>
+      <span class="ph-text">Local 825 operators at Oradell or Westwood. Replace with a photo supplied by the local.</span>
+    </div>
+    <div class="tag">In union there is strength</div>
+  </div>
+</section>
+
+<!-- Alert band -->
+<div class="alert">
+  <div class="wrap">
+    <div>
+      <strong>Flooding or incident on your route?</strong>
+      <span>Call the Oradell flood line: 201·407·3719. Your union has your back.</span>
+    </div>
+    <a class="btn" href="tel:2014073719">Call now →</a>
+  </div>
+</div>
+
+<!-- About the local -->
+<section class="wrap about" id="about">
+  <div>
+    <h2 class="eyebrow" style="margin:0">About Local 825</h2>
+    <p class="about-copy">ATU Local 825 represents operators, mechanics, maintenance and field staff at the Oradell and Westwood garages, serving Bergen County and the NYC corridor. Elected officers run the local; delegates represent members at the ATU New Jersey State Council.</p>
+    <div class="officer-cards">
+      <div class="officer">
+        <div class="initials" aria-hidden="true">RG</div>
+        <div class="officer-text">
+          <span class="role">President</span>
+          <span class="name">Retheena Goodwin</span>
+          <span class="where">ATU Local 825</span>
+        </div>
+      </div>
+      <div class="officer">
+        <div class="initials" aria-hidden="true">CH</div>
+        <div class="officer-text">
+          <span class="role">Vice President</span>
+          <span class="name">Chris Haskins</span>
+          <span class="where">ATU Local 825</span>
+        </div>
+      </div>
+      <div class="officer">
+        <div class="initials" aria-hidden="true">JE</div>
+        <div class="officer-text">
+          <span class="role">Fin Secretary · Treasurer</span>
+          <span class="name">Jeffrey Evans</span>
+          <span class="where">ATU Local 825</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num">2</div><div class="cap">Garages · Oradell &amp; Westwood</div></div>
+    <div class="stat"><div class="num">100%</div><div class="cap">Union · All staff represented</div></div>
+    <div class="stat wide"><div class="wide-title">Bergen County · NYC corridor</div><div class="cap">Affiliated with ATU International and the ATU New Jersey State Council</div></div>
+  </div>
+</section>
+
+<!-- Meeting banner -->
+<section class="meeting">
+  <div class="wrap">
+    <div>
+      <div class="m-label">General Membership Meeting</div>
+      <div class="m-head">Every 4th Monday<br>of the month.</div>
+      <div class="m-times"><span>11:00 AM</span><span>8:00 PM</span></div>
+    </div>
+    <div>
+      <div class="m-detail-label">VFW</div>
+      <div class="m-detail-val">267 Madison Avenue</div>
+      <div class="m-detail-sub">New Milford, NJ 07646 · Open to all members</div>
+    </div>
+    <a class="btn btn-accent" href="#" onclick="event.preventDefault();toast('Would download .ics in the real build')">Add to calendar →</a>
+  </div>
+</section>
+
+<!-- News -->
+<section class="section deep" id="news" aria-labelledby="news-title">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div>
+        <div class="eyebrow red">◆ The dispatch</div>
+        <h2 class="h2" id="news-title">News &amp; updates</h2>
+      </div>
+      <a href="#" class="action-btn">All updates →</a>
+    </div>
+    <div id="council-pinned"></div>
+    <div class="news-grid">
+      <article class="news-card">
+        <div class="news-img"><span class="lab">[ Photo · Credit union counter ]</span></div>
+        <div class="news-body">
+          <div class="news-meta"><span class="news-tag advisory">Advisory</span><span>Jul 8, 2026</span></div>
+          <h3 class="news-title">Credit union contact number has changed.</h3>
+          <p class="news-excerpt">The credit union serving Local 825 members has a new contact number. Please review the notice before your next transaction and update your records.</p>
+          <div class="news-foot"><b>ATU825-1-Credit-Union</b><span>Read brief →</span></div>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-img"><span class="lab">[ Photo · Pick board ]</span></div>
+        <div class="news-body">
+          <div class="news-meta"><span class="news-tag event">Calendar</span><span>Jun 30, 2026</span></div>
+          <h3 class="news-title">Vacation pick notice posted.</h3>
+          <p class="news-excerpt">The vacation pick notice is posted. Check your garage board and submit your selections before the posted deadline to lock in your weeks.</p>
+          <div class="news-foot"><b>ATU825-2-Vacation-Pick</b><span>Read brief →</span></div>
+        </div>
+      </article>
+      <article class="news-card">
+        <div class="news-img"><span class="lab">[ Photo · Route stop ]</span></div>
+        <div class="news-body">
+          <div class="news-meta"><span class="news-tag">Safety</span><span>Jun 22, 2026</span></div>
+          <h3 class="news-title">Oradell restroom locations updated.</h3>
+          <p class="news-excerpt">The restroom location list for Oradell routes has been updated. Refer to the current posting for your run before you leave the yard.</p>
+          <div class="news-foot"><b>ATU825-3-Restroom-Oradell</b><span>Read brief →</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Garages -->
+<section class="section garages">
+  <div class="wrap">
+    <div class="eyebrow">◆ Two garages · one local</div>
+    <h2 class="h2">Find your yard.</h2>
+    <div class="garage-grid">
+      <a class="garage" href="#">
+        <div class="g-top"><span>Garage 01</span><span class="active">● Active</span></div>
+        <div class="g-name">Oradell</div>
+        <div class="g-addr">Oradell garage · Bergen County to NYC<br>Flood line: 201·407·3719</div>
+        <div class="g-stats">
+          <div class="g-stat"><span class="lbl">Code</span><span class="val">OR</span></div>
+          <div class="g-stat"><span class="lbl">Service area</span><span class="val">Bergen → NYC</span></div>
+        </div>
+        <span class="g-cta">View Oradell picks &amp; board →</span>
+      </a>
+      <a class="garage" href="#">
+        <div class="g-top"><span>Garage 02</span><span class="active">● Active</span></div>
+        <div class="g-name">Westwood</div>
+        <div class="g-addr">Westwood garage · Northern Bergen<br>Depot direct: 862·763·1582</div>
+        <div class="g-stats">
+          <div class="g-stat"><span class="lbl">Code</span><span class="val">WW</span></div>
+          <div class="g-stat"><span class="lbl">Service area</span><span class="val">Northern Bergen</span></div>
+        </div>
+        <span class="g-cta">View Westwood picks &amp; board →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Tools -->
+<section class="section deep" id="tools">
+  <div class="wrap">
+    <div class="eyebrow">◆ The paperwork</div>
+    <h2 class="h2">What you need.</h2>
+    <div class="tools-grid">
+      <a class="tool-card" href="#">
+        <span class="tool-num">01</span>
+        <span class="tool-title">Pick<br>Schedules</span>
+        <span class="tool-desc">Current pick rounds for Oradell and Westwood.</span>
+        <div class="tool-foot"><span>Updated weekly</span><span>→</span></div>
+      </a>
+      <a class="tool-card" href="#">
+        <span class="tool-num">02</span>
+        <span class="tool-title">Safety<br>Rule Book</span>
+        <span class="tool-desc">Required reading for all crews - updated 2026.</span>
+        <div class="tool-foot"><span>PDF</span><span>→</span></div>
+      </a>
+      <a class="tool-card" href="#">
+        <span class="tool-num">03</span>
+        <span class="tool-title">Accident<br>Discipline</span>
+        <span class="tool-desc">How accidents are graded and the discipline process.</span>
+        <div class="tool-foot"><span>PDF</span><span>→</span></div>
+      </a>
+      <a class="tool-card" href="#">
+        <span class="tool-num">04</span>
+        <span class="tool-title">Forms &amp;<br>Grievance</span>
+        <span class="tool-desc">CBA, bylaws, grievance forms, taxi list.</span>
+        <div class="tool-foot"><span>Index</span><span>→</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- SMS footer -->
+<section class="sms-footer">
+  <div class="wrap">
+    <div>
+      <strong>Join the Local 825 alert line. <span class="sample" style="vertical-align:middle">Sample</span></strong>
+      <span class="sub">The hall texts you when it matters. Flood line, pick notices, GMM reminders. Phone number only.</span>
+    </div>
+    <form class="sms-form" onsubmit="return smsSubmit(event)">
+      <input class="sms-input" type="tel" placeholder="(555) 555-5555" inputmode="tel" autocomplete="tel" aria-label="Phone number">
+      <button class="sms-btn" type="submit">Join the line</button>
+    </form>
+  </div>
+</section>
+
+<!-- Member benefits & partners: each local manages its own list; statewide council partners show in a row (see /council-feed.js) -->
+<section class="partners-mount" id="partners" aria-label="Member benefits and partners"></section>
+
+<!-- Council strip -->
+<section class="council-strip" aria-label="NJ State Council locals">
+  <div class="wrap">
+    <div class="cs-label">◆ Part of the <b>ATU New Jersey State Council</b> · 9 locals · nearly 10,000 operators</div>
+    <div class="cs-locals">
+      <a class="cs-local" href="/">◆ Council Hub</a>
+      <a class="cs-local" href="/preview-540/"><b>540</b>Trenton</a>
+      <a class="cs-local" href="/preview-819/"><b>819</b>Newark</a>
+      <a class="cs-local" href="/preview-820/"><b>820</b>Union City</a>
+      <a class="cs-local" href="/preview-821/"><b>821</b>Jersey City</a>
+      <a class="cs-local" href="/preview-822/"><b>822</b>Plainfield</a>
+      <a class="cs-local" href="/preview-823/"><b>823</b>Ironbound</a>
+      <a class="cs-local" href="/preview-824/"><b>824</b>New Brunswick</a>
+      <span class="cs-local self"><b>825</b>Oradell · You are here</span>
+      <a class="cs-local" href="/preview-880/"><b>880</b>Camden</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="footer-brand">
+        <div class="seal">ATU<br>825</div>
+        <div class="footer-brand-txt">
+          <span class="footer-brand-name">ATU Local 825</span>
+          <span class="footer-brand-sub">Oradell · Westwood</span>
+        </div>
+      </div>
+      <p class="footer-tag">The voice of operators across Bergen County every day. Contracts won at the table. Solidarity built behind the wheel.</p>
+    </div>
+    <div>
+      <h3>The Local</h3>
+      <ul>
+        <li><a href="#news">News &amp; Advisories</a></li>
+        <li><a href="#about">Officers</a></li>
+        <li><a href="#about">Union Meetings</a></li>
+        <li><a href="#">Member Portal</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Member Tools</h3>
+      <ul>
+        <li><a href="#tools">Pick Schedules</a></li>
+        <li><a href="#tools">Route Descriptions</a></li>
+        <li><a href="#tools">Forms &amp; Contract</a></li>
+        <li><a href="#tools">File a Grievance</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Visit the Hall</h3>
+      <ul>
+        <li>Mailing address pending</li>
+        <li><a href="tel:2012253039">201 · 225 · 3039</a></li>
+        <li>Flood line: 201·407·3719</li>
+        <li><a href="https://www.atu.org" target="_blank" rel="noopener">atu.org ↗</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Amalgamated Transit Union Local 825 · Preview Mockup</span>
+    <span>Solidarity Forever.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" style="position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--navy);font-family:var(--body);font-size:15px;padding:12px 18px;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:opacity .2s,transform .2s;z-index:50;max-width:calc(100% - 32px)"></div>
+
+<script>
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  el.style.transform = 'translate(-50%,0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translate(-50%,20px)'; }, 2600);
+}
+function smsSubmit(ev){
+  ev.preventDefault();
+  const form = ev.target;
+  const input = form.querySelector('.sms-input');
+  const val = (input.value || '').replace(/\D/g, '');
+  if (val.length < 10){ toast('Enter a 10-digit phone number.'); input.focus(); return false; }
+  input.value = '';
+  toast('Thanks - in the real build, you would get a one-time confirmation text.');
+  return false;
+}
+</script>
+<script src="/council-feed.js"></script>
+<script>CouncilFeed.mountLocal('825', { alert: '#council-alert', pinned: '#council-pinned', grid: '.news-grid' }); CouncilFeed.mountPartners('#partners', '825');</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F5F7">
+<title>Officer portal (demo) | NJ Council Hub</title>
+<meta name="description" content="Demo of the local officer portal: send posts up to the State Council, ask other locals for support, manage your member benefits partners, and confirm your local's contacts.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+/* Demo of a president's email: deliberately looks like a mail app, not like the union site. */
+:root{
+  --bg:#F4F5F7; --card:#FFFFFF; --ink:#1B2333; --muted:#4F5B70; --dim:#555F72; --line:#DDE1E8;
+  --navy:#0C1A33; --navy-deep:#06101F; --red:#D7263D; --red-dark:#B81E33; --green:#1F7A45; --buff:#E4BE80; --focus:#2F5DA8;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace; --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--focus)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.demo-ribbon{background:#F2C14E;color:#06101F;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:10px 16px;font-weight:600}
+.demo-ribbon a{color:#06101F;margin-left:10px}
+.app-bar{background:var(--card);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.app-bar .who{display:flex;align-items:center;gap:12px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:17px;flex:none}
+.who b{display:block;font-size:15px}
+.who div > span{display:block;font-size:12px;color:var(--muted)}
+.switches{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg)}
+.seg a,.seg button{border:0;background:transparent;color:var(--ink);padding:9px 12px;min-height:40px;text-decoration:none;font-size:13px;display:inline-flex;align-items:center}
+.seg [aria-current="true"],.seg [aria-pressed="true"]{background:var(--navy);color:#fff}
+.layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;max-width:1240px;margin:20px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-height:640px}
+.list{border-right:1px solid var(--line);background:#FAFBFC}
+.list h2{margin:0;padding:16px 18px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+.msg{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:14px 18px;color:var(--ink)}
+.msg:hover{background:#F0F2F6}
+.msg[aria-current="true"]{background:#E8EDF7;box-shadow:inset 3px 0 0 var(--focus)}
+.msg .from{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.msg .from time{font-weight:400;color:var(--dim);font-size:12px;white-space:nowrap}
+.msg .subj{display:block;font-size:14px;margin-top:2px}
+.msg .snip{display:block;font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:99px;background:#E6E9EF;color:var(--muted)}
+.pill.pending{background:#FFF1CC;color:#6B4E00}
+.pill.approved,.pill.live{background:#DDF3E6;color:#155C33}
+.pill.urgent{background:#FBE0E4;color:#8E1427}
+.pill.declined,.pill.removed{background:#E6E9EF;color:#4F5B70}
+.read{padding:26px 32px 40px;min-width:0}
+.empty{padding:60px 32px;text-align:center;color:var(--muted)}
+.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:6px}
+.subject{margin:0;font-size:22px;line-height:1.25}
+.hdr{display:flex;gap:12px;align-items:flex-start;margin:16px 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.hdr .avatar{background:var(--red)}
+.hdr .meta{font-size:13px;color:var(--muted);line-height:1.6}
+.hdr .meta b{color:var(--ink)}
+.body p{margin:0 0 14px;max-width:68ch}
+.callout{border-radius:8px;padding:12px 14px;margin:0 0 18px;font-size:14px}
+.callout.urgent{background:#FBE0E4;color:#5E0B19}
+.callout.done{background:#DDF3E6;color:#0E4024}
+.callout.no{background:#EEF0F4;color:var(--ink)}
+.preview-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:22px 0 8px}
+.site-preview{background:var(--navy);color:#F2F4F8;border-radius:8px;padding:20px 22px;border-top:4px solid var(--accent,var(--red))}
+.site-preview .badge{display:inline-block;background:var(--buff);color:#06101F;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px}
+.site-preview h3{margin:10px 0 0;font-family:var(--display);font-weight:800;font-size:26px;line-height:1.05}
+.site-preview p{margin:8px 0 0;color:#C5CDDB;max-width:none}
+.site-preview .es{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(255,255,255,.25)}
+.site-preview .es span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8FA2C4}
+.site-preview .es h4{margin:4px 0 0;font-family:var(--display);font-weight:800;font-size:20px}
+.site-preview .note{margin-top:12px;border-left:3px solid var(--accent,var(--red));padding:4px 0 4px 10px;font-size:14px}
+.site-preview .note span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8FA2C4}
+fieldset.chan{margin-top:16px}
+.chan label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;cursor:pointer}
+.chan small{display:block;color:var(--muted);font-size:12px}
+form.decide{margin-top:24px;border:1px solid var(--line);border-radius:10px;padding:18px 20px;background:#FAFBFC}
+fieldset{border:0;margin:0;padding:0}
+legend{font-weight:700;margin-bottom:8px}
+.place{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.place label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff;cursor:pointer;min-height:56px}
+.place label:has(input:checked){border-color:var(--focus);box-shadow:0 0 0 1px var(--focus)}
+.place small{display:block;color:var(--muted);font-size:12px}
+.field{display:block;margin-top:14px;font-weight:700}
+.field small{font-weight:400;color:var(--muted)}
+.field textarea,.field input,.field select{font-weight:400}
+.field textarea{display:block;width:100%;margin-top:6px;min-height:68px;border:1px solid #B9C0CC;border-radius:8px;padding:10px 12px;font:inherit;resize:vertical}
+.count{font-size:12px;color:var(--dim);text-align:right;margin-top:4px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.b{border:0;border-radius:8px;padding:12px 18px;min-height:46px;font-weight:700;font-size:15px}
+.b.ok{background:var(--green);color:#fff}
+.b.ok:hover{background:#17633A}
+.b.no{background:#fff;color:var(--ink);border:1px solid #B9C0CC}
+.b.danger{background:var(--red);color:#fff}
+.b.link{background:transparent;color:var(--focus);text-decoration:underline;padding-left:4px;padding-right:4px}
+.fine{margin-top:18px;font-size:12px;color:var(--dim);max-width:68ch}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--navy);color:#fff;padding:12px 18px;border-radius:8px;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px);z-index:10}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:860px){
+  .layout{grid-template-columns:minmax(0,1fr);margin:0;border-radius:0;border-left:0;border-right:0}
+  .list{border-right:0;border-bottom:1px solid var(--line)}
+  .read{padding:20px 16px 32px}
+  .place{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+/* ---------- Officer portal ---------- */
+.portal{max-width:1040px;margin:20px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ptabs{display:flex;gap:2px;border-bottom:1px solid var(--line);background:#FAFBFC;padding:0 12px;flex-wrap:wrap}
+.ptab{border:0;background:transparent;min-height:50px;padding:0 16px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
+.ptab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent,var(--red))}
+.ptab .n{display:inline-flex;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#E6E9EF;color:var(--ink);font-size:11px;align-items:center;justify-content:center;margin-left:6px}
+.ppanel{padding:24px 28px 32px}
+.ppanel h2{margin:0;font-size:22px}
+.ppanel .lead{color:var(--muted);margin:6px 0 18px;max-width:68ch}
+.kinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kinds label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;background:#fff}
+.kinds label:has(input:checked){border-color:var(--focus);box-shadow:0 0 0 1px var(--focus)}
+.kinds b{display:block}
+.kinds small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.input{display:block;width:100%;margin-top:6px;border:1px solid #B9C0CC;border-radius:8px;padding:10px 12px;font:inherit;min-height:46px;background:#fff;color:var(--ink)}
+textarea.input{min-height:100px;resize:vertical}
+.locals{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.locals label{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;min-height:44px;background:#fff}
+.locals label:has(input:checked){border-color:var(--focus);background:#E8EDF7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.item{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:12px}
+.item h3{margin:4px 0 0;font-size:17px}
+.item p{margin:6px 0 0;color:var(--muted)}
+.item .meta{font-size:12px;color:var(--dim);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:3px 9px;color:var(--muted)}
+.chip.ok{background:#DDF3E6;border-color:#B6E2C6;color:#155C33}
+.chip.wait{background:#FFF1CC;border-color:#F1DC9A;color:#6B4E00}
+.chip.no{text-decoration:line-through}
+.reply{margin-top:10px;border-left:3px solid var(--accent,var(--red));padding:4px 0 4px 10px;font-size:14px}
+.banner{border-radius:8px;padding:12px 14px;margin:0 0 18px;font-size:14px;background:#FFF1CC;color:#4A3600}
+.banner.ok{background:#DDF3E6;color:#0E4024}
+/* Partners */
+.pt-admin{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:start;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:10px;background:#fff}
+.pt-admin.feat{border-color:#C9A14A;box-shadow:inset 4px 0 0 #C9A14A}
+.pt-admin .lg{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:18px;border-radius:6px}
+.pt-admin h3{margin:0;font-size:16px}
+.pt-admin p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.pt-admin .meta{margin-top:6px;display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--dim)}
+.pt-admin .meta .pill{margin-top:0}
+.b[disabled]{opacity:.45;cursor:not-allowed}
+.pt-admin .acts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.pt-admin .acts .b{min-height:38px;padding:8px 12px;font-size:13px}
+.ack{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 14px;border:1px solid #F1DC9A;background:#FFF8E1;border-radius:8px;font-size:14px;cursor:pointer}
+.ack input{margin-top:3px}
+.section-h{margin:28px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.check{display:flex;gap:10px;align-items:center;margin-top:14px;font-weight:700;cursor:pointer}
+.check small{font-weight:400;color:var(--muted)}
+select.input{appearance:auto}
+@media (max-width:860px){.pt-admin{grid-template-columns:auto minmax(0,1fr)}.pt-admin .acts{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}}
+@media (max-width:860px){.portal{margin:0;border-radius:0;border-left:0;border-right:0}.ppanel{padding:18px 16px 28px}.kinds,.grid2{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="demo-ribbon">Demo · Local officer portal <a href="/#console">← Council console</a><a id="inbox-link" href="/inbox/">Officer email →</a></div>
+<header class="app-bar">
+  <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
+  <div class="switches">
+    <span>Local</span><nav class="seg" aria-label="Choose local" id="local-switch"></nav>
+    <span>Signed in as</span><div class="seg" role="group" aria-label="Signed in as"><button type="button" data-role="president">President</button><button type="button" data-role="backup">Backup</button></div>
+  </div>
+</header>
+<main class="portal">
+  <div class="ptabs" role="tablist" id="ptabs"></div>
+  <section class="ppanel" id="panel" role="tabpanel" aria-live="polite"></section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/council-feed.js"></script>
+<script>
+(function () {
+  const CF = window.CouncilFeed, esc = CF.esc;
+  const params = new URLSearchParams(location.search);
+  const LOCAL = CF.ALL.includes(params.get('local')) ? params.get('local') : '823';
+  let role = 'president';
+  let tab = ['send', 'sent', 'partners', 'contacts'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'send';
+  const draft = { kind: 'share', title: '', body: '', targets: [] };
+  let contactDraft = null;
+  const ptDraft = { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false };
+  let ptConfirm = null;
+  const $ = (s) => document.querySelector(s);
+  const C = () => CF.contacts(LOCAL);
+  const timeFmt = (ms) => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  let toastT; const toast = (m) => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); };
+  document.documentElement.style.setProperty('--accent', C().accent);
+  $('#local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
+  $('#inbox-link').href = '/inbox/?local=' + LOCAL;
+  const me = () => role === 'president' ? C().president : C().backup;
+  const initials = (name) => name.replace(/\(.*\)/, '').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+
+  function header() {
+    $('#who-name').textContent = me();
+    $('#who-role').textContent = (role === 'president' ? 'President, ' : 'Backup approver, ') + C().name;
+    $('#who-initials').textContent = initials(me()) || 'VP';
+    document.querySelectorAll('[data-l]').forEach((a) => a.setAttribute('aria-current', String(a.dataset.l === LOCAL)));
+    document.querySelectorAll('[data-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
+    const mine = CF.subs().filter((x) => x.from === LOCAL).length;
+    const t = (k, label, n) => `<button type="button" class="ptab" role="tab" data-tab="${k}" aria-selected="${tab === k}">${label}${n ? `<span class="n">${n}</span>` : ''}</button>`;
+    $('#ptabs').innerHTML = t('send', 'Send to the council') + t('sent', 'Sent by your local', mine) + t('partners', 'Partners', CF.partnersAdmin(LOCAL).length) + t('contacts', 'Contacts', C().requestedAt || C().verifyDue ? '!' : 0);
+  }
+
+  function sendPanel() {
+    const others = CF.ALL.filter((n) => n !== LOCAL);
+    return `<h2>Send something up to the council</h2>
+      <p class="lead">The council reviews everything before it goes out. Shared posts and solidarity requests still go to each local president for approval on their own site.</p>
+      <form data-form="submit" novalidate>
+        <fieldset><legend class="field" style="margin-top:0">What is it?</legend>
+          <div class="kinds">
+            <label><input type="radio" name="kind" value="share"${draft.kind === 'share' ? ' checked' : ''}><span><b>Share a win or news</b><small>Ask the council to post it on every local's site.</small></span></label>
+            <label><input type="radio" name="kind" value="solidarity"${draft.kind === 'solidarity' ? ' checked' : ''}><span><b>Ask other locals for support</b><small>A rally, a hearing, a fight at your garage.</small></span></label>
+            <label><input type="radio" name="kind" value="issue"${draft.kind === 'issue' ? ' checked' : ''}><span><b>Flag an issue to the council</b><small>Private. Only the council sees it.</small></span></label>
+          </div>
+        </fieldset>
+        ${draft.kind === 'solidarity' ? `<fieldset style="margin-top:14px"><legend class="field" style="margin-top:0">Which locals?</legend><div class="locals">${others.map((n) => `<label><input type="checkbox" name="t" value="${n}"${draft.targets.includes(n) ? ' checked' : ''}>Local ${n}</label>`).join('')}</div></fieldset>` : ''}
+        <label class="field">Headline<input class="input" name="title" maxlength="90" value="${esc(draft.title)}" placeholder="${draft.kind === 'issue' ? 'Example: Restroom at the Broad St layover is locked again' : draft.kind === 'solidarity' ? 'Example: Pack the board meeting Thursday 6pm' : 'Example: Back pay won for 12 operators'}"></label>
+        <label class="field">Message<textarea class="input" name="body" maxlength="400">${esc(draft.body)}</textarea></label>
+        <div class="actions"><button type="submit" class="b ok">Send to the council</button></div>
+      </form>`;
+  }
+  function chipsFor(p) {
+    return '<div class="chips">' + Object.keys(p.status).map((n) => {
+      const s = p.status[n];
+      const cls = ['approved', 'live'].includes(s.state) ? 'ok' : s.state === 'pending' ? 'wait' : 'no';
+      const label = n === LOCAL ? 'yours' : { approved: 'approved', live: 'live', pending: 'waiting', declined: 'declined', removed: 'removed' }[s.state];
+      return `<span class="chip ${cls}">${n} ${label}</span>`;
+    }).join('') + '</div>';
+  }
+  function sentPanel() {
+    const list = CF.subs().filter((x) => x.from === LOCAL);
+    if (!list.length) return `<h2>Sent by your local</h2><p class="lead">Nothing yet. What your local sends up to the council shows here, with the council's answer.</p>`;
+    const kinds = { share: 'Share with all locals', solidarity: 'Solidarity request', issue: 'Private issue' };
+    const st = { pending: 'Waiting for the council', routed: 'Sent out by the council', declined: 'Declined by the council', handled: 'Answered by the council' };
+    return `<h2>Sent by your local</h2><p class="lead">Where each one stands. When the council sends a post out, you can watch each local approve it.</p>` + list.map((x) => {
+      const p = x.postId && CF.posts().find((q) => q.id === x.postId);
+      return `<div class="item"><div class="meta"><span class="pill ${x.state === 'pending' ? 'pending' : x.state === 'declined' ? 'declined' : 'approved'}">${st[x.state]}</span><span>${kinds[x.kind]}${x.kind === 'solidarity' ? ' · to ' + x.targets.join(', ') : ''}</span><span>${esc(timeFmt(x.created))}</span></div>
+        <h3>${esc(x.title)}</h3><p>${esc(x.body)}</p>
+        ${x.councilNote ? `<div class="reply"><b>Council:</b> ${esc(x.councilNote)}</div>` : ''}
+        ${p ? chipsFor(p) : ''}</div>`;
+    }).join('');
+  }
+  function contactsPanel() {
+    const c = C();
+    if (!contactDraft) contactDraft = { president: c.presidentSet ? c.president : '', backup: c.backupSet ? c.backup : '', stewards: c.stewards == null ? '' : c.stewards, delegates: c.delegates == null ? '' : c.delegates };
+    const days = c.verifiedAt ? Math.floor((Date.now() - c.verifiedAt) / 86400000) : null;
+    const banner = c.requestedAt ? `<div class="banner"><b>The council asked you to confirm your contacts</b> on ${esc(new Date(c.requestedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))}.</div>`
+      : c.verifyDue ? `<div class="banner"><b>Time to check your contacts.</b> Locals confirm them every ${CF.VERIFY_DAYS} days.</div>`
+      : `<div class="banner ok"><b>Confirmed ${days === 0 ? 'today' : days + ' days ago'}.</b> Next check in ${CF.VERIFY_DAYS - days} days.</div>`;
+    return `<h2>Your local's contacts</h2>
+      <p class="lead">Council approval emails and urgent alerts go to these two people. If either changes, update it here so nothing goes to the wrong person.</p>
+      ${banner}
+      <form data-form="contacts" novalidate>
+        <div class="grid2">
+          <label class="field">President<input class="input" name="president" value="${esc(contactDraft.president)}" autocomplete="name" placeholder="Full name"></label>
+          <label class="field">Backup approver <small>(often the VP)</small><input class="input" name="backup" value="${esc(contactDraft.backup)}" placeholder="Full name"></label>
+          <label class="field">Number of stewards<input class="input" name="stewards" type="number" min="0" inputmode="numeric" value="${esc(contactDraft.stewards)}"></label>
+          <label class="field">Delegates to the council<input class="input" name="delegates" type="number" min="0" inputmode="numeric" value="${esc(contactDraft.delegates)}"></label>
+        </div>
+        <div class="actions"><button type="submit" class="b ok">Confirm contacts</button></div>
+        <p class="fine">Confirming is recorded with your name and the date, so the council knows the list is current.</p>
+      </form>`;
+  }
+  function partnersPanel() {
+    const list = CF.partnersAdmin(LOCAL), state = CF.partnerWindow;
+    const featN = list.filter((p) => p.featured && state(p) !== 'ended').length, full = featN >= CF.FEATURED_MAX;
+    const dateFmt = (ms) => new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const row = (p) => {
+      const [bg, fg] = CF.swatch(p.name), w = state(p);
+      return `<div class="pt-admin${p.featured ? ' feat' : ''}">
+        <span class="lg" style="background:${bg};color:${fg}" aria-hidden="true">${esc(CF.mono(p.name))}</span>
+        <div><h3>${esc(p.name)}</h3><p>${esc(p.offer)}</p>
+          <div class="meta"><span class="pill ${w === 'active' ? 'approved' : w === 'scheduled' ? 'pending' : 'declined'}">${w === 'active' ? 'On your site' : w === 'scheduled' ? 'Starts later' : 'Ended'}</span>${p.featured ? '<span class="pill pending">Featured</span>' : ''}${p.sample ? '<span class="pill">Sample</span>' : ''}<span>${esc((CF.CATS[p.cat] || CF.CATS.other).en)}</span><span>${(p.clicks || 0).toLocaleString('en-US')} clicks</span>${p.endAt ? `<span>Ends ${esc(dateFmt(p.endAt))}</span>` : ''}</div></div>
+        <div class="acts">
+          <button type="button" class="b no" data-pt="feature" data-id="${esc(p.id)}"${!p.featured && full ? ' disabled title="Up to ' + CF.FEATURED_MAX + ' featured partners"' : ''}>${p.featured ? 'Unfeature' : 'Feature'}</button>
+          <button type="button" class="b ${ptConfirm === p.id ? 'danger' : 'no'}" data-pt="remove" data-id="${esc(p.id)}">${ptConfirm === p.id ? 'Click again to remove' : 'Remove'}</button>
+        </div></div>`;
+    };
+    return `<h2>Member benefits &amp; partners</h2>
+      <p class="lead">Your local's own partners, shown in the Member Benefits section of <a href="${esc(C().site)}#partners">your site</a>. Your local finds them and sets the terms. The council's statewide partners show in a separate row under yours. Nobody else can change your list.</p>
+      <div class="section-h">On your list (${list.length}) · ${featN} of ${CF.FEATURED_MAX} featured</div>
+      ${list.length ? list.map(row).join('') : '<p class="lead">No partners yet. Add your first one below.</p>'}
+      <form data-form="partner" novalidate style="margin-top:28px;border-top:1px solid var(--line);padding-top:22px">
+        <h2 style="font-size:18px">Add a partner</h2>
+        <div class="grid2">
+          <label class="field">Business name<input class="input" name="name" maxlength="60" value="${esc(ptDraft.name)}" placeholder="Example: Corner Coffee"></label>
+          <label class="field">Website <small>(optional)</small><input class="input" name="url" inputmode="url" value="${esc(ptDraft.url)}" placeholder="example.com"></label>
+        </div>
+        <label class="field">The member deal<input class="input" name="offer" maxlength="140" value="${esc(ptDraft.offer)}" placeholder="Example: 10% off for ATU members. Show your union card."></label>
+        <div class="grid2">
+          <label class="field">Category<select class="input" name="cat">${Object.entries(CF.CATS).map(([k, v]) => `<option value="${k}"${ptDraft.cat === k ? ' selected' : ''}>${esc(v.en)}</option>`).join('')}</select></label>
+          <label class="field">Ends <small>(optional, comes off your site after this day)</small><input class="input" type="date" name="endAt" value="${esc(ptDraft.endAt)}"></label>
+        </div>
+        <label class="check"><input type="checkbox" name="featured"${ptDraft.featured ? ' checked' : ''}${full ? ' disabled' : ''}> Feature this partner <small>${full ? '(all ' + CF.FEATURED_MAX + ' featured spots are taken)' : '(bigger card at the top, up to ' + CF.FEATURED_MAX + ')'}</small></label>
+        <label class="ack"><input type="checkbox" name="ack"${ptDraft.ack ? ' checked' : ''}><span><b>Our local is responsible for this partnership.</b> We found this partner and set the terms. If the partner employs our members, we checked with our attorney first.</span></label>
+        <div class="actions"><button type="submit" class="b ok">Add to our site</button></div>
+        <p class="fine">Partners show on your website only, never in texts, alerts or emails. Clicks are counted as totals. Partners never receive member information. Adding a partner is recorded with your name and the date.</p>
+      </form>`;
+  }
+  function render() {
+    header();
+    $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : tab === 'partners' ? partnersPanel() : contactsPanel();
+  }
+
+  document.addEventListener('click', (e) => {
+    const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
+    const pa = e.target.closest('[data-pt]');
+    if (pa) {
+      const id = pa.dataset.id;
+      if (pa.dataset.pt === 'feature') { const p = CF.partnersAdmin(LOCAL).find((x) => x.id === id); const r = CF.setFeatured(id, !p.featured, role); ptConfirm = null; render(); toast(r.error === 'full' ? 'All ' + CF.FEATURED_MAX + ' featured spots are taken.' : p.featured ? 'Now featured on your site.' : 'Moved to the regular list.'); }
+      if (pa.dataset.pt === 'remove') { if (ptConfirm !== id) { ptConfirm = id; render(); return; } const p = CF.removePartner(id, role); ptConfirm = null; render(); toast((p ? p.name : 'Partner') + ' is off your site.'); }
+      return;
+    }
+    const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; history.replaceState(null, '', '#' + tab); render(); const again = document.querySelector(`[data-tab="${tab}"]`); if (again) again.focus(); }
+  });
+  document.addEventListener('input', (e) => {
+    const f = e.target.closest('form'); if (!f) return;
+    if (f.dataset.form === 'submit' && ['title', 'body'].includes(e.target.name)) draft[e.target.name] = e.target.value;
+    if (f.dataset.form === 'contacts') contactDraft[e.target.name] = e.target.value;
+    if (f.dataset.form === 'partner' && ['name', 'offer', 'url', 'endAt'].includes(e.target.name)) ptDraft[e.target.name] = e.target.value;
+  });
+  document.addEventListener('change', (e) => {
+    const f = e.target.closest('form'); if (!f) return;
+    if (f.dataset.form === 'partner') { if (e.target.type === 'checkbox') ptDraft[e.target.name] = e.target.checked; else ptDraft[e.target.name] = e.target.value; return; }
+    if (f.dataset.form !== 'submit') return;
+    if (e.target.name === 'kind') { draft.kind = e.target.value; render(); }
+    if (e.target.name === 't') draft.targets = [...f.querySelectorAll('input[name=t]:checked')].map((i) => i.value);
+  });
+  document.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = e.target.dataset.form;
+    if (f === 'submit') {
+      if (!draft.title.trim() || !draft.body.trim()) { toast('Add a headline and a message.'); return; }
+      if (draft.kind === 'solidarity' && !draft.targets.length) { toast('Pick at least one local to ask.'); return; }
+      CF.submit(LOCAL, { kind: draft.kind, title: draft.title, body: draft.body, targets: draft.targets, by: role });
+      Object.assign(draft, { title: '', body: '', targets: [] });
+      tab = 'sent'; history.replaceState(null, '', '#sent'); render();
+      toast('Sent to the council. You will get an email when they answer.');
+    }
+    if (f === 'partner') {
+      if (!ptDraft.name.trim() || !ptDraft.offer.trim()) { toast('Add the business name and the member deal.'); return; }
+      if (!ptDraft.ack) { toast('Confirm your local is responsible for this partnership.'); return; }
+      const endAt = ptDraft.endAt ? new Date(ptDraft.endAt + 'T23:59:59').getTime() : null;
+      if (endAt && endAt < Date.now()) { toast('The end date has already passed.'); return; }
+      const r = CF.addPartner(LOCAL, Object.assign({}, ptDraft, { endAt, by: role }));
+      Object.assign(ptDraft, { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false });
+      render(); toast(r.partner.name + ' is on your site now.' + (r.featuredFull ? ' Featured spots were full, so it went in the regular list.' : ''));
+    }
+    if (f === 'contacts') {
+      if (!String(contactDraft.president).trim() || !String(contactDraft.backup).trim()) { toast('Add both the president and the backup approver.'); return; }
+      CF.verifyContacts(LOCAL, contactDraft); contactDraft = null; render();
+      toast('Contacts confirmed. Thank you.');
+    }
+  });
+  CF.onChange(() => { if (!document.activeElement || !document.activeElement.closest('form')) render(); else header(); });
+  setInterval(() => CF.tick(), 1000);
+  render();
+})();
+</script>
+</body>
+</html>
