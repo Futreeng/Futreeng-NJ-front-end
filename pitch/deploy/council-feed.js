@@ -356,7 +356,7 @@
   function exportCSV(rows) {
     const cols = ['when', 'who', 'action', 'local', 'post or submission', 'detail'];
     const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-    const lines = (rows || log()).map((r) => [new Date(r.at).toISOString(), r.actor, r.action, r.local ? 'Local ' + r.local : '', r.title || '', r.detail || ''].map(q).join(','));
+    const lines = (rows || backend.log()).map((r) => [new Date(r.at).toISOString(), r.actor, r.action, r.local ? 'Local ' + r.local : '', r.title || '', r.detail || ''].map(q).join(','));
     return [cols.join(',')].concat(lines).join('\n');
   }
   function reset() { save(fresh()); }
@@ -386,7 +386,7 @@
       const st = document.createElement('style'); st.id = 'council-feed-css'; st.textContent = CSS; document.head.appendChild(st);
     }
     const draw = () => {
-      const list = forLocal(n);
+      const list = backend.forLocal(n);
       const v = (p) => p.status[n].version || snapshot(p);
       const credit = (p) => p.origin && p.origin !== n ? `From Local ${p.origin} · shared by the State Council` : (p.origin === n ? 'From your local · shared statewide by the council' : 'Sent by the ATU NJ State Council');
       const urgent = list.filter((p) => p.urgent);
@@ -422,7 +422,7 @@
           </article>`).join(''));
       }
     };
-    draw(); onChange(draw);
+    draw(); backend.onChange(draw);
     setInterval(draw, 30000);   // start and end dates
   }
 
@@ -450,8 +450,8 @@
   /* owner: 'council' (the hub) or a local number. Local sites also get the statewide row. */
   function partnersHTML(owner, opt) {
     const o = opt || {}, lang = o.lang || 'en', t = Object.assign({}, PT_EN, o.t || {});
-    const own = partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
-    const isHub = owner === 'council', statewide = isHub ? [] : partners('council');
+    const own = backend.partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
+    const isHub = owner === 'council', statewide = isHub ? [] : backend.partners('council');
     if (!own.length && !statewide.length) return '';
     return `<div class="pt-wrap">
       <div class="pt-head"><div class="pt-eyebrow">${esc(t.eyebrow)}</div>
@@ -507,7 +507,7 @@
     if (clickWired) return; clickWired = true;
     document.addEventListener('click', (e) => {
       const a = e.target.closest && e.target.closest('[data-partner]'); if (!a) return;
-      clickPartner(a.dataset.partner);
+      backend.clickPartner(a.dataset.partner);
       if (a.getAttribute('href') === '#') e.preventDefault();    // sample partners have no real site
     });
   }
@@ -515,15 +515,60 @@
   function mountPartners(sel, owner, opt) {
     ensurePartnerCSS(); wirePartnerClicks();
     const draw = () => { const el = document.querySelector(sel); if (el) el.innerHTML = partnersHTML(owner, typeof opt === 'function' ? opt() : opt); };
-    draw(); onChange(draw); setInterval(draw, 60000);
+    draw(); backend.onChange(draw); setInterval(draw, 60000);
     return draw;
   }
 
-  window.CouncilFeed = {
-    LOCALS, ALL, HANDS_ON, NOTE_MAX, DEMO_HOUR, REMIND_H, ESCALATE_H, VERIFY_DAYS,
-    posts, subs, log, contacts, alertSubs, emailSubs, reach, reachTotal, forLocal, windowState, ageLabel, hoursSince,
-    send, correct, pull, approve, decline, remove, submit, routeSub, requestVerify, verifyContacts, exportCSV, reset, onChange, mountLocal,
-    CATS, FEATURED_MAX, partners, partnersAdmin, partnerWindow, addPartner, setFeatured, removePartner, clickPartner, partnersHTML, mountPartners, ensurePartnerCSS, wirePartnerClicks, mono, swatch,
-    esc, fmtDate, tick: () => { const st = load(); if (settle(st)) save(st); }
+  /* ---------- storage swap point ----------
+     Pages only talk to window.CouncilFeed. Everything that reads or changes
+     shared data goes through `backend`, so the demo store below can be
+     replaced by the real back end without touching the pages.
+
+     Choosing a backend: set window.NJCH_CONFIG = { mode: 'live' } and
+     window.NJCH_LIVE_BACKEND = (ctx) => ({ ...BACKEND_METHODS }) before this
+     script loads. Default is the demo store (this browser's storage).
+
+     Contract for a live backend (see pitch/BACKEND_INTERFACE.md):
+     - Reads are synchronous and come from the backend's own in-memory copy.
+       Call the onChange listeners whenever that copy changes.
+     - Actions may return a value or a Promise. Pages await them.
+     - The live backend enforces who may do what. Pages are not trusted. */
+  const BACKEND_METHODS = [
+    // reads
+    'posts', 'subs', 'log', 'contacts', 'forLocal', 'partners', 'partnersAdmin', 'reach', 'reachTotal', 'alertSubs', 'emailSubs',
+    // council actions
+    'send', 'correct', 'pull', 'routeSub', 'requestVerify',
+    // local officer actions (president or secretary)
+    'approve', 'decline', 'remove', 'submit', 'verifyContacts',
+    // partners
+    'addPartner', 'setFeatured', 'removePartner', 'clickPartner',
+    // plumbing
+    'onChange', 'tick', 'reset'
+  ];
+  const demoBackend = {
+    name: 'demo',
+    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs,
+    send, correct, pull, routeSub, requestVerify,
+    approve, decline, remove, submit, verifyContacts,
+    addPartner, setFeatured, removePartner, clickPartner,
+    onChange, tick: () => { const st = load(); if (settle(st)) save(st); }, reset
   };
+  function chooseBackend() {
+    const cfg = window.NJCH_CONFIG || {};
+    if (cfg.mode !== 'live') return demoBackend;
+    if (typeof window.NJCH_LIVE_BACKEND !== 'function') throw new Error('CouncilFeed: live mode is on but no live backend is loaded.');
+    const live = window.NJCH_LIVE_BACKEND({ LOCALS, ALL, NOTE_MAX, FEATURED_MAX, CATS, config: cfg });
+    const missing = BACKEND_METHODS.filter((k) => typeof (live && live[k]) !== 'function');
+    // Never fall back to demo data in live mode: officers would think sample posts are real.
+    if (missing.length) throw new Error('CouncilFeed: live backend is missing ' + missing.join(', '));
+    return Object.assign({ name: 'live' }, live);
+  }
+  const backend = chooseBackend();
+
+  window.CouncilFeed = Object.assign({
+    mode: backend.name,
+    LOCALS, ALL, HANDS_ON, NOTE_MAX, DEMO_HOUR, REMIND_H, ESCALATE_H, VERIFY_DAYS, CATS, FEATURED_MAX,
+    windowState, ageLabel, hoursSince, partnerWindow, exportCSV, mountLocal,
+    partnersHTML, mountPartners, ensurePartnerCSS, wirePartnerClicks, mono, swatch, esc, fmtDate
+  }, Object.fromEntries(BACKEND_METHODS.map((k) => [k, backend[k]])));
 })();

@@ -188,6 +188,7 @@ select.input{appearance:auto}
   const C = () => CF.contacts(LOCAL);
   const timeFmt = (ms) => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   let toastT; const toast = (m) => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); };
+  window.addEventListener('unhandledrejection', (e) => { console.error(e.reason); toast('That did not go through. Please try again.'); });
   document.documentElement.style.setProperty('--accent', C().accent);
   $('#local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
   $('#inbox-link').href = '/inbox/?local=' + LOCAL;
@@ -306,13 +307,13 @@ select.input{appearance:auto}
     $('#panel').innerHTML = tab === 'send' ? sendPanel() : tab === 'sent' ? sentPanel() : tab === 'partners' ? partnersPanel() : contactsPanel();
   }
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
     const pa = e.target.closest('[data-pt]');
     if (pa) {
       const id = pa.dataset.id;
-      if (pa.dataset.pt === 'feature') { const p = CF.partnersAdmin(LOCAL).find((x) => x.id === id); const r = CF.setFeatured(id, !p.featured, role); ptConfirm = null; render(); toast(r.error === 'full' ? 'All ' + CF.FEATURED_MAX + ' featured spots are taken.' : p.featured ? 'Now featured on your site.' : 'Moved to the regular list.'); }
-      if (pa.dataset.pt === 'remove') { if (ptConfirm !== id) { ptConfirm = id; render(); return; } const p = CF.removePartner(id, role); ptConfirm = null; render(); toast((p ? p.name : 'Partner') + ' is off your site.'); }
+      if (pa.dataset.pt === 'feature') { const p = CF.partnersAdmin(LOCAL).find((x) => x.id === id); const r = await CF.setFeatured(id, !p.featured, role); ptConfirm = null; render(); toast(r.error === 'full' ? 'All ' + CF.FEATURED_MAX + ' featured spots are taken.' : p.featured ? 'Now featured on your site.' : 'Moved to the regular list.'); }
+      if (pa.dataset.pt === 'remove') { if (ptConfirm !== id) { ptConfirm = id; render(); return; } const p = await CF.removePartner(id, role); ptConfirm = null; render(); toast((p ? p.name : 'Partner') + ' is off your site.'); }
       return;
     }
     const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; history.replaceState(null, '', '#' + tab); render(); const again = document.querySelector(`[data-tab="${tab}"]`); if (again) again.focus(); }
@@ -330,13 +331,13 @@ select.input{appearance:auto}
     if (e.target.name === 'kind') { draft.kind = e.target.value; render(); }
     if (e.target.name === 't') draft.targets = [...f.querySelectorAll('input[name=t]:checked')].map((i) => i.value);
   });
-  document.addEventListener('submit', (e) => {
+  document.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = e.target.dataset.form;
     if (f === 'submit') {
       if (!draft.title.trim() || !draft.body.trim()) { toast('Add a headline and a message.'); return; }
       if (draft.kind === 'solidarity' && !draft.targets.length) { toast('Pick at least one local to ask.'); return; }
-      CF.submit(LOCAL, { kind: draft.kind, title: draft.title, body: draft.body, targets: draft.targets, by: role });
+      await CF.submit(LOCAL, { kind: draft.kind, title: draft.title, body: draft.body, targets: draft.targets, by: role });
       Object.assign(draft, { title: '', body: '', targets: [] });
       tab = 'sent'; history.replaceState(null, '', '#sent'); render();
       toast('Sent to the council. You will get an email when they answer.');
@@ -346,13 +347,13 @@ select.input{appearance:auto}
       if (!ptDraft.ack) { toast('Confirm your local is responsible for this partnership.'); return; }
       const endAt = ptDraft.endAt ? new Date(ptDraft.endAt + 'T23:59:59').getTime() : null;
       if (endAt && endAt < Date.now()) { toast('The end date has already passed.'); return; }
-      const r = CF.addPartner(LOCAL, Object.assign({}, ptDraft, { endAt, by: role }));
+      const r = await CF.addPartner(LOCAL, Object.assign({}, ptDraft, { endAt, by: role }));
       Object.assign(ptDraft, { name: '', offer: '', url: '', cat: 'food', featured: false, endAt: '', ack: false });
       render(); toast(r.partner.name + ' is on your site now.' + (r.featuredFull ? ' Featured spots were full, so it went in the regular list.' : ''));
     }
     if (f === 'contacts') {
       if (!String(contactDraft.president).trim() || !String(contactDraft.secretary).trim()) { toast('Add both the president and the secretary.'); return; }
-      CF.verifyContacts(LOCAL, contactDraft); contactDraft = null; render();
+      await CF.verifyContacts(LOCAL, contactDraft); contactDraft = null; render();
       toast('Contacts confirmed. Thank you.');
     }
   });

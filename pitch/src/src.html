@@ -2454,45 +2454,46 @@ function wireConsole() {
     if (['startAt', 'endAt'].includes(t.name)) cc[t.name] = t.value;
   });
   document.addEventListener('toggle', (ev) => { if (ev.target.classList && ev.target.classList.contains('cc-es')) cc.esOpen = ev.target.open; }, true);
-  document.addEventListener('click', (ev) => {
+  window.addEventListener('unhandledrejection', (e) => { console.error(e.reason); toast('That did not go through. Please try again.'); });
+  document.addEventListener('click', async (ev) => {
     const tb = ev.target.closest('[data-tab]');
     if (tb) { cc.tab = tb.dataset.tab; cc.pullArm = null; renderConsoleSent(); const again = document.querySelector(`[data-tab="${cc.tab}"]`); if (again) again.focus(); return; }
     const b = ev.target.closest('[data-cc]'); if (!b) return;
     const u = CU(), F = CF(), id = b.dataset.id, a = b.dataset.cc;
     if (a === 'all') { form().querySelectorAll('input[name=t]').forEach((i) => { i.checked = true; }); cc.targets = CONTENT.locals.map((l) => l.num); }
-    if (a === 'reset') { F.reset(); Object.assign(cc, { editing: null, pullArm: null, subNotes: {} }); toast(u.resetDone); renderConsoleSent(); }
+    if (a === 'reset') { await F.reset(); Object.assign(cc, { editing: null, pullArm: null, subNotes: {} }); toast(u.resetDone); renderConsoleSent(); }
     if (a === 'correct') { const p = F.posts().find((x) => x.id === id); cc.editing = id; cc.edit = { title: p.title, body: p.body, titleEs: p.titleEs, bodyEs: p.bodyEs }; renderConsoleSent(); const f = document.querySelector('.cc-edit input'); if (f) f.focus(); }
     if (a === 'cancel') { cc.editing = null; renderConsoleSent(); }
     if (a === 'pull') {
-      if (cc.pullArm === id) { F.pull(id); cc.pullArm = null; toast(u.pulled); } else { cc.pullArm = id; setTimeout(() => { if (cc.pullArm === id) { cc.pullArm = null; renderConsoleSent(); } }, 4000); }
+      if (cc.pullArm === id) { await F.pull(id); cc.pullArm = null; toast(u.pulled); } else { cc.pullArm = id; setTimeout(() => { if (cc.pullArm === id) { cc.pullArm = null; renderConsoleSent(); } }, 4000); }
       renderConsoleSent();
     }
     if (a === 'route' || a === 'decline-sub') {
       const s = F.subs().find((x) => x.id === id);
-      F.routeSub(id, { approve: a === 'route', note: cc.subNotes[id] || '' });
+      await F.routeSub(id, { approve: a === 'route', note: cc.subNotes[id] || '' });
       delete cc.subNotes[id];
       toast(a === 'decline-sub' ? u.declinedMsg : (s.kind === 'issue' ? u.handledMsg : u.routed));
       renderConsoleSent();
     }
-    if (a === 'pt-feature') { const p = F.partnersAdmin('council').find((x) => x.id === id); const r = F.setFeatured(id, !p.featured); ptd.confirm = null; toast(r.error === 'full' ? u.pt.full.replace('{m}', F.FEATURED_MAX) : (p.featured ? u.pt.featOn : u.pt.featOff)); renderConsoleSent(); }
+    if (a === 'pt-feature') { const p = F.partnersAdmin('council').find((x) => x.id === id); const r = await F.setFeatured(id, !p.featured); ptd.confirm = null; toast(r.error === 'full' ? u.pt.full.replace('{m}', F.FEATURED_MAX) : (p.featured ? u.pt.featOn : u.pt.featOff)); renderConsoleSent(); }
     if (a === 'pt-remove') {
       if (ptd.confirm !== id) { ptd.confirm = id; setTimeout(() => { if (ptd.confirm === id) { ptd.confirm = null; renderConsoleSent(); } }, 4000); renderConsoleSent(); }
-      else { const p = F.removePartner(id); ptd.confirm = null; toast(u.pt.removed.replace('{name}', p ? p.name : '')); renderConsoleSent(); }
+      else { const p = await F.removePartner(id); ptd.confirm = null; toast(u.pt.removed.replace('{name}', p ? p.name : '')); renderConsoleSent(); }
     }
-    if (a === 'verify') { F.requestVerify(b.dataset.n); toast(u.askedMsg.replace('{n}', b.dataset.n)); renderConsoleSent(); }
+    if (a === 'verify') { await F.requestVerify(b.dataset.n); toast(u.askedMsg.replace('{n}', b.dataset.n)); renderConsoleSent(); }
     if (a === 'csv') {
       const blob = new Blob([F.exportCSV()], { type: 'text/csv' });
       const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'nj-council-record.csv';
       document.body.appendChild(link); link.click(); setTimeout(() => { URL.revokeObjectURL(link.href); link.remove(); }, 500);
     }
   });
-  document.addEventListener('submit', (ev) => {
+  document.addEventListener('submit', async (ev) => {
     const f = ev.target;
     if (f.closest('[data-form="correct"]')) {
       ev.preventDefault();
       const u = CU(), e = cc.edit;
       if (!String(e.title || '').trim() || !String(e.body || '').trim()) { toast(u.needTitle); return; }
-      const p = CF().correct(f.dataset.id, e);
+      const p = await CF().correct(f.dataset.id, e);
       cc.editing = null; toast(p && p.urgent ? u.correctedUrgent : u.corrected); renderConsoleSent();
       return;
     }
@@ -2503,7 +2504,7 @@ function wireConsole() {
       if (!ptd.ack) { toast(v.needAck); return; }
       const endAt = ptd.endAt ? new Date(ptd.endAt + 'T23:59:59').getTime() : null;
       if (endAt && endAt < Date.now()) { toast(v.past); return; }
-      const r = CF().addPartner('council', Object.assign({}, ptd, { endAt }));
+      const r = await CF().addPartner('council', Object.assign({}, ptd, { endAt }));
       Object.assign(ptd, { name: '', offer: '', offerEs: '', url: '', cat: 'finance', featured: false, endAt: '', ack: false });
       if (document.activeElement) document.activeElement.blur();
       toast(v.added.replace('{name}', r.partner.name) + (r.featuredFull ? v.addedFull : '')); renderConsoleSent();
@@ -2518,7 +2519,7 @@ function wireConsole() {
     if (cc.startMode === 'later') { if (!cc.startAt) { toast(u.needStart); return; } startAt = new Date(cc.startAt).getTime(); }
     if (cc.endAt) endAt = new Date(cc.endAt + 'T23:59:59').getTime();
     if (endAt && endAt <= (startAt || Date.now())) { toast(u.badEnd); return; }
-    CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice(), startAt, endAt });
+    await CF().send({ title: cc.title, body: cc.body, titleEs: cc.titleEs, bodyEs: cc.bodyEs, urgent: cc.urgent, targets: cc.targets.slice(), startAt, endAt });
     const one = cc.targets.length === 1;
     toast(startAt && startAt > Date.now() ? u.scheduled.replace('{d}', when(startAt))
       : (cc.urgent ? (one ? u.sentUrgent1 : u.sentUrgent) : (one ? u.sentRegular1 : u.sentRegular)).replace('{n}', cc.targets.length).replace('{l}', cc.targets[0]));

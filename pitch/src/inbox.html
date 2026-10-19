@@ -135,6 +135,7 @@ legend{font-weight:700;margin-bottom:8px}
   const initials = (name) => name.replace(/\(.*\)/, '').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   const timeFmt = (ms) => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   let toastT; const toast = (m) => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800); };
+  window.addEventListener('unhandledrejection', (e) => { console.error(e.reason); toast('That did not go through. Please try again.'); });
   document.documentElement.style.setProperty('--accent', C().accent);
   document.getElementById('local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
   document.getElementById('portal-link').href = '/portal/?local=' + LOCAL;
@@ -307,14 +308,14 @@ legend{font-weight:700;margin-bottom:8px}
   const currentPost = () => { const m = messages().find((x) => x.id === selected); return m && m.p; };
   function render() { header(); renderList(); renderRead(); }
 
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     const r = e.target.closest('[data-role]'); if (r) { role = r.dataset.role; render(); return; }
     const m = e.target.closest('[data-msg]'); if (m) { selected = m.dataset.msg; declining = false; Object.assign(draft, { placement: 'feed', note: '', reason: '', text: false, email: true }); render(); return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
     const p = currentPost();
     if (a.dataset.act === 'decline') { declining = true; renderRead(); }
     if (a.dataset.act === 'cancel') { declining = false; renderRead(); }
-    if (a.dataset.act === 'remove' && p) { CF.remove(p.id, LOCAL, { by: role }); render(); toast('Taken down from ' + C().name + '\'s site.'); }
+    if (a.dataset.act === 'remove' && p) { await CF.remove(p.id, LOCAL, { by: role }); render(); toast('Taken down from ' + C().name + '\'s site.'); }
   });
   document.addEventListener('input', (e) => {
     if (e.target.name === 'note') { draft.note = e.target.value; const cnt = $('#note-count'); if (cnt) cnt.textContent = draft.note.length; const pv = $('.site-preview'); const p = currentPost(); if (pv && p) pv.outerHTML = preview(p, p.status[LOCAL], draft.note); }
@@ -324,15 +325,15 @@ legend{font-weight:700;margin-bottom:8px}
     if (e.target.name === 'placement') draft.placement = e.target.value;
     if (e.target.name === 'text' || e.target.name === 'email') draft[e.target.name] = e.target.checked;
   });
-  document.addEventListener('submit', (e) => {
+  document.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = e.target.dataset.form, p = currentPost(); if (!p) return;
     if (f === 'approve') {
-      CF.approve(p.id, LOCAL, { placement: draft.placement, note: draft.note, by: role, text: draft.text, email: draft.email }); render();
+      await CF.approve(p.id, LOCAL, { placement: draft.placement, note: draft.note, by: role, text: draft.text, email: draft.email }); render();
       const sent = [draft.text ? 'texted ' + CF.alertSubs(LOCAL).toLocaleString() : '', draft.email ? 'emailed ' + CF.emailSubs(LOCAL).toLocaleString() : ''].filter(Boolean).join(' and ');
       toast('Approved. Live on ' + C().name + '\'s site' + (sent ? ', ' + sent + ' members' : '') + '.');
     }
-    if (f === 'decline') { CF.decline(p.id, LOCAL, { reason: draft.reason, by: role }); declining = false; render(); toast('Declined. The council has been told.'); }
+    if (f === 'decline') { await CF.decline(p.id, LOCAL, { reason: draft.reason, by: role }); declining = false; render(); toast('Declined. The council has been told.'); }
   });
   CF.onChange(() => { renderList(); if (!document.activeElement || !document.activeElement.closest('form')) renderRead(); });
   setInterval(() => { CF.tick(); }, 1000);
