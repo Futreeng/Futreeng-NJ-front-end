@@ -18,7 +18,7 @@
 | **Local 825 preview (unified design)** | https://nj-council-hub.vercel.app/preview-825/ | Not deployed yet. |
 | Local 823 Connect (live, Haron's) | https://atu-local-823-connect.vercel.app | Live. Separate codebase. |
 | Local 825 Connect (live, Haron's) | https://atu-825-connect.vercel.app | Live. Separate codebase. |
-| GitHub repo | https://github.com/futreeng-hq/nj-council-hub | **Not linked to Vercel yet.** All deploys go through the Vercel MCP connector, not git push. |
+| GitHub repo | https://github.com/futreeng-hq/nj-council-hub | **Linked to Vercel (2026-10-19).** Merging to `main` deploys production; branches and PRs get preview links. |
 
 ---
 
@@ -151,7 +151,7 @@ The hub uses the DOL union registry city labels: 820 Union City, 822 Plainfield,
 The ATU state council's 990 filing says "oversight of the 8 local unions." 825's own live site also says "8 locals strong" and lists 8 (dropping 540). The hub still shows 9 (including 540 Trenton). **Unresolved.** Likely 540 Mercer is in the state but not in the state council. Confirm with Riley or Arroyo.
 
 ### GitHub to Vercel
-The repo at `github.com/futreeng-hq/nj-council-hub` is not linked to the Vercel project. Every change requires an MCP-mediated redeploy. To get push-to-deploy, go to the Vercel project settings → Git → Connect `futreeng-hq/nj-council-hub` to the `main` branch.
+Resolved 2026-10-19: `futreeng-hq/nj-council-hub` is connected to the Vercel project (production branch `main`, root directory `pitch/deploy`).
 
 ### Spanish strings for new sections
 Only the strings that existed before this session have Spanish translations in `CONTENT.strings.es`. The new strings for the scoreboard, wins, ladder, COPE, governance, measurement, and SMS copy are English-only. The language toggle still works but only translates the subset. Add ES copy before any Spanish-speaking pitch audience sees it.
@@ -235,7 +235,7 @@ Demo pieces:
 4. **Any real contract data** → swap into `fight[]` if available (otherwise keep SAMPLE).
 5. **Any real wins** collected from locals in the past 6 months → swap into `wins[]`.
 6. ~~Spanish translations~~ Done 2026-10-17. Every section switches to Spanish.
-7. **GitHub ↔ Vercel link** for push-to-deploy. Vercel project root directory is now `pitch/deploy` and git-sourced deploys work; connecting the repo in Project Settings → Git turns on auto-deploy.
+7. ~~GitHub ↔ Vercel link~~ Done 2026-10-19. Push-to-deploy is on.
 8. **Content rule conflict:** `docs/CONTENT_RULES.md` allows only Riley and Arroyo by name; the 823/825 previews show those locals' officers. Decide before merging PR #1.
 
 ---

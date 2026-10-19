@@ -9,9 +9,10 @@ Static front-end demo shown to the ATU New Jersey State Council. Separate from t
 - `BACKEND_INTERFACE.md` what the pages need from the real back end, and how a live backend plugs into `council-feed.js`.
 
 ```bash
-python3 pitch/build.py
-cd pitch/deploy && vercel deploy --prod   # project: nj-council-hub
+python3 pitch/build.py   # then commit src/ and deploy/ together
 ```
+
+The repo is linked to the Vercel project `nj-council-hub` (root directory `pitch/deploy`). Merging to `main` deploys to production at nj-council-hub.vercel.app; every other branch and pull request gets its own preview link.
 
 ## Tests
 
