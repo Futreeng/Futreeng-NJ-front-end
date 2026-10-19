@@ -94,7 +94,8 @@
       mk('825', 3, { name: 'Valley Fit Club', cat: 'fitness', clicks: 38, offer: 'No sign-up fee and $15 a month for members.' })
     ];
   }
-  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners() });
+  const freshPause = () => ({ all: false, allAt: null, locals: {} });
+  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners(), pause: freshPause() });
 
   /* ---------- storage ---------- */
   let mem = fresh();
@@ -102,7 +103,7 @@
   function load() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } } else save(mem, true);
+      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } if (!mem.pause) mem.pause = freshPause(); } else save(mem, true);
     } catch (e) { /* storage blocked: keep memory copy */ }
     return mem;
   }
@@ -290,6 +291,29 @@
     save(st);
   }
 
+  /* ---------- emergency off-switch ----------
+     Pause everything: no council posts or partners on any local site, and
+     the hub shows only a notice. Pause one local: nothing from the council
+     on that local's site. Nothing is deleted; resuming puts it all back. */
+  function paused() { const p = state().pause || freshPause(); return { all: !!p.all, allAt: p.allAt, locals: Object.assign({}, p.locals) }; }
+  function isPaused(n) { const p = paused(); return p.all || !!p.locals[n]; }
+  function pauseAll(on, o) {
+    const st = state(); st.pause = st.pause || freshPause();
+    if (!!st.pause.all === !!on) return paused();
+    st.pause.all = !!on; st.pause.allAt = on ? now() : null;
+    const why = o && o.reason ? ' · reason: ' + String(o.reason).slice(0, 280) : '';
+    record(st, 'Council', on ? 'paused everything' : 'resumed everything', { detail: (on ? 'All public content taken off the hub and every local site' : 'Public content back on the hub and every local site') + why });
+    save(st); return paused();
+  }
+  function pauseLocal(n, on, o) {
+    const st = state(); st.pause = st.pause || freshPause();
+    if (!LOCALS[n] || !!st.pause.locals[n] === !!on) return paused();
+    if (on) st.pause.locals[n] = now(); else delete st.pause.locals[n];
+    const why = o && o.reason ? ' · reason: ' + String(o.reason).slice(0, 280) : '';
+    record(st, 'Council', on ? 'paused local' : 'resumed local', { local: n, detail: (on ? 'Council posts and partners taken off the Local ' + n + ' site' : 'Council posts and partners back on the Local ' + n + ' site') + why });
+    save(st); return paused();
+  }
+
   /* ---------- reach (simulated): site views, texts, emails ---------- */
   function reach(p, n) {
     const s = p.status[n];
@@ -309,7 +333,7 @@
   const partnerWindow = (p) => p.startAt && p.startAt > now() ? 'scheduled' : (p.endAt && now() >= p.endAt ? 'ended' : 'active');
   const byRank = (a, b) => (b.featured - a.featured) || (b.created - a.created);
   /* What the public sees: active partners only, featured first. */
-  function partners(owner) { return (state().partners || []).filter((p) => p.owner === owner && partnerWindow(p) === 'active').sort(byRank); }
+  function partners(owner) { if (owner === 'council' ? paused().all : isPaused(owner)) return []; return (state().partners || []).filter((p) => p.owner === owner && partnerWindow(p) === 'active').sort(byRank); }
   /* What the officers manage: everything, including scheduled and ended. */
   function partnersAdmin(owner) { return (state().partners || []).filter((p) => p.owner === owner).sort(byRank); }
   const featuredCount = (st, owner) => st.partners.filter((p) => p.owner === owner && p.featured && partnerWindow(p) !== 'ended').length;
@@ -350,6 +374,7 @@
   const log = () => state().log;
   /* What a local website shows: live/approved posts (or the approved version of one being corrected), inside its date window. */
   function forLocal(n) {
+    if (isPaused(n)) return [];
     return posts().filter((p) => { const s = p.status[n];
       return s && windowState(p) === 'active' && (['live', 'approved'].includes(s.state) || (s.state === 'pending' && s.version)); });
   }
@@ -451,7 +476,7 @@
   function partnersHTML(owner, opt) {
     const o = opt || {}, lang = o.lang || 'en', t = Object.assign({}, PT_EN, o.t || {});
     const own = backend.partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
-    const isHub = owner === 'council', statewide = isHub ? [] : backend.partners('council');
+    const isHub = owner === 'council', statewide = isHub || backend.isPaused(owner) ? [] : backend.partners('council');
     if (!own.length && !statewide.length) return '';
     return `<div class="pt-wrap">
       <div class="pt-head"><div class="pt-eyebrow">${esc(t.eyebrow)}</div>
@@ -536,8 +561,9 @@
   const BACKEND_METHODS = [
     // reads
     'posts', 'subs', 'log', 'contacts', 'forLocal', 'partners', 'partnersAdmin', 'reach', 'reachTotal', 'alertSubs', 'emailSubs',
+    'paused', 'isPaused',
     // council actions
-    'send', 'correct', 'pull', 'routeSub', 'requestVerify',
+    'send', 'correct', 'pull', 'routeSub', 'requestVerify', 'pauseAll', 'pauseLocal',
     // local officer actions (president or secretary)
     'approve', 'decline', 'remove', 'submit', 'verifyContacts',
     // partners
@@ -547,8 +573,8 @@
   ];
   const demoBackend = {
     name: 'demo',
-    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs,
-    send, correct, pull, routeSub, requestVerify,
+    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs, paused, isPaused,
+    send, correct, pull, routeSub, requestVerify, pauseAll, pauseLocal,
     approve, decline, remove, submit, verifyContacts,
     addPartner, setFeatured, removePartner, clickPartner,
     onChange, tick: () => { const st = load(); if (settle(st)) save(st); }, reset

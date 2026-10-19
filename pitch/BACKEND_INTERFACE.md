@@ -41,6 +41,8 @@ The hub pages (hub and council console, officer portal, approval inbox, local si
 | `partners(owner)` / `partnersAdmin(owner)` | Member-benefit partners for `'council'` or a local | Public list (active only) and officer list (all) |
 | `reach(post, n)` / `reachTotal(post)` | Views, texts, taps, emails, opens | Demo numbers are simulated. Until real numbers exist, return zeros |
 | `alertSubs(n)` / `emailSubs(n)` | Members signed up for texts / email | Zeros until Phase 3 |
+| `paused()` | `{ all, allAt, locals: { [n]: pausedAt } }` | Off-switch state. Public |
+| `isPaused(n)` | `true` if everything or Local `n` is paused | `forLocal(n)` and `partners(n)` must return nothing while this is true |
 
 ## Actions
 
@@ -51,6 +53,8 @@ The hub pages (hub and council console, officer portal, approval inbox, local si
 | `pull(postId)` | Council | Takes the post off every site at once |
 | `routeSub(subId, { approve, note })` | Council | Decline, reply to an issue, or turn a share or solidarity request into a post (the sending local is approved automatically) |
 | `requestVerify(n)` | Council | Asks Local `n` to confirm its contacts |
+| `pauseAll(on, { reason })` | Council (fresh sign-in and MFA in production) | Off-switch. While on, no local site shows council posts or partners and the public hub shows only a notice. Nothing is deleted. Target: public pages empty within 10 seconds |
+| `pauseLocal(n, on, { reason })` | Council (fresh sign-in and MFA in production) | Same, for Local `n`'s site only |
 | `approve(postId, n, { placement, note, by, text, email })` | President or secretary of `n` | First one to act decides. `note` max 140 characters |
 | `decline(postId, n, { reason, by })` | President or secretary of `n` | `reason` max 280 characters |
 | `remove(postId, n, { by })` | President or secretary of `n` | Takes a live or approved post off that local's site only |
@@ -70,5 +74,4 @@ The hub pages (hub and council console, officer portal, approval inbox, local si
 ## Not covered here yet
 
 - Login, logout, invite acceptance and MFA screens (waiting on the API's auth design).
-- Pause all / pause one local (kill-switch) controls in the console.
 - Events, locals list and other hub content still come from the `CONTENT` block in `src/src.html`.

@@ -688,6 +688,19 @@ textarea.sv-input{min-height:84px;resize:vertical}
 .cc-clock{font-family:var(--mono);font-size:11px;color:var(--nj-buff);letter-spacing:.06em;text-transform:uppercase}
 .cc-reset{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:underline;padding:8px 0}
 .cc-empty{font-family:var(--body);font-size:15px;color:var(--muted);padding:18px 0}
+.cc-tab[data-tab="emergency"]{color:var(--red)}.cc-tab[data-tab="emergency"] .cc-badge{background:var(--red);color:#fff}
+.cc-em{border:3px solid var(--red);padding:20px;margin-top:6px;display:flex;flex-direction:column;gap:16px}
+.cc-em h3{margin:0;font-family:var(--display);font-weight:800;font-size:26px;text-transform:uppercase;letter-spacing:.02em}
+.cc-em p{margin:0;font-family:var(--body);font-size:15px;line-height:1.5;color:var(--muted)}
+.cc-em-status{font-family:var(--body);font-size:16px;font-weight:600;padding:12px 14px;border-left:4px solid #3FB27F;background:var(--navy-deep)}
+.cc-em-status.off{border-left-color:var(--red)}
+.cc-em-locals{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:10px}
+.cc-em-local{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);padding:10px 12px;font-family:var(--body);font-size:14px}
+.cc-em-local.off{border-color:var(--red)}.cc-em-local i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.cc-em-local.off i{color:var(--red)}
+.pause-notice{margin:0;padding:48px var(--gutter,24px);background:var(--red);color:#fff;font-family:var(--body);font-size:17px}
+.pause-notice strong{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);text-transform:uppercase;line-height:1}
+body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-footer,body.paused-all .measure,body.paused-all #partners,body.paused-all .lang-note{display:none}
 .cc-post{border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px}
 .cc-post.pulled{opacity:.6}
 .cc-post .tt{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
@@ -812,6 +825,7 @@ textarea.sv-input{min-height:84px;resize:vertical}
 </header>
 
 <main>
+<div id="pause-notice" class="pause-notice" role="status" hidden></div>
 
 <!-- ======================= Hero ======================= -->
 <section class="hero" aria-labelledby="hero-title">
@@ -1591,7 +1605,14 @@ const CONTENT = {
           needTitle: 'Add a headline and a message.', needTarget: 'Pick at least one local.', needStart: 'Pick when it starts.', badEnd: 'The end date has to be after it starts.',
           sentUrgent: 'Sent. Live now on {n} local sites. Members texted.', sentRegular: 'Sent to {n} locals. Waiting for approval.',
           sentUrgent1: 'Sent. Live now on Local {l}\'s site. Members texted.', sentRegular1: 'Sent to Local {l}. Waiting for approval.', scheduled: 'Scheduled. Locals can approve now; it goes live on {d}.',
-          tabs: { sent: 'Sent', from: 'From locals', dir: 'Directory', partners: 'Partners', log: 'Record' },
+          tabs: { sent: 'Sent', from: 'From locals', dir: 'Directory', partners: 'Partners', log: 'Record', emergency: 'Emergency' },
+          em: { title: 'Emergency off-switch', lede: 'Take council content off the public sites at once. Nothing is deleted: resuming puts it all back.',
+            liveAll: 'Everything is live.', pausedAll: 'Everything is paused. The hub shows only a notice, and no local site shows council posts or partners.', since: 'Paused {d}',
+            pauseAll: 'Pause everything', pauseAllConfirm: 'Click again to pause everything', resumeAll: 'Resume everything',
+            locals: 'Pause one local', localHint: 'Takes council posts and partners off that local\'s site only.', live: 'Live', paused: 'Paused', pause: 'Pause', resume: 'Resume',
+            reauth: 'In the real system, the council admin signs in again before pausing or resuming, and every change is recorded.',
+            pausedAllMsg: 'Everything is paused.', resumedAllMsg: 'Everything is live again.', pausedLocalMsg: 'Local {n} is paused.', resumedLocalMsg: 'Local {n} is live again.',
+            noticeT: 'Public content is paused', noticeB: 'The ATU New Jersey State Council has paused this site for now. Check back soon.' },
           clock: 'Demo clock: 1 second = 1 hour', reset: 'Clear demo', resetDone: 'Demo cleared.',
           empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
           count: 'Approved by {a} of {n}', countUrgent: 'Live on {a} of {n} sites', waiting: 'Waiting: {list}',
@@ -1637,7 +1658,14 @@ const CONTENT = {
           needTitle: 'Agrega un titular y un mensaje.', needTarget: 'Elige al menos un local.', needStart: 'Elige cuándo empieza.', badEnd: 'La fecha final tiene que ser después del inicio.',
           sentUrgent: 'Enviado. Ya está en {n} sitios de locales. Texto enviado a los miembros.', sentRegular: 'Enviado a {n} locales. Esperando aprobación.',
           sentUrgent1: 'Enviado. Ya está en el sitio del Local {l}. Texto enviado a los miembros.', sentRegular1: 'Enviado al Local {l}. Esperando aprobación.', scheduled: 'Programado. Los locales pueden aprobarlo ya; se publica el {d}.',
-          tabs: { sent: 'Enviados', from: 'De los locales', dir: 'Directorio', partners: 'Socios', log: 'Registro' },
+          tabs: { sent: 'Enviados', from: 'De los locales', dir: 'Directorio', partners: 'Socios', log: 'Registro', emergency: 'Emergencia' },
+          em: { title: 'Interruptor de emergencia', lede: 'Retira de inmediato el contenido del consejo de los sitios públicos. No se borra nada: al reanudar, todo vuelve.',
+            liveAll: 'Todo está publicado.', pausedAll: 'Todo está en pausa. El hub solo muestra un aviso y ningún sitio local muestra publicaciones ni socios del consejo.', since: 'En pausa desde {d}',
+            pauseAll: 'Pausar todo', pauseAllConfirm: 'Haz clic otra vez para pausar todo', resumeAll: 'Reanudar todo',
+            locals: 'Pausar un local', localHint: 'Retira las publicaciones y los socios del consejo solo del sitio de ese local.', live: 'Publicado', paused: 'En pausa', pause: 'Pausar', resume: 'Reanudar',
+            reauth: 'En el sistema real, el administrador del consejo vuelve a iniciar sesión antes de pausar o reanudar, y cada cambio queda registrado.',
+            pausedAllMsg: 'Todo está en pausa.', resumedAllMsg: 'Todo está publicado otra vez.', pausedLocalMsg: 'El Local {n} está en pausa.', resumedLocalMsg: 'El Local {n} está publicado otra vez.',
+            noticeT: 'El contenido público está en pausa', noticeB: 'El Consejo Estatal de ATU Nueva Jersey pausó este sitio por ahora. Vuelve pronto.' },
           clock: 'Reloj de la demo: 1 segundo = 1 hora', reset: 'Borrar demo', resetDone: 'Demo borrada.',
           empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
           count: 'Aprobado por {a} de {n}', countUrgent: 'En vivo en {a} de {n} sitios', waiting: 'En espera: {list}',
@@ -2242,7 +2270,8 @@ const nf = (n) => Number(n || 0).toLocaleString(LOC());
 const ACTIONS_ES = { 'sent': 'enviado', 'sent urgent': 'urgente enviado', 'approved': 'aprobado', 're-approved': 'reaprobado', 'declined': 'rechazado', 'removed': 'retirado',
   'pulled': 'retirado de todos', 'corrected': 'corregido', 'reminded': 'recordatorio', 'passed to secretary': 'pasado al secretario', 'submitted': 'enviado al consejo',
   'routed submission': 'reenviado por el consejo', 'declined submission': 'pedido rechazado', 'replied': 'respondido', 'asked to verify contacts': 'pidió verificar contactos', 'verified contacts': 'contactos verificados',
-  'added partner': 'socio agregado', 'removed partner': 'socio quitado', 'featured partner': 'socio destacado', 'unfeatured partner': 'socio ya no destacado' };
+  'added partner': 'socio agregado', 'removed partner': 'socio quitado', 'featured partner': 'socio destacado', 'unfeatured partner': 'socio ya no destacado',
+  'paused everything': 'pausó todo', 'resumed everything': 'reanudó todo', 'paused local': 'pausó un local', 'resumed local': 'reanudó un local' };
 
 function renderConsoleForm() {
   const u = CU();
@@ -2417,16 +2446,43 @@ function renderLogTab() {
       <button type="button" class="action-btn" data-cc="csv">${esc(u.download)}</button></div>
     ${rows.length ? `<div class="cc-table-wrap"><table class="cc-table log"><thead><tr>${u.logCols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>` : `<p class="cc-empty">${esc(u.logEmpty)}</p>`}`;
 }
+function renderEmergencyTab() {
+  const u = CU(), em = u.em, F = CF(), p = F.paused();
+  const locals = F.ALL.map((n) => { const off = !!p.locals[n];
+    return `<div class="cc-em-local${off ? ' off' : ''}"><span><b>${n}</b> ${esc(F.LOCALS[n].city)} <i>${esc(off ? em.paused : em.live)}</i></span>
+      <button type="button" class="action-btn${off ? ' solid' : ''}" data-cc="pause-local" data-n="${n}">${esc(off ? em.resume : em.pause)}</button></div>`; }).join('');
+  const main = p.all
+    ? `<button type="button" class="btn btn-red" data-cc="resume-all">${esc(em.resumeAll)}</button>`
+    : `<button type="button" class="btn btn-red" data-cc="pause-all">${esc(cc.pauseArm === 'all' ? em.pauseAllConfirm : em.pauseAll)}</button>`;
+  return `<div class="cc-em">
+      <div><h3>${esc(em.title)}</h3><p>${esc(em.lede)}</p></div>
+      <div class="cc-em-status${p.all ? ' off' : ''}">${esc(p.all ? em.pausedAll : em.liveAll)}${p.all && p.allAt ? ' ' + esc(em.since.replace('{d}', when(p.allAt))) : ''}</div>
+      <div>${main}</div>
+      <div><h3 style="font-size:20px">${esc(em.locals)}</h3><p>${esc(em.localHint)}</p></div>
+      <div class="cc-em-locals">${locals}</div>
+      <p>${esc(em.reauth)}</p>
+    </div>`;
+}
+/* Pause everything: the public hub shows only a notice (the council console stays). */
+function applyPause() {
+  const F = CF(); if (!F) return;
+  const on = F.paused().all, em = CU().em, el = $('#pause-notice');
+  document.body.classList.toggle('paused-all', on);
+  el.hidden = !on;
+  el.innerHTML = on ? `<strong>${esc(em.noticeT)}</strong>${esc(em.noticeB)}` : '';
+}
 function renderConsoleSent() {
+  applyPause();
   if (!CF()) return;
   const u = CU(), F = CF();
   const pendingSubs = F.subs().filter((s) => s.state === 'pending').length;
   const due = F.ALL.filter((n) => F.contacts(n).verifyDue && !F.contacts(n).requestedAt).length;
   const tab = (k, label, badge) => `<button type="button" role="tab" class="cc-tab" data-tab="${k}" aria-selected="${cc.tab === k}">${esc(label)}${badge ? ` <span class="cc-badge">${badge}</span>` : ''}</button>`;
-  const panel = { sent: renderSentTab, from: renderFromTab, dir: renderDirTab, partners: renderPartnersTab, log: renderLogTab }[cc.tab]();
+  const panel = { sent: renderSentTab, from: renderFromTab, dir: renderDirTab, partners: renderPartnersTab, log: renderLogTab, emergency: renderEmergencyTab }[cc.tab]();
+  const pz = F.paused(), pzBadge = pz.all ? '!' : Object.keys(pz.locals).length;
   $('#console-sent').innerHTML = `<div class="cc-sent">
       <div class="cc-sent-head">
-        <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('partners', u.tabs.partners, F.partnersAdmin('council').length)}${tab('log', u.tabs.log, 0)}</div>
+        <div class="cc-tabs" role="tablist">${tab('sent', u.tabs.sent, F.posts().length)}${tab('from', u.tabs.from, pendingSubs)}${tab('dir', u.tabs.dir, due)}${tab('partners', u.tabs.partners, F.partnersAdmin('council').length)}${tab('log', u.tabs.log, 0)}${tab('emergency', u.tabs.emergency, pzBadge)}</div>
         <div class="cc-tools"><span class="cc-clock">${esc(u.clock)}</span><button type="button" class="cc-reset" data-cc="reset">${esc(u.reset)}</button></div>
       </div>
       <div class="cc-panel" role="tabpanel">${panel}</div>
@@ -2435,7 +2491,7 @@ function renderConsoleSent() {
 const busy = () => cc.editing || (document.activeElement && document.activeElement.closest && document.activeElement.closest('#console-sent textarea, #console-sent select, #console-sent input'));
 function wireConsole() {
   if (!CF()) return;
-  CF().onChange(() => { if (!busy()) renderConsoleSent(); renderPartnersSection(); });
+  CF().onChange(() => { applyPause(); if (!busy()) renderConsoleSent(); renderPartnersSection(); });
   setInterval(() => { CF().tick(); if (!busy() && ['sent', 'log', 'dir'].includes(cc.tab)) renderConsoleSent(); }, 1000);
   const form = () => $('#console-form form');
   document.addEventListener('input', (ev) => {
@@ -2466,6 +2522,17 @@ function wireConsole() {
     if (a === 'reset') { await F.reset(); Object.assign(cc, { editing: null, pullArm: null, subNotes: {} }); toast(u.resetDone); renderConsoleSent(); }
     if (a === 'correct') { const p = F.posts().find((x) => x.id === id); cc.editing = id; cc.edit = { title: p.title, body: p.body, titleEs: p.titleEs, bodyEs: p.bodyEs }; renderConsoleSent(); const f = document.querySelector('.cc-edit input'); if (f) f.focus(); }
     if (a === 'cancel') { cc.editing = null; renderConsoleSent(); }
+    if (a === 'pause-all') {
+      if (cc.pauseArm === 'all') { cc.pauseArm = null; await F.pauseAll(true); toast(u.em.pausedAllMsg); }
+      else { cc.pauseArm = 'all'; setTimeout(() => { if (cc.pauseArm === 'all') { cc.pauseArm = null; renderConsoleSent(); } }, 4000); }
+      renderConsoleSent();
+    }
+    if (a === 'resume-all') { await F.pauseAll(false); toast(u.em.resumedAllMsg); renderConsoleSent(); }
+    if (a === 'pause-local') {
+      const n = b.dataset.n, on = !F.paused().locals[n];
+      await F.pauseLocal(n, on);
+      toast((on ? u.em.pausedLocalMsg : u.em.resumedLocalMsg).replace('{n}', n)); renderConsoleSent();
+    }
     if (a === 'pull') {
       if (cc.pullArm === id) { await F.pull(id); cc.pullArm = null; toast(u.pulled); } else { cc.pullArm = id; setTimeout(() => { if (cc.pullArm === id) { cc.pullArm = null; renderConsoleSent(); } }, 4000); }
       renderConsoleSent();

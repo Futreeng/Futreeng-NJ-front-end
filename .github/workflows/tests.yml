@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install test tools
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Build the site (fails on em dashes)
+        run: python3 pitch/build.py
+
+      - name: Check pitch/deploy matches pitch/src
+        run: |
+          if ! git diff --quiet -- pitch/deploy; then
+            echo "pitch/deploy is out of date. Run: python3 pitch/build.py and commit the result."
+            git diff --stat -- pitch/deploy
+            exit 1
+          fi
+
+      - name: Check no secret keys in the built site
+        run: |
+          if grep -rniE 'service_role|sk-ant-|SUPABASE_SERVICE_ROLE_KEY' pitch/deploy; then
+            echo "A secret key or service-role reference is in pitch/deploy."
+            exit 1
+          fi
+
+      - name: End-to-end tests
+        run: npx playwright test
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
