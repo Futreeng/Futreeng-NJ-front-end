@@ -15,7 +15,7 @@ cd pitch/deploy && vercel deploy --prod   # project: nj-council-hub
 
 ## Tests
 
-End-to-end tests in `tests/e2e/` click through the demo: council sends, president or secretary approves, posts show on the right local sites, pull, corrections, locals sending posts up, and the backend swap point. Run them from the repo root:
+End-to-end tests in `tests/e2e/` click through the demo: council sends, president or secretary approves, posts show on the right local sites, pull, corrections, locals sending posts up, the emergency off-switch and the backend swap point. They also check the security headers in `deploy/vercel.json` (the test server, `tests/serve.js`, sends the same headers Vercel does) and scan every page for serious accessibility problems. GitHub Actions runs them on every push. Run them from the repo root:
 
 ```bash
 npm install

@@ -1,5 +1,5 @@
 // End-to-end tests for the pitch demo. They run against the built site in
-// pitch/deploy, served by a plain static server (same as Vercel cleanUrls).
+// pitch/deploy, served with Vercel's cleanUrls and the headers in vercel.json.
 const { defineConfig, devices } = require('@playwright/test');
 
 const PORT = 8766;
@@ -16,7 +16,7 @@ module.exports = defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `python3 -m http.server ${PORT} --directory pitch/deploy`,
+    command: `node tests/serve.js ${PORT}`,
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env.CI,
   },

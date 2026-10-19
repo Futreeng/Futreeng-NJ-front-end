@@ -501,7 +501,7 @@ img,svg{display:block;max-width:100%}
 .lang-note .ln-l b{color:var(--sample)}
 .lang-note .ln-r{display:flex;gap:8px;flex-wrap:wrap}
 .lang-chip{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);background:var(--panel);padding:5px 10px;text-transform:uppercase;border:1px solid var(--line)}
-.lang-chip.soon{opacity:.55}
+.lang-chip.soon{color:var(--dim);background:transparent;border-style:dashed}
 
 /* Preview ribbon (used on preview-823, preview-825) */
 .preview-ribbon{background:var(--sample);color:var(--navy);padding:10px 0;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-align:center;font-weight:600}
@@ -798,7 +798,7 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 <!-- ======================= Header ======================= -->
 <header class="header" id="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="NJ Council Hub home">
+    <a class="brand" href="#top">
       <span class="logo-mark" aria-hidden="true">ATU</span>
       <span class="nj-glyph" aria-hidden="true"></span>
       <span class="brand-name"><strong>NJ Council Hub</strong><span>ATU New Jersey State Council</span></span>
@@ -2184,7 +2184,7 @@ function renderMap() {
     <text class="lbl" x="${(tx - 18).toFixed(1)}" y="${(ty - 6).toFixed(1)}" text-anchor="end">${esc(t().council)}</text>
     <text class="sub" x="${(tx - 18).toFixed(1)}" y="${(ty + 6).toFixed(1)}" text-anchor="end">${esc(t().terminal)}</text>`;
 
-  $('#map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t().mapLabel)}">${dots}${shape}${regions}${lines}${stops}${term}</svg>`;
+  $('#map').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${esc(t().mapLabel)}">${dots}${shape}${regions}${lines}${stops}${term}</svg>`;
 }
 
 function renderTabs() {

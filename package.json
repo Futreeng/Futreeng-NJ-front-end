@@ -8,6 +8,7 @@
     "test:headed": "python3 pitch/build.py && playwright test --headed"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.64.1"
   }
 }
