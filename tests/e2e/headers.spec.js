@@ -2,7 +2,7 @@
 // blocked by the Content-Security-Policy.
 const { test, expect } = require('@playwright/test');
 
-const PAGES = ['/', '/inbox/?local=823', '/portal/?local=825', '/preview-823/', '/preview-825/', '/preview-540/'];
+const PAGES = ['/', '/console/', '/join/', '/inbox/?local=823', '/portal/?local=825', '/preview-823/', '/preview-825/', '/preview-540/'];
 
 test('every page sends the security headers', async ({ request }) => {
   for (const path of PAGES) {

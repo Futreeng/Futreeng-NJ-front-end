@@ -1,6 +1,6 @@
 // Council controls (pull, correct) and locals sending posts up to the council.
 const { test, expect } = require('@playwright/test');
-const { watchErrors, sendFromHub, approveInInbox, openSite } = require('./helpers');
+const { watchErrors, sendFromHub, approveInInbox, openSite, openConsole } = require('./helpers');
 
 function sentPost(page, title) {
   return page.locator('#console-sent .cc-post', { has: page.locator('.tt', { hasText: title }) });
@@ -12,7 +12,7 @@ test('pulling a post takes it off every local site', async ({ page }) => {
   await approveInInbox(page, '823', title);
   await approveInInbox(page, '825', title);
 
-  await page.goto('/#console');
+  await openConsole(page);
   const pull = sentPost(page, title).locator('[data-cc="pull"]');
   await pull.click();
   await pull.click(); // second click confirms
@@ -29,7 +29,7 @@ test('a correction waits for re-approval; the site keeps the approved version un
   await sendFromHub(page, { title, body: 'First version.', targets: ['823'] });
   await approveInInbox(page, '823', title);
 
-  await page.goto('/#console');
+  await openConsole(page);
   await sentPost(page, title).locator('[data-cc="correct"]').click();
   const edit = page.locator('form[data-form="correct"]');
   await edit.locator('[name="title"]').fill(fixed);
@@ -55,7 +55,7 @@ test('a local shares a win; the council routes it and other locals approve it', 
   await form.locator('[name="body"]').fill('Twelve operators paid in full.');
   await form.locator('button[type="submit"]').click();
 
-  await page.goto('/#console');
+  await openConsole(page);
   await page.locator('[data-tab="from"]').click();
   await page.locator('#console-sent .cc-post', { hasText: title }).locator('[data-cc="route"]').click();
 
@@ -82,7 +82,7 @@ test('a private issue never appears on any local site', async ({ page }) => {
   await form.locator('[name="body"]').fill('Third week in a row.');
   await form.locator('button[type="submit"]').click();
 
-  await page.goto('/#console');
+  await openConsole(page);
   await page.locator('[data-tab="from"]').click();
   await page.locator('#console-sent .cc-post', { hasText: title }).locator('[data-cc="route"]').click();
 
@@ -94,7 +94,7 @@ test('a private issue never appears on any local site', async ({ page }) => {
 
 test('every page loads without errors', async ({ page }) => {
   const errors = watchErrors(page);
-  for (const path of ['/', '/inbox/?local=823', '/portal/?local=825', '/preview-823/', '/preview-825/', '/preview-540/']) {
+  for (const path of ['/', '/console/', '/join/', '/inbox/?local=823', '/portal/?local=825', '/preview-823/', '/preview-825/', '/preview-540/']) {
     await page.goto(path);
     await page.waitForLoadState('load');
   }

@@ -14,10 +14,24 @@ function watchErrors(page) {
   return errors;
 }
 
-/** Send a post from the council console on the hub. */
-async function sendFromHub(page, { title, body, urgent = false, targets = ['823', '825'] }) {
-  await page.goto('/#console');
+/** Open the council console (/console/), signing in as council admin if needed. */
+async function openConsole(page) {
+  await page.goto('/console/');
+  const signin = page.locator('[data-cc="signin"]');
   const form = page.locator('[data-form="council"]');
+  await expect(signin.or(form)).toBeVisible();
+  if (await signin.isVisible()) await signin.click();
+  await expect(form).toBeVisible();
+}
+
+/** Send a post from the council console. */
+async function sendFromHub(page, { title, body, urgent = false, targets = ['823', '825'], visibility = 'public' }) {
+  await openConsole(page);
+  const form = page.locator('[data-form="council"]');
+  if (visibility === 'members') {
+    await form.locator('label:has(input[name="visibility"][value="members"])').click();
+    await expect(form.locator('input[name="visibility"][value="members"]')).toBeChecked();
+  }
   if (urgent) {
     await form.locator('label:has(input[name="kind"][value="urgent"])').click();
     await expect(form.locator('input[name="kind"][value="urgent"]')).toBeChecked();
@@ -64,4 +78,17 @@ async function openSite(page, local) {
   return site(page);
 }
 
-module.exports = { watchErrors, sendFromHub, openInbox, approveInInbox, openSite };
+/** Member log-in on /join/ (sample members: 823-0001, 825-0001). */
+async function memberLogin(page, local, number) {
+  await page.goto('/join/#login');
+  await page.locator('select[name="loginLocal"]').selectOption(local);
+  await page.locator('input[name="loginNumber"]').fill(number);
+  await page.locator('form[data-form="login"] button[type="submit"]').click();
+}
+
+/** Sign out of the demo (council or member). */
+async function signOut(page) {
+  await page.evaluate(() => window.CouncilFeed && window.CouncilFeed.signOut());
+}
+
+module.exports = { watchErrors, openConsole, sendFromHub, openInbox, approveInInbox, openSite, memberLogin, signOut };

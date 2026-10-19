@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C1A33">
+<title>Members' area | NJ Council Hub</title>
+<meta name="description" content="Log in to your ATU local's members' area, or ask to join. Your local's secretary confirms you're a member.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0C1A33; --navy-deep:#06101F; --panel:#13284D; --ink:#F2F4F8; --muted:#C5CDDB; --dim:#8FA2C4; --line:rgba(255,255,255,.18);
+  --red:#D7263D; --gold:#F2C14E; --green:#3FB27F; --focus:#F2C14E;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace; --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--navy)}
+body{margin:0;background:var(--navy);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--ink)}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.demo-ribbon{background:var(--gold);color:#06101F;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:10px 16px;font-weight:600}
+.demo-ribbon a{color:#06101F;margin-left:10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:16px max(16px,4vw);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.logo-mark{font-family:var(--display);font-weight:800;font-size:20px;background:var(--red);color:#fff;padding:6px 8px;letter-spacing:.04em}
+.brand strong{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.lang{display:inline-flex;border:1px solid var(--line)}
+.lang button{border:0;background:transparent;color:var(--ink);padding:8px 12px;min-height:40px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--navy)}
+main{max-width:1100px;margin:0 auto;padding:40px max(16px,4vw) 64px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+h1{margin:8px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,64px);line-height:.95;text-transform:uppercase}
+.lede{margin:14px 0 0;color:var(--muted);max-width:62ch}
+.cols{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px}
+.card{background:var(--panel);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:14px}
+.card h2{margin:0;font-family:var(--display);font-weight:800;font-size:30px;text-transform:uppercase;line-height:1}
+.card p{margin:0;color:var(--muted)}
+label{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+input,select{background:var(--navy-deep);color:var(--ink);border:1px solid var(--line);padding:12px;min-height:46px;font-family:var(--body);font-size:16px;letter-spacing:0;text-transform:none}
+.btn{align-self:flex-start;border:0;background:var(--red);color:#fff;font-family:var(--display);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.04em;padding:12px 18px;min-height:46px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.btn.ghost{background:transparent;border:1px solid var(--ink)}
+.note{font-size:14px;color:var(--dim)}
+.msg{border-left:4px solid var(--green);background:var(--navy-deep);padding:12px 14px}
+.msg.warn{border-left-color:var(--gold)}
+.msg.err{border-left-color:var(--red)}
+.signed{display:flex;flex-direction:column;gap:12px}
+.sample{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#06101F;padding:2px 6px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="demo-ribbon">Demo · Members' area <a href="/">← Council Hub</a></div>
+<header class="top">
+  <a class="brand" href="/"><span class="logo-mark" aria-hidden="true">ATU</span><strong>NJ Council Hub</strong></a>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="es" aria-pressed="false">ES</button></div>
+</header>
+<main id="main"></main>
+
+<script src="/council-feed.js"></script>
+<script>
+(function () {
+  const CF = window.CouncilFeed, esc = CF.esc;
+  const params = new URLSearchParams(location.search);
+  const T = {
+    en: {
+      eyebrow: '◆ Members only', title: 'Members\' area', lede: 'Contract documents, bargaining surveys, COPE, member stories and members-only council posts. Members of all nine ATU locals in New Jersey.',
+      loginT: 'Log in', loginB: 'For members your local has already approved.', local: 'Your local', number: 'Member or badge number', loginBtn: 'Log in',
+      loginReal: 'In the real system you get a one-time code by text or email instead.', demoHint: 'Demo log-ins:', demoSample: 'Sample',
+      joinT: 'Ask to join', joinB: 'Your local\'s secretary checks you against the membership list, usually within a few days. We only use this to confirm you\'re a member.',
+      name: 'Full name', contact: 'Phone or email (so we can tell you when you\'re approved)', joinBtn: 'Send to my local\'s secretary',
+      pickLocal: 'Choose your local', sent: 'Sent. The Local {n} secretary will confirm you. Then come back and log in.',
+      errMissing: 'Add your name and your member or badge number.', errDup: 'You already asked to join. The Local {n} secretary hasn\'t confirmed you yet.',
+      errApproved: 'You\'re already approved. Log in instead.', errUnknown: 'We couldn\'t find an approved member with that number in Local {n}.', errPending: 'Your sign-up is still waiting for the Local {n} secretary.',
+      signedT: 'You\'re logged in', signedB: '{name}, Local {n}. You can now see members-only content on the hub and on your local\'s site.', toHub: 'Go to the hub', toLocal: 'Your local\'s site', signOut: 'Log out',
+      councilT: 'Signed in as council admin', councilB: 'Council admins can already see everything. Sign out from the council console.'
+    },
+    es: {
+      eyebrow: '◆ Solo para miembros', title: 'Área de miembros', lede: 'Documentos del contrato, encuestas de negociación, COPE, historias de miembros y publicaciones del consejo solo para miembros. Para miembros de los nueve locales de ATU en Nueva Jersey.',
+      loginT: 'Iniciar sesión', loginB: 'Para miembros que tu local ya aprobó.', local: 'Tu local', number: 'Número de miembro o de placa', loginBtn: 'Entrar',
+      loginReal: 'En el sistema real recibes un código de un solo uso por texto o correo.', demoHint: 'Accesos de la demo:', demoSample: 'Ejemplo',
+      joinT: 'Pedir unirme', joinB: 'El secretario de tu local te verifica en la lista de miembros, normalmente en pocos días. Solo usamos esto para confirmar que eres miembro.',
+      name: 'Nombre completo', contact: 'Teléfono o correo (para avisarte cuando te aprueben)', joinBtn: 'Enviar al secretario de mi local',
+      pickLocal: 'Elige tu local', sent: 'Enviado. El secretario del Local {n} te confirmará. Después vuelve e inicia sesión.',
+      errMissing: 'Escribe tu nombre y tu número de miembro o de placa.', errDup: 'Ya pediste unirte. El secretario del Local {n} todavía no te confirma.',
+      errApproved: 'Ya estás aprobado. Inicia sesión.', errUnknown: 'No encontramos un miembro aprobado con ese número en el Local {n}.', errPending: 'Tu solicitud todavía espera al secretario del Local {n}.',
+      signedT: 'Iniciaste sesión', signedB: '{name}, Local {n}. Ya puedes ver el contenido para miembros en el hub y en el sitio de tu local.', toHub: 'Ir al hub', toLocal: 'Sitio de tu local', signOut: 'Cerrar sesión',
+      councilT: 'Sesión de administrador del consejo', councilB: 'Los administradores del consejo ya pueden ver todo. Cierra sesión desde la consola del consejo.'
+    }
+  };
+  let lang = 'en';
+  const startLocal = CF.ALL.includes(params.get('local')) ? params.get('local') : '';
+  const draft = { local: startLocal, name: '', number: '', contact: '', loginLocal: startLocal, loginNumber: '' };
+  let note = null;   // { box: 'join' | 'login', kind: '' | 'warn' | 'err', text }
+  const L = () => T[lang];
+  const f = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => esc(o[k]));
+  const opts = (sel) => `<option value="">${esc(L().pickLocal)}</option>` + CF.ALL.map((n) => `<option value="${n}"${sel === n ? ' selected' : ''}>Local ${n} · ${esc(CF.LOCALS[n].city)}</option>`).join('');
+  const msg = (box) => note && note.box === box ? `<p class="msg ${note.kind}" role="status">${note.text}</p>` : '';
+
+  function render() {
+    const s = CF.session(), t = L();
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    let body;
+    if (s.role === 'member') {
+      body = `<div class="card signed"><h2>${esc(t.signedT)}</h2><p>${f(t.signedB, { name: s.name, n: s.local })}</p>
+        <div><a class="btn" href="/">${esc(t.toHub)}</a> <a class="btn ghost" href="/preview-${esc(s.local)}/">${esc(t.toLocal)}</a></div>
+        <button type="button" class="btn ghost" data-act="signout">${esc(t.signOut)}</button></div>`;
+    } else if (s.role === 'council') {
+      body = `<div class="card signed"><h2>${esc(t.councilT)}</h2><p>${esc(t.councilB)}</p><div><a class="btn" href="/console/">Council console</a></div></div>`;
+    } else {
+      const sample = ['823', '825'].map((n) => `<span class="sample">${esc(t.demoSample)}</span>Local ${n} · ${n}-0001`).join(' &nbsp; ');
+      body = `<div class="cols">
+        <form class="card" id="login" data-form="login" novalidate>
+          <h2>${esc(t.loginT)}</h2><p>${esc(t.loginB)}</p>
+          <label>${esc(t.local)}<select name="loginLocal">${opts(draft.loginLocal)}</select></label>
+          <label>${esc(t.number)}<input name="loginNumber" autocomplete="off" value="${esc(draft.loginNumber)}"></label>
+          ${msg('login')}
+          <button type="submit" class="btn">${esc(t.loginBtn)}</button>
+          <p class="note">${esc(t.loginReal)}<br>${esc(t.demoHint)} ${sample}</p>
+        </form>
+        <form class="card" id="join" data-form="join" novalidate>
+          <h2>${esc(t.joinT)}</h2><p>${esc(t.joinB)}</p>
+          <label>${esc(t.local)}<select name="local">${opts(draft.local)}</select></label>
+          <label>${esc(t.name)}<input name="name" autocomplete="name" value="${esc(draft.name)}"></label>
+          <label>${esc(t.number)}<input name="number" autocomplete="off" value="${esc(draft.number)}"></label>
+          <label>${esc(t.contact)}<input name="contact" autocomplete="email" value="${esc(draft.contact)}"></label>
+          ${msg('join')}
+          <button type="submit" class="btn">${esc(t.joinBtn)}</button>
+        </form></div>`;
+    }
+    document.getElementById('main').innerHTML = `<div class="eyebrow">${esc(t.eyebrow)}</div><h1>${esc(t.title)}</h1><p class="lede">${esc(t.lede)}</p>${body}`;
+  }
+
+  document.addEventListener('input', (e) => { if (e.target.name in draft) draft[e.target.name] = e.target.value; });
+  document.addEventListener('change', (e) => { if (e.target.name in draft) draft[e.target.name] = e.target.value; });
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-lang]'); if (b) { lang = b.dataset.lang; render(); return; }
+    const a = e.target.closest('[data-act]');
+    if (a && a.dataset.act === 'signout') { await CF.signOut(); note = null; render(); }
+  });
+  document.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const t = L(), form = e.target.dataset.form;
+    if (form === 'join') {
+      if (!draft.local || !draft.name.trim() || !draft.number.trim()) { note = { box: 'join', kind: 'err', text: esc(draft.local ? t.errMissing : t.pickLocal) }; render(); return; }
+      const r = await CF.requestMembership(draft.local, { name: draft.name, number: draft.number, contact: draft.contact });
+      if (r.error) note = { box: 'join', kind: r.error === 'missing' ? 'err' : 'warn', text: r.error === 'approved' ? esc(t.errApproved) : r.error === 'pending' ? f(t.errDup, { n: draft.local }) : esc(t.errMissing) };
+      else { note = { box: 'join', kind: '', text: f(t.sent, { n: draft.local }) }; Object.assign(draft, { loginLocal: draft.local, loginNumber: draft.number, name: '', number: '', contact: '' }); }
+      render(); return;
+    }
+    if (form === 'login') {
+      if (!draft.loginLocal) { note = { box: 'login', kind: 'err', text: esc(t.pickLocal) }; render(); return; }
+      const r = await CF.signIn({ role: 'member', local: draft.loginLocal, number: draft.loginNumber });
+      if (r.error) { note = { box: 'login', kind: r.error === 'pending' ? 'warn' : 'err', text: f(r.error === 'pending' ? t.errPending : t.errUnknown, { n: draft.loginLocal }) }; render(); return; }
+      note = null; render();
+    }
+  });
+  window.addEventListener('unhandledrejection', (e) => { console.error(e.reason); note = { box: 'login', kind: 'err', text: 'That did not go through. Please try again.' }; render(); });
+  CF.onChange(render);
+  render();
+  if (location.hash === '#login') { const el = document.querySelector('#login select'); if (el) el.focus(); }
+})();
+</script>
+</body>
+</html>

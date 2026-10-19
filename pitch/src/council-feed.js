@@ -95,7 +95,15 @@
     ];
   }
   const freshPause = () => ({ all: false, allAt: null, locals: {} });
-  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners(), pause: freshPause() });
+  /* Fictional sample members so the demo log-in works. Real members come from each local's sign-ups. */
+  function seedMembers() {
+    const t = Date.now();
+    return [
+      { id: 'm8231', local: '823', name: 'Sample Member', number: '823-0001', contact: '', state: 'approved', created: t - 10 * DAY, decidedBy: 'Secretary', decidedAt: t - 9 * DAY, sample: true },
+      { id: 'm8251', local: '825', name: 'Sample Member', number: '825-0001', contact: '', state: 'approved', created: t - 10 * DAY, decidedBy: 'Secretary', decidedAt: t - 9 * DAY, sample: true }
+    ];
+  }
+  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners(), pause: freshPause(), members: seedMembers() });
 
   /* ---------- storage ---------- */
   let mem = fresh();
@@ -103,7 +111,7 @@
   function load() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } if (!mem.pause) mem.pause = freshPause(); } else save(mem, true);
+      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } if (!mem.pause) mem.pause = freshPause(); if (!mem.members) mem.members = seedMembers(); } else save(mem, true);
     } catch (e) { /* storage blocked: keep memory copy */ }
     return mem;
   }
@@ -180,7 +188,8 @@
     const targets = o.targets && o.targets.length ? o.targets : ALL;
     const post = { id: uid('p'), created: t, urgent: !!o.urgent, title: String(o.title).trim(), body: String(o.body).trim(),
       titleEs: String(o.titleEs || '').trim(), bodyEs: String(o.bodyEs || '').trim(),
-      startAt: o.startAt || null, endAt: o.endAt || null, origin: o.origin || null, kind: o.kind || 'council', status: {} };
+      startAt: o.startAt || null, endAt: o.endAt || null, origin: o.origin || null, kind: o.kind || 'council',
+      visibility: o.visibility === 'members' ? 'members' : 'public', status: {} };
     targets.forEach((n, i) => {
       if (post.urgent) post.status[n] = { state: 'live', at: t, version: snapshot(post), channels: { text: true, email: false } };
       else if (o.origin === n) post.status[n] = { state: 'approved', at: t, by: 'origin', placement: 'feed', version: snapshot(post), channels: { text: false, email: false } };
@@ -190,7 +199,7 @@
     st.posts.unshift(post);
     const when = post.startAt && post.startAt > t ? ' · starts ' + new Date(post.startAt).toLocaleString('en-US') : '';
     record(st, 'Council', post.urgent ? 'sent urgent' : 'sent', { post: post.id, title: post.title,
-      detail: (post.urgent ? 'Live now, members texted' : 'Waiting for local approval') + ' · to ' + targets.join(', ') + (post.origin ? ' · shared from Local ' + post.origin : '') + when });
+      detail: (post.urgent ? 'Live now, members texted' : 'Waiting for local approval') + (post.visibility === 'members' ? ' · members only' : '') + ' · to ' + targets.join(', ') + (post.origin ? ' · shared from Local ' + post.origin : '') + when });
     save(st); return post;
   }
   function correct(id, o) {
@@ -291,6 +300,70 @@
     save(st);
   }
 
+  /* ---------- sign-in (demo) ----------
+     Demo only: who is signed in on this browser. Production: the back end's
+     sign-in (council and officers: email, password and authenticator code;
+     members: a one-time code by text or email). No passwords in the demo. */
+  const SESSION_KEY = 'njch.session';
+  function session() {
+    try { const v = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); if (v && v.role) return v; } catch (e) { /* none */ }
+    return { role: null };
+  }
+  function signIn(o) {
+    let s = null;
+    if (o.role === 'council') s = { role: 'council', name: 'Council admin (demo)' };
+    if (o.role === 'member') {
+      const num = String(o.number || '').trim().toLowerCase();
+      const m = (state().members || []).find((x) => x.local === o.local && x.state === 'approved' && x.number.toLowerCase() === num);
+      if (!m) return { error: (state().members || []).some((x) => x.local === o.local && x.number.toLowerCase() === num && x.state === 'pending') ? 'pending' : 'unknown' };
+      s = { role: 'member', local: m.local, name: m.name, memberId: m.id };
+    }
+    if (!s) return { error: 'unknown' };
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) { /* memory only */ }
+    listeners.forEach((f) => f());
+    return { session: s };
+  }
+  function signOut() {
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) { /* none */ }
+    listeners.forEach((f) => f());
+  }
+  /* Members-only content: members of that local, and the council. */
+  function canSeeMembers(n) {
+    const s = session();
+    if (s.role === 'council') return true;
+    if (s.role !== 'member') return false;
+    const m = (state().members || []).find((x) => x.id === s.memberId);
+    return !!m && m.state === 'approved' && (n == null || m.local === n);
+  }
+  window.addEventListener('storage', (e) => { if (e.key === SESSION_KEY) listeners.forEach((f) => f()); });
+
+  /* ---------- member sign-ups ----------
+     A member asks to join their local's members' area; that local's
+     secretary checks them against the membership list and approves. */
+  function members(n) { return (state().members || []).filter((m) => m.local === n).sort((a, b) => b.created - a.created); }
+  function requestMembership(n, o) {
+    const st = state(); st.members = st.members || [];
+    const name = String(o.name || '').trim().slice(0, 80), number = String(o.number || '').trim().slice(0, 30), contact = String(o.contact || '').trim().slice(0, 120);
+    if (!LOCALS[n] || !name || !number) return { error: 'missing' };
+    const dup = st.members.find((m) => m.local === n && m.number.toLowerCase() === number.toLowerCase() && ['pending', 'approved'].includes(m.state));
+    if (dup) return { error: dup.state === 'approved' ? 'approved' : 'pending' };
+    const m = { id: uid('m'), local: n, name, number, contact, state: 'pending', created: now() };
+    st.members.unshift(m);
+    record(st, 'Member sign-up', 'asked to join', { local: n, detail: 'Waiting for the Local ' + n + ' secretary' });
+    save(st); return { member: m };
+  }
+  function decideMember(id, o, next, action) {
+    const st = state(), m = (st.members || []).find((x) => x.id === id); if (!m) return { error: 'missing' };
+    if (o.by !== 'secretary') return { error: 'secretary-only' };      // only the local's secretary decides
+    m.state = next; m.decidedBy = officer(m.local, 'secretary'); m.decidedAt = now();
+    if (o.reason) m.reason = String(o.reason).slice(0, 280);
+    record(st, m.decidedBy, action, { local: m.local, detail: action === 'approved member' ? 'Members-only area opened for a member' : action === 'removed member' ? 'Members-only access removed' : 'Sign-up declined' });
+    save(st); return { member: m };
+  }
+  const approveMember = (id, o) => decideMember(id, o || {}, 'approved', 'approved member');
+  const declineMember = (id, o) => decideMember(id, o || {}, 'declined', 'declined member');
+  const removeMember = (id, o) => decideMember(id, o || {}, 'removed', 'removed member');
+
   /* ---------- emergency off-switch ----------
      Pause everything: no council posts or partners on any local site, and
      the hub shows only a notice. Pause one local: nothing from the council
@@ -375,8 +448,9 @@
   /* What a local website shows: live/approved posts (or the approved version of one being corrected), inside its date window. */
   function forLocal(n) {
     if (isPaused(n)) return [];
+    const members = canSeeMembers(n);
     return posts().filter((p) => { const s = p.status[n];
-      return s && windowState(p) === 'active' && (['live', 'approved'].includes(s.state) || (s.state === 'pending' && s.version)); });
+      return s && (p.visibility !== 'members' || members) && windowState(p) === 'active' && (['live', 'approved'].includes(s.state) || (s.state === 'pending' && s.version)); });
   }
   function exportCSV(rows) {
     const cols = ['when', 'who', 'action', 'local', 'post or submission', 'detail'];
@@ -402,6 +476,8 @@
 .council-meta{margin-top:10px;font-family:var(--mono,monospace);font-size:11px;letter-spacing:.06em;color:var(--dim,#8FA2C4);text-transform:uppercase}
 .council-note{margin-top:12px;border-left:3px solid var(--local-accent,#D7263D);padding:6px 0 6px 12px;font-family:var(--body,sans-serif);font-size:14px;color:var(--ink,#F2F4F8)}
 .council-note span{display:block;font-family:var(--mono,monospace);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim,#8FA2C4);margin-bottom:2px}
+.council-members-note{grid-column:1 / -1;margin:0;font-family:var(--body,sans-serif);font-size:14px;color:var(--muted,#C5CDDB);border:1px dashed rgba(255,255,255,.3);padding:12px 14px}
+.council-members-note a{color:var(--ink,#F2F4F8);font-weight:600}
 .news-card.council .news-img{background:#06101F;border-bottom:3px solid #E4BE80}
 .news-card.council .news-img .lab{color:#E4BE80;font-family:var(--display,sans-serif);font-weight:800;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
 @media (max-width:720px){.council-alert .ca-in{flex-direction:column;align-items:flex-start;gap:8px}.council-pin{grid-template-columns:minmax(0,1fr)}}
@@ -418,7 +494,7 @@
       const pinned = list.filter((p) => !p.urgent && p.status[n].placement === 'pinned');
       const feed = list.filter((p) => !p.urgent && p.status[n].placement !== 'pinned');
       const note = (p) => p.status[n].note ? `<div class="council-note"><span>Note from Local ${n}</span>${esc(p.status[n].note)}</div>` : '';
-      const badge = (p) => p.origin ? (p.kind === 'solidarity' ? '◆ Solidarity request' : '◆ From Local ' + p.origin) : '◆ From the State Council';
+      const badge = (p) => (p.origin ? (p.kind === 'solidarity' ? '◆ Solidarity request' : '◆ From Local ' + p.origin) : '◆ From the State Council') + (p.visibility === 'members' ? ' · Members only' : '');
       const alertEl = document.querySelector(sel.alert);
       if (alertEl) alertEl.innerHTML = urgent.map((p) => `
         <div class="council-alert" role="alert"><div class="ca-in">
@@ -434,17 +510,18 @@
         </article>`).join('');
       const grid = document.querySelector(sel.grid);
       if (grid) {
-        grid.querySelectorAll('.news-card.council').forEach((c) => c.remove());
+        grid.querySelectorAll('.news-card.council, .council-members-note').forEach((c) => c.remove());
         grid.insertAdjacentHTML('afterbegin', feed.map((p) => `
           <article class="news-card council">
             <div class="news-img"><span class="lab">${esc(p.origin ? (p.kind === 'solidarity' ? 'Solidarity' : 'Local ' + p.origin) : 'NJ State Council')}</span></div>
             <div class="news-body">
-              <div class="news-meta"><span class="council-badge">${esc(p.origin ? 'Via the Council' : 'From the Council')}</span><span>${fmtDate(p.created)}</span></div>
+              <div class="news-meta"><span class="council-badge">${esc((p.origin ? 'Via the Council' : 'From the Council') + (p.visibility === 'members' ? ' · Members only' : ''))}</span><span>${fmtDate(p.created)}</span></div>
               <h3 class="news-title">${esc(v(p).title)}</h3>
               <p class="news-excerpt">${esc(v(p).body)}</p>${note(p)}
               <div class="news-foot"><b>${esc(credit(p))}</b><span>${p.endAt ? 'Until ' + fmtDate(p.endAt) : ''}</span></div>
             </div>
           </article>`).join(''));
+        if (!backend.canSeeMembers(n)) grid.insertAdjacentHTML('afterbegin', `<p class="council-members-note">Members of Local ${esc(n)}: <a href="/join/#login">log in</a> to see members-only updates. Not signed up? <a href="/join/?local=${esc(n)}">Join the members' area</a>.</p>`);
       }
     };
     draw(); backend.onChange(draw);
@@ -561,11 +638,13 @@
   const BACKEND_METHODS = [
     // reads
     'posts', 'subs', 'log', 'contacts', 'forLocal', 'partners', 'partnersAdmin', 'reach', 'reachTotal', 'alertSubs', 'emailSubs',
-    'paused', 'isPaused',
+    'paused', 'isPaused', 'session', 'canSeeMembers', 'members',
     // council actions
     'send', 'correct', 'pull', 'routeSub', 'requestVerify', 'pauseAll', 'pauseLocal',
     // local officer actions (president or secretary)
     'approve', 'decline', 'remove', 'submit', 'verifyContacts',
+    // sign-in and members
+    'signIn', 'signOut', 'requestMembership', 'approveMember', 'declineMember', 'removeMember',
     // partners
     'addPartner', 'setFeatured', 'removePartner', 'clickPartner',
     // plumbing
@@ -573,7 +652,8 @@
   ];
   const demoBackend = {
     name: 'demo',
-    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs, paused, isPaused,
+    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs, paused, isPaused, session, canSeeMembers, members,
+    signIn, signOut, requestMembership, approveMember, declineMember, removeMember,
     send, correct, pull, routeSub, requestVerify, pauseAll, pauseLocal,
     approve, decline, remove, submit, verifyContacts,
     addPartner, setFeatured, removePartner, clickPartner,

@@ -8,6 +8,8 @@ Static front-end demo shown to the ATU New Jersey State Council. Separate from t
 - `HANDOFF.md` project state, pitch walkthrough, open decisions.
 - `BACKEND_INTERFACE.md` what the pages need from the real back end, and how a live backend plugs into `council-feed.js`.
 
+Pages: `/` public hub (members-only sections locked for visitors), `/console/` council console (same source as the hub, behind the council sign-in), `/join/` members' log-in and sign-up, `/portal/` and `/inbox/` local officers, `/preview-N/` local sites.
+
 ```bash
 python3 pitch/build.py   # then commit src/ and deploy/ together
 ```
