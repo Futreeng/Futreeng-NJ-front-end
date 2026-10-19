@@ -10,10 +10,10 @@
 
    Agreed rules (Haron, 2026-10-17)
    - Urgent: live at once on every targeted local's site; president and
-     backup notified; members texted automatically; either officer can
+     secretary notified; members texted automatically; either officer can
      take it down.
-   - Regular: waits until the local president OR backup approves; first
-     to act decides. Reminder at 24h, passed to the backup at 48h.
+   - Regular: waits until the local president OR secretary approves; first
+     to act decides. Reminder at 24h, passed to the secretary at 48h.
    - Locals approve or decline, pick news feed or pinned, may add a note
      (140 chars), and choose to text and/or email their members. They
      cannot edit the council's text.
@@ -38,7 +38,7 @@
    ===================================================================== */
 (function () {
   'use strict';
-  const KEY = 'njch.council.v2';
+  const KEY = 'njch.council.v3';
   const NOTE_MAX = 140;
   const DEMO_HOUR = 1000;            // ms of real time per demo hour
   const REMIND_H = 24, ESCALATE_H = 48, VERIFY_DAYS = 90;
@@ -63,9 +63,9 @@
 
   function seedDirectory() {
     const t = Date.now(), d = {};
-    ALL.forEach((n) => { d[n] = { president: '', backup: '', stewards: null, delegates: DELEGATES[n], verifiedAt: null, requestedAt: null }; });
-    Object.assign(d['823'], { president: 'Elijah Spates Jr.', backup: 'Vice President', stewards: 2, verifiedAt: t - 20 * DAY });
-    Object.assign(d['825'], { president: 'Retheena Goodwin', backup: 'Chris Haskins', verifiedAt: t - 20 * DAY });
+    ALL.forEach((n) => { d[n] = { president: '', secretary: '', stewards: null, delegates: DELEGATES[n], verifiedAt: null, requestedAt: null }; });
+    Object.assign(d['823'], { president: 'Elijah Spates Jr.', stewards: 2, verifiedAt: t - 20 * DAY });
+    Object.assign(d['825'], { president: 'Retheena Goodwin', verifiedAt: t - 20 * DAY });
     Object.assign(d['819'], { verifiedAt: t - 40 * DAY });
     return d;
   }
@@ -94,7 +94,8 @@
       mk('825', 3, { name: 'Valley Fit Club', cat: 'fitness', clicks: 38, offer: 'No sign-up fee and $15 a month for members.' })
     ];
   }
-  const fresh = () => ({ v: 2, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners() });
+  const freshPause = () => ({ all: false, allAt: null, locals: {} });
+  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners(), pause: freshPause() });
 
   /* ---------- storage ---------- */
   let mem = fresh();
@@ -102,7 +103,7 @@
   function load() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (v && v.v === 2) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } } else save(mem, true);
+      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } if (!mem.pause) mem.pause = freshPause(); } else save(mem, true);
     } catch (e) { /* storage blocked: keep memory copy */ }
     return mem;
   }
@@ -124,8 +125,8 @@
     const d = load().dir[n] || {};
     return {
       name: 'ATU Local ' + n, num: n, city: LOCALS[n].city, accent: LOCALS[n].accent, members: LOCALS[n].members,
-      site: '/preview-' + n + '/', president: d.president || 'President (to confirm)', backup: d.backup || 'Vice President (to confirm)',
-      presidentSet: !!d.president, backupSet: !!d.backup,
+      site: '/preview-' + n + '/', president: d.president || 'President (to confirm)', secretary: d.secretary || 'Secretary (to confirm)',
+      presidentSet: !!d.president, secretarySet: !!d.secretary,
       stewards: d.stewards, delegates: d.delegates, verifiedAt: d.verifiedAt, requestedAt: d.requestedAt,
       verifyDue: !d.verifiedAt || now() - d.verifiedAt > VERIFY_DAYS * DAY
     };
@@ -163,7 +164,7 @@
         }
         if (!s.escalatedAt && now() >= escAt) {
           s.escalatedAt = escAt; changed = true;
-          record(st, 'System', 'passed to backup', { at: escAt, local: n, post: p.id, title: p.title, detail: 'No answer in 48 hours. Passed to the backup approver' });
+          record(st, 'System', 'passed to secretary', { at: escAt, local: n, post: p.id, title: p.title, detail: 'No answer in 48 hours. Passed to the secretary' });
         }
       });
     });
@@ -211,7 +212,7 @@
   }
 
   /* ---------- locals: approve, decline, remove ---------- */
-  const officer = (n, by) => { const c = contacts(n); return (by === 'backup' ? c.backup + ' (backup)' : c.president) + ', Local ' + n; };
+  const officer = (n, by) => { const c = contacts(n); return (by === 'secretary' ? (c.secretarySet ? c.secretary + ' (secretary)' : 'Secretary') : c.president) + ', Local ' + n; };
   function approve(id, n, o) {
     const st = state(), p = st.posts.find((x) => x.id === id);
     if (!p || !p.status[n] || p.status[n].state !== 'pending') return p;     // first approver decides
@@ -282,12 +283,35 @@
   function verifyContacts(n, o) {
     const st = state(), d = st.dir[n];
     const norm = (v) => v == null ? '' : String(v).trim();
-    const changes = ['president', 'backup', 'stewards', 'delegates'].filter((k) => norm(o[k]) !== norm(d[k]));
-    Object.assign(d, { president: norm(o.president), backup: norm(o.backup),
+    const changes = ['president', 'secretary', 'stewards', 'delegates'].filter((k) => norm(o[k]) !== norm(d[k]));
+    Object.assign(d, { president: norm(o.president), secretary: norm(o.secretary),
                        stewards: norm(o.stewards) === '' ? null : +o.stewards, delegates: norm(o.delegates) === '' ? null : +o.delegates,
                        verifiedAt: now(), requestedAt: null });
     record(st, (d.president || 'President') + ', Local ' + n, 'verified contacts', { local: n, detail: changes.length ? 'Updated: ' + changes.join(', ') : 'Confirmed, no changes' });
     save(st);
+  }
+
+  /* ---------- emergency off-switch ----------
+     Pause everything: no council posts or partners on any local site, and
+     the hub shows only a notice. Pause one local: nothing from the council
+     on that local's site. Nothing is deleted; resuming puts it all back. */
+  function paused() { const p = state().pause || freshPause(); return { all: !!p.all, allAt: p.allAt, locals: Object.assign({}, p.locals) }; }
+  function isPaused(n) { const p = paused(); return p.all || !!p.locals[n]; }
+  function pauseAll(on, o) {
+    const st = state(); st.pause = st.pause || freshPause();
+    if (!!st.pause.all === !!on) return paused();
+    st.pause.all = !!on; st.pause.allAt = on ? now() : null;
+    const why = o && o.reason ? ' · reason: ' + String(o.reason).slice(0, 280) : '';
+    record(st, 'Council', on ? 'paused everything' : 'resumed everything', { detail: (on ? 'All public content taken off the hub and every local site' : 'Public content back on the hub and every local site') + why });
+    save(st); return paused();
+  }
+  function pauseLocal(n, on, o) {
+    const st = state(); st.pause = st.pause || freshPause();
+    if (!LOCALS[n] || !!st.pause.locals[n] === !!on) return paused();
+    if (on) st.pause.locals[n] = now(); else delete st.pause.locals[n];
+    const why = o && o.reason ? ' · reason: ' + String(o.reason).slice(0, 280) : '';
+    record(st, 'Council', on ? 'paused local' : 'resumed local', { local: n, detail: (on ? 'Council posts and partners taken off the Local ' + n + ' site' : 'Council posts and partners back on the Local ' + n + ' site') + why });
+    save(st); return paused();
   }
 
   /* ---------- reach (simulated): site views, texts, emails ---------- */
@@ -309,7 +333,7 @@
   const partnerWindow = (p) => p.startAt && p.startAt > now() ? 'scheduled' : (p.endAt && now() >= p.endAt ? 'ended' : 'active');
   const byRank = (a, b) => (b.featured - a.featured) || (b.created - a.created);
   /* What the public sees: active partners only, featured first. */
-  function partners(owner) { return (state().partners || []).filter((p) => p.owner === owner && partnerWindow(p) === 'active').sort(byRank); }
+  function partners(owner) { if (owner === 'council' ? paused().all : isPaused(owner)) return []; return (state().partners || []).filter((p) => p.owner === owner && partnerWindow(p) === 'active').sort(byRank); }
   /* What the officers manage: everything, including scheduled and ended. */
   function partnersAdmin(owner) { return (state().partners || []).filter((p) => p.owner === owner).sort(byRank); }
   const featuredCount = (st, owner) => st.partners.filter((p) => p.owner === owner && p.featured && partnerWindow(p) !== 'ended').length;
@@ -350,13 +374,14 @@
   const log = () => state().log;
   /* What a local website shows: live/approved posts (or the approved version of one being corrected), inside its date window. */
   function forLocal(n) {
+    if (isPaused(n)) return [];
     return posts().filter((p) => { const s = p.status[n];
       return s && windowState(p) === 'active' && (['live', 'approved'].includes(s.state) || (s.state === 'pending' && s.version)); });
   }
   function exportCSV(rows) {
     const cols = ['when', 'who', 'action', 'local', 'post or submission', 'detail'];
     const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-    const lines = (rows || log()).map((r) => [new Date(r.at).toISOString(), r.actor, r.action, r.local ? 'Local ' + r.local : '', r.title || '', r.detail || ''].map(q).join(','));
+    const lines = (rows || backend.log()).map((r) => [new Date(r.at).toISOString(), r.actor, r.action, r.local ? 'Local ' + r.local : '', r.title || '', r.detail || ''].map(q).join(','));
     return [cols.join(',')].concat(lines).join('\n');
   }
   function reset() { save(fresh()); }
@@ -386,7 +411,7 @@
       const st = document.createElement('style'); st.id = 'council-feed-css'; st.textContent = CSS; document.head.appendChild(st);
     }
     const draw = () => {
-      const list = forLocal(n);
+      const list = backend.forLocal(n);
       const v = (p) => p.status[n].version || snapshot(p);
       const credit = (p) => p.origin && p.origin !== n ? `From Local ${p.origin} · shared by the State Council` : (p.origin === n ? 'From your local · shared statewide by the council' : 'Sent by the ATU NJ State Council');
       const urgent = list.filter((p) => p.urgent);
@@ -422,7 +447,7 @@
           </article>`).join(''));
       }
     };
-    draw(); onChange(draw);
+    draw(); backend.onChange(draw);
     setInterval(draw, 30000);   // start and end dates
   }
 
@@ -450,8 +475,8 @@
   /* owner: 'council' (the hub) or a local number. Local sites also get the statewide row. */
   function partnersHTML(owner, opt) {
     const o = opt || {}, lang = o.lang || 'en', t = Object.assign({}, PT_EN, o.t || {});
-    const own = partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
-    const isHub = owner === 'council', statewide = isHub ? [] : partners('council');
+    const own = backend.partners(owner), feat = own.filter((p) => p.featured), rest = own.filter((p) => !p.featured);
+    const isHub = owner === 'council', statewide = isHub || backend.isPaused(owner) ? [] : backend.partners('council');
     if (!own.length && !statewide.length) return '';
     return `<div class="pt-wrap">
       <div class="pt-head"><div class="pt-eyebrow">${esc(t.eyebrow)}</div>
@@ -507,7 +532,7 @@
     if (clickWired) return; clickWired = true;
     document.addEventListener('click', (e) => {
       const a = e.target.closest && e.target.closest('[data-partner]'); if (!a) return;
-      clickPartner(a.dataset.partner);
+      backend.clickPartner(a.dataset.partner);
       if (a.getAttribute('href') === '#') e.preventDefault();    // sample partners have no real site
     });
   }
@@ -515,15 +540,61 @@
   function mountPartners(sel, owner, opt) {
     ensurePartnerCSS(); wirePartnerClicks();
     const draw = () => { const el = document.querySelector(sel); if (el) el.innerHTML = partnersHTML(owner, typeof opt === 'function' ? opt() : opt); };
-    draw(); onChange(draw); setInterval(draw, 60000);
+    draw(); backend.onChange(draw); setInterval(draw, 60000);
     return draw;
   }
 
-  window.CouncilFeed = {
-    LOCALS, ALL, HANDS_ON, NOTE_MAX, DEMO_HOUR, REMIND_H, ESCALATE_H, VERIFY_DAYS,
-    posts, subs, log, contacts, alertSubs, emailSubs, reach, reachTotal, forLocal, windowState, ageLabel, hoursSince,
-    send, correct, pull, approve, decline, remove, submit, routeSub, requestVerify, verifyContacts, exportCSV, reset, onChange, mountLocal,
-    CATS, FEATURED_MAX, partners, partnersAdmin, partnerWindow, addPartner, setFeatured, removePartner, clickPartner, partnersHTML, mountPartners, ensurePartnerCSS, wirePartnerClicks, mono, swatch,
-    esc, fmtDate, tick: () => { const st = load(); if (settle(st)) save(st); }
+  /* ---------- storage swap point ----------
+     Pages only talk to window.CouncilFeed. Everything that reads or changes
+     shared data goes through `backend`, so the demo store below can be
+     replaced by the real back end without touching the pages.
+
+     Choosing a backend: set window.NJCH_CONFIG = { mode: 'live' } and
+     window.NJCH_LIVE_BACKEND = (ctx) => ({ ...BACKEND_METHODS }) before this
+     script loads. Default is the demo store (this browser's storage).
+
+     Contract for a live backend (see pitch/BACKEND_INTERFACE.md):
+     - Reads are synchronous and come from the backend's own in-memory copy.
+       Call the onChange listeners whenever that copy changes.
+     - Actions may return a value or a Promise. Pages await them.
+     - The live backend enforces who may do what. Pages are not trusted. */
+  const BACKEND_METHODS = [
+    // reads
+    'posts', 'subs', 'log', 'contacts', 'forLocal', 'partners', 'partnersAdmin', 'reach', 'reachTotal', 'alertSubs', 'emailSubs',
+    'paused', 'isPaused',
+    // council actions
+    'send', 'correct', 'pull', 'routeSub', 'requestVerify', 'pauseAll', 'pauseLocal',
+    // local officer actions (president or secretary)
+    'approve', 'decline', 'remove', 'submit', 'verifyContacts',
+    // partners
+    'addPartner', 'setFeatured', 'removePartner', 'clickPartner',
+    // plumbing
+    'onChange', 'tick', 'reset'
+  ];
+  const demoBackend = {
+    name: 'demo',
+    posts, subs, log, contacts, forLocal, partners, partnersAdmin, reach, reachTotal, alertSubs, emailSubs, paused, isPaused,
+    send, correct, pull, routeSub, requestVerify, pauseAll, pauseLocal,
+    approve, decline, remove, submit, verifyContacts,
+    addPartner, setFeatured, removePartner, clickPartner,
+    onChange, tick: () => { const st = load(); if (settle(st)) save(st); }, reset
   };
+  function chooseBackend() {
+    const cfg = window.NJCH_CONFIG || {};
+    if (cfg.mode !== 'live') return demoBackend;
+    if (typeof window.NJCH_LIVE_BACKEND !== 'function') throw new Error('CouncilFeed: live mode is on but no live backend is loaded.');
+    const live = window.NJCH_LIVE_BACKEND({ LOCALS, ALL, NOTE_MAX, FEATURED_MAX, CATS, config: cfg });
+    const missing = BACKEND_METHODS.filter((k) => typeof (live && live[k]) !== 'function');
+    // Never fall back to demo data in live mode: officers would think sample posts are real.
+    if (missing.length) throw new Error('CouncilFeed: live backend is missing ' + missing.join(', '));
+    return Object.assign({ name: 'live' }, live);
+  }
+  const backend = chooseBackend();
+
+  window.CouncilFeed = Object.assign({
+    mode: backend.name,
+    LOCALS, ALL, HANDS_ON, NOTE_MAX, DEMO_HOUR, REMIND_H, ESCALATE_H, VERIFY_DAYS, CATS, FEATURED_MAX,
+    windowState, ageLabel, hoursSince, partnerWindow, exportCSV, mountLocal,
+    partnersHTML, mountPartners, ensurePartnerCSS, wirePartnerClicks, mono, swatch, esc, fmtDate
+  }, Object.fromEntries(BACKEND_METHODS.map((k) => [k, backend[k]])));
 })();

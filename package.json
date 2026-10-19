@@ -1,0 +1,14 @@
+{
+  "name": "nj-council-hub",
+  "private": true,
+  "description": "Tests for the NJ Council Hub pitch demo (pitch/deploy).",
+  "scripts": {
+    "build": "python3 pitch/build.py",
+    "test": "python3 pitch/build.py && playwright test",
+    "test:headed": "python3 pitch/build.py && playwright test --headed"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1"
+  }
+}

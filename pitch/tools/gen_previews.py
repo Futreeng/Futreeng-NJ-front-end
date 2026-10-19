@@ -189,7 +189,7 @@ def page(l):
 <!-- Header -->
 <header class="header" id="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="ATU Local {n} home">
+    <a class="brand" href="#top">
       <span class="logo-mark" aria-hidden="true">ATU</span>
       <span class="brand-name">
         <span class="eyebrow-txt">Amalgamated Transit Union</span>
