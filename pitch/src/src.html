@@ -648,6 +648,18 @@ textarea.sv-input{min-height:84px;resize:vertical}
 }
 
 /* ---------- Council workspace (demo) ---------- */
+.pause-notice{margin:0;padding:48px var(--gutter,24px);background:var(--red);color:#fff;font-family:var(--body);font-size:17px}
+.pause-notice strong{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);text-transform:uppercase;line-height:1}
+.members-lock{display:none}
+body.members-locked [data-members] > :not(.members-lock){display:none}
+body.members-locked .members-lock{display:block}
+.ml-box{border:2px dashed var(--line);padding:28px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.ml-box p{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--muted);max-width:60ch}
+.ml-actions{display:flex;gap:10px;flex-wrap:wrap}
+.credit a{color:inherit;text-decoration:underline}
+body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-footer,body.paused-all .measure,body.paused-all #partners,body.paused-all .lang-note{display:none}
+.action-btn[disabled]{opacity:.4;cursor:not-allowed}
+/*CONSOLE*/
 .cc-section{background:linear-gradient(180deg,var(--navy) 0,#0E1F3D 100%)}
 .cc{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:start}
 .cc-steps{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:cc}
@@ -696,19 +708,9 @@ textarea.sv-input{min-height:84px;resize:vertical}
 .cc-em-local{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);padding:10px 12px;font-family:var(--body);font-size:14px}
 .cc-em-local.off{border-color:var(--red)}.cc-em-local i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .cc-em-local.off i{color:var(--red)}
-.pause-notice{margin:0;padding:48px var(--gutter,24px);background:var(--red);color:#fff;font-family:var(--body);font-size:17px}
-.pause-notice strong{display:block;font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,44px);text-transform:uppercase;line-height:1}
-.members-lock{display:none}
-body.members-locked [data-members] > :not(.members-lock){display:none}
-body.members-locked .members-lock{display:block}
-.ml-box{border:2px dashed var(--line);padding:28px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
-.ml-box p{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--muted);max-width:60ch}
-.ml-actions{display:flex;gap:10px;flex-wrap:wrap}
 body.page-console main > :not(#console):not(#pause-notice),body.page-console .sms-footer,body.page-console .measure,body.page-console #partners,body.page-console .lang-note,body.page-console #tabbar,body.page-console .nav{display:none}
 .cc-gate{display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:60ch}.cc-gate p{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--muted)}
 .cc-vis{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media (max-width:720px){.cc-vis{grid-template-columns:1fr}}
-.credit a{color:inherit;text-decoration:underline}
-body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-footer,body.paused-all .measure,body.paused-all #partners,body.paused-all .lang-note{display:none}
 .cc-post{border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 24px}
 .cc-post.pulled{opacity:.6}
 .cc-post .tt{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
@@ -753,27 +755,27 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
 .cc-pt-logo{flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:18px}
 .cc-pt.feat{box-shadow:inset 4px 0 0 var(--nj-buff);padding-left:14px}
 .cc-pt .cc-links{grid-column:auto;align-self:start}
-.action-btn[disabled]{opacity:.4;cursor:not-allowed}
 .cc-pt-count{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.04em;margin:8px 0 4px}
 .cc-pt-form{margin-top:28px}
 .cc-check{display:flex;gap:10px;align-items:flex-start;font-family:var(--body);font-size:14px;line-height:1.45;color:var(--ink);cursor:pointer;position:relative}
 .cc-check input{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--red)}
 .cc-ack{border:1px solid var(--nj-buff);padding:12px 14px;background:rgba(228,190,128,.08)}
 .cc-pt-locals{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+/*/CONSOLE*/
 @media (max-width:720px){.cc-pt .cc-links{grid-column:1 / -1}}
 .cc-mini{display:inline-block;padding:6px 0;font-family:var(--mono);font-size:11px;color:var(--nj-buff);text-decoration:underline}
 .cc-logbar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .cc-logbar .sv-field{min-width:220px}
 @media (max-width:1040px){.cc{grid-template-columns:minmax(0,1fr);gap:28px}}
 @media (max-width:720px){
-  .cc-form{padding:16px}.cc-post{grid-template-columns:minmax(0,1fr)}.cc-count{text-align:left}.cc-count span{margin-left:0}
-  .cc-when{grid-template-columns:minmax(0,1fr)}.cc-tab{padding:0 10px;font-size:16px}.cc-tools{width:100%;justify-content:space-between}
-  .cc-table-wrap{border:0;overflow:visible}
-  .cc-table thead{display:none}
-  .cc-table tr{display:block;border:1px solid var(--line);margin-bottom:10px;padding:6px 0}
-  .cc-table td{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;border:0;padding:6px 12px}
-  .cc-table td::before{content:attr(data-l);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-  .cc-table td:not([data-l]){display:block}
+/*CONSOLE*/.cc-form{padding:16px}.cc-post{grid-template-columns:minmax(0,1fr)}.cc-count{text-align:left}.cc-count span{margin-left:0}/*/CONSOLE*/
+/*CONSOLE*/.cc-when{grid-template-columns:minmax(0,1fr)}.cc-tab{padding:0 10px;font-size:16px}.cc-tools{width:100%;justify-content:space-between}/*/CONSOLE*/
+/*CONSOLE*/.cc-table-wrap{border:0;overflow:visible}/*/CONSOLE*/
+/*CONSOLE*/.cc-table thead{display:none}/*/CONSOLE*/
+/*CONSOLE*/.cc-table tr{display:block;border:1px solid var(--line);margin-bottom:10px;padding:6px 0}/*/CONSOLE*/
+/*CONSOLE*/.cc-table td{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;border:0;padding:6px 12px}/*/CONSOLE*/
+/*CONSOLE*/.cc-table td::before{content:attr(data-l);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}/*/CONSOLE*/
+/*CONSOLE*/.cc-table td:not([data-l]){display:block}/*/CONSOLE*/
 }
 
 /* Accessibility: small accent text needs 4.5:1 on navy; phones need 44px tap targets */
@@ -949,11 +951,11 @@ body.paused-all main > :not(#console):not(#pause-notice),body.paused-all .sms-fo
   </div>
 </section>
 
-<!-- ======================= Council console (demo) ======================= -->
+<!--CONSOLE--><!-- ======================= Council console (demo) ======================= -->
 <section class="section cc-section" id="console" aria-labelledby="cc-title">
   <div class="wrap cc" id="console-form"></div>
   <div class="wrap" id="console-sent" aria-live="polite"></div>
-</section>
+</section><!--/CONSOLE-->
 
 <!-- ======================= Rights ======================= -->
 <section class="section" id="rights" aria-labelledby="rights-title">
@@ -1360,6 +1362,7 @@ const CONTENT = {
       benefits: 'Benefits & retirees', spot: 'Member spotlight', wall: 'From the locals', ride: 'Ride to your local',
       slogan: 'An injury to one is an injury to all.', going: "I'm going", rsvp: 'RSVP', goingCount: 'going',
       soon: 'This part of the hub is coming in a later build.',
+      pause: { noticeT: 'Public content is paused', noticeB: 'The ATU New Jersey State Council has paused this site for now. Check back soon.' },
       mem: { link: 'Members', you: 'Member · Local {n}', lockT: 'Members only', lockB: 'Log in to your local\'s members\' area to see this. New here? Ask to join, and your local\'s secretary will confirm you\'re a member.', login: 'Member log in', join: 'Ask to join', console: 'Council console' },
       smsOk: 'Thanks - in the real build, you would get a one-time confirmation text.',
       newHireLink: 'New to NJ Transit? Start with your first 90 days →', phone: 'Phone number',
@@ -1381,6 +1384,7 @@ const CONTENT = {
       benefits: 'Beneficios y jubilados', spot: 'Miembro destacado', wall: 'Desde los locales', ride: 'Viaja a tu local',
       slogan: 'Una injuria a uno es una injuria a todos.', going: 'Voy', rsvp: 'Confirmar', goingCount: 'van',
       soon: 'Esta parte del sitio llegará en una versión posterior.',
+      pause: { noticeT: 'El contenido público está en pausa', noticeB: 'El Consejo Estatal de ATU Nueva Jersey pausó este sitio por ahora. Vuelve pronto.' },
       mem: { link: 'Miembros', you: 'Miembro · Local {n}', lockT: 'Solo para miembros', lockB: 'Inicia sesión en el área de miembros de tu local para ver esto. ¿Eres nuevo? Pide unirte y el secretario de tu local confirmará que eres miembro.', login: 'Acceso de miembros', join: 'Pedir unirme', console: 'Consola del consejo' },
       smsOk: 'Gracias - en la versión real, recibirías un mensaje de confirmación.',
       newHireLink: '¿Nuevo en NJ Transit? Empieza con tus primeros 90 días →', phone: 'Número de teléfono',
@@ -1605,6 +1609,7 @@ const CONTENT = {
   ],
   terminal: { city: 'Trenton', ll: [40.2600, -74.8400] },
 
+  /*CONSOLE*/
   // Council workspace: how the council and the locals talk. Logic lives in /council-feed.js.
   console: {
     en: { eyebrow: '◆ Council console · live demo', title: 'Send it down the line',
@@ -1718,6 +1723,7 @@ const CONTENT = {
                 featOn: 'Ahora es destacado.', featOff: 'Pasó a la lista normal.', removed: '{name} ya no está en ningún sitio.', view: 'Verlo en el hub →', locals: 'La lista propia de cada local:', localLink: 'Local {n} →',
                 namePh: 'Ejemplo: Café de la Esquina', offerPh: 'Ejemplo: 10% de descuento para miembros de ATU. Muestra tu tarjeta sindical.' } }
   },
+  /*/CONSOLE*/
   // Bargaining survey. base = sample count of members who put the issue in their top 3.
   survey: {
     sample: true,
@@ -2247,7 +2253,8 @@ function renderAll() {
   renderPosts(); renderRights(); renderContract(); renderSafety();
   renderBenefits(); renderSpots(); renderWall(); renderLocals(); renderMap();
   renderFight(); renderWins(); renderCope(); renderEvents(); renderTabs(); renderHeroMap();
-  renderSurvey(); renderNewHires(); renderConsoleForm(); renderConsoleSent(); renderPartnersSection();
+  renderSurvey(); renderNewHires(); renderPartnersSection();
+/*CONSOLE*/  if (PAGE === 'console') { renderConsoleForm(); renderConsoleSent(); }/*/CONSOLE*/
 }
 
 function applyStrings() {
@@ -2287,8 +2294,10 @@ function applyMembers() {
 }
 
 /* ---------- Council workspace (demo): council <-> locals. Engine: /council-feed.js ---------- */
+/*CONSOLE*/
 const cc = { urgent: false, visibility: 'public', title: '', body: '', titleEs: '', bodyEs: '', targets: ['823', '825'], esOpen: false,
              startMode: 'now', startAt: '', endAt: '', tab: 'sent', editing: null, edit: {}, pullArm: null, subNotes: {}, logFilter: 'all' };
+/*/CONSOLE*/
 const CF = () => window.CouncilFeed;
 const PARTNERS_UI = {
   en: { eyebrow: '◆ Member benefits & partners', titleHub: 'Statewide partners', ledeHub: 'Businesses that back every member of all nine locals. Show your union card to get the deal.',
@@ -2303,6 +2312,7 @@ function renderPartnersSection() {
   CF().ensurePartnerCSS(); CF().wirePartnerClicks();
   el.innerHTML = CF().partnersHTML('council', { lang: state.lang, t: PARTNERS_UI[state.lang] });
 }
+/*CONSOLE*/
 const CU = () => CONTENT.console[state.lang];
 const LOC = () => (state.lang === 'es' ? 'es-US' : 'en-US');
 const when = (ms, withTime) => new Date(ms).toLocaleString(LOC(), withTime === false ? { month: 'short', day: 'numeric', year: 'numeric' } : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -2516,14 +2526,6 @@ function renderEmergencyTab() {
       <p>${esc(em.reauth)}</p>
     </div>`;
 }
-/* Pause everything: the public hub shows only a notice (the council console stays). */
-function applyPause() {
-  const F = CF(); if (!F) return;
-  const on = F.paused().all, em = CU().em, el = $('#pause-notice');
-  document.body.classList.toggle('paused-all', on);
-  el.hidden = !on;
-  el.innerHTML = on ? `<strong>${esc(em.noticeT)}</strong>${esc(em.noticeB)}` : '';
-}
 function renderConsoleSent() {
   applyPause();
   if (!CF() || !$('#console-sent')) return;
@@ -2545,8 +2547,7 @@ function renderConsoleSent() {
 const busy = () => cc.editing || (document.activeElement && document.activeElement.closest && document.activeElement.closest('#console-sent textarea, #console-sent select, #console-sent input'));
 function wireConsole() {
   if (!CF()) return;
-  CF().onChange(() => { applyPause(); applyMembers(); if (PAGE === 'console' && !busy()) { renderConsoleForm(); renderConsoleSent(); } renderPartnersSection(); });
-  if (PAGE !== 'console') return;   // the console only runs on /console/
+  CF().onChange(() => { if (!busy()) { renderConsoleForm(); renderConsoleSent(); } });
   setInterval(() => { CF().tick(); if (!busy() && ['sent', 'log', 'dir'].includes(cc.tab)) renderConsoleSent(); }, 1000);
   const form = () => $('#console-form form');
   document.addEventListener('input', (ev) => {
@@ -2653,6 +2654,15 @@ function wireConsole() {
     Object.assign(cc, { title: '', body: '', titleEs: '', bodyEs: '', urgent: false, visibility: 'public', startMode: 'now', startAt: '', endAt: '', tab: 'sent' });
     renderConsoleForm(); renderConsoleSent();
   });
+}
+/*/CONSOLE*/
+/* Pause everything: the public hub shows only a notice (the console page keeps working). */
+function applyPause() {
+  const F = CF(); if (!F) return;
+  const on = F.paused().all, em = t().pause, el = $('#pause-notice');
+  document.body.classList.toggle('paused-all', on);
+  el.hidden = !on;
+  el.innerHTML = on ? `<strong>${esc(em.noticeT)}</strong>${esc(em.noticeB)}` : '';
 }
 
 /* ---------- Bargaining survey ---------- */
@@ -2825,7 +2835,9 @@ function smsSubmit(ev) {
 
 renderGlyphs();
 collectFixed();
-applyStrings(); watchTabs(); wireHeroMap(); wireForms(); wireConsole();
+applyStrings(); watchTabs(); wireHeroMap(); wireForms();
+if (CF()) CF().onChange(() => { applyPause(); applyMembers(); renderPartnersSection(); });
+/*CONSOLE*/if (PAGE === 'console') wireConsole();/*/CONSOLE*/
 </script>
 </body>
 </html>
