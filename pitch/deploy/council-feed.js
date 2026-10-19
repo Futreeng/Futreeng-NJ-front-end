@@ -10,10 +10,10 @@
 
    Agreed rules (Haron, 2026-10-17)
    - Urgent: live at once on every targeted local's site; president and
-     backup notified; members texted automatically; either officer can
+     secretary notified; members texted automatically; either officer can
      take it down.
-   - Regular: waits until the local president OR backup approves; first
-     to act decides. Reminder at 24h, passed to the backup at 48h.
+   - Regular: waits until the local president OR secretary approves; first
+     to act decides. Reminder at 24h, passed to the secretary at 48h.
    - Locals approve or decline, pick news feed or pinned, may add a note
      (140 chars), and choose to text and/or email their members. They
      cannot edit the council's text.
@@ -38,7 +38,7 @@
    ===================================================================== */
 (function () {
   'use strict';
-  const KEY = 'njch.council.v2';
+  const KEY = 'njch.council.v3';
   const NOTE_MAX = 140;
   const DEMO_HOUR = 1000;            // ms of real time per demo hour
   const REMIND_H = 24, ESCALATE_H = 48, VERIFY_DAYS = 90;
@@ -63,9 +63,9 @@
 
   function seedDirectory() {
     const t = Date.now(), d = {};
-    ALL.forEach((n) => { d[n] = { president: '', backup: '', stewards: null, delegates: DELEGATES[n], verifiedAt: null, requestedAt: null }; });
-    Object.assign(d['823'], { president: 'Elijah Spates Jr.', backup: 'Vice President', stewards: 2, verifiedAt: t - 20 * DAY });
-    Object.assign(d['825'], { president: 'Retheena Goodwin', backup: 'Chris Haskins', verifiedAt: t - 20 * DAY });
+    ALL.forEach((n) => { d[n] = { president: '', secretary: '', stewards: null, delegates: DELEGATES[n], verifiedAt: null, requestedAt: null }; });
+    Object.assign(d['823'], { president: 'Elijah Spates Jr.', stewards: 2, verifiedAt: t - 20 * DAY });
+    Object.assign(d['825'], { president: 'Retheena Goodwin', verifiedAt: t - 20 * DAY });
     Object.assign(d['819'], { verifiedAt: t - 40 * DAY });
     return d;
   }
@@ -94,7 +94,7 @@
       mk('825', 3, { name: 'Valley Fit Club', cat: 'fitness', clicks: 38, offer: 'No sign-up fee and $15 a month for members.' })
     ];
   }
-  const fresh = () => ({ v: 2, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners() });
+  const fresh = () => ({ v: 3, posts: [], subs: [], dir: seedDirectory(), log: [], partners: seedPartners() });
 
   /* ---------- storage ---------- */
   let mem = fresh();
@@ -102,7 +102,7 @@
   function load() {
     try {
       const v = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (v && v.v === 2) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } } else save(mem, true);
+      if (v && v.v === 3) { mem = v; if (!mem.partners) { mem.partners = seedPartners(); save(mem, true); } } else save(mem, true);
     } catch (e) { /* storage blocked: keep memory copy */ }
     return mem;
   }
@@ -124,8 +124,8 @@
     const d = load().dir[n] || {};
     return {
       name: 'ATU Local ' + n, num: n, city: LOCALS[n].city, accent: LOCALS[n].accent, members: LOCALS[n].members,
-      site: '/preview-' + n + '/', president: d.president || 'President (to confirm)', backup: d.backup || 'Vice President (to confirm)',
-      presidentSet: !!d.president, backupSet: !!d.backup,
+      site: '/preview-' + n + '/', president: d.president || 'President (to confirm)', secretary: d.secretary || 'Secretary (to confirm)',
+      presidentSet: !!d.president, secretarySet: !!d.secretary,
       stewards: d.stewards, delegates: d.delegates, verifiedAt: d.verifiedAt, requestedAt: d.requestedAt,
       verifyDue: !d.verifiedAt || now() - d.verifiedAt > VERIFY_DAYS * DAY
     };
@@ -163,7 +163,7 @@
         }
         if (!s.escalatedAt && now() >= escAt) {
           s.escalatedAt = escAt; changed = true;
-          record(st, 'System', 'passed to backup', { at: escAt, local: n, post: p.id, title: p.title, detail: 'No answer in 48 hours. Passed to the backup approver' });
+          record(st, 'System', 'passed to secretary', { at: escAt, local: n, post: p.id, title: p.title, detail: 'No answer in 48 hours. Passed to the secretary' });
         }
       });
     });
@@ -211,7 +211,7 @@
   }
 
   /* ---------- locals: approve, decline, remove ---------- */
-  const officer = (n, by) => { const c = contacts(n); return (by === 'backup' ? c.backup + ' (backup)' : c.president) + ', Local ' + n; };
+  const officer = (n, by) => { const c = contacts(n); return (by === 'secretary' ? (c.secretarySet ? c.secretary + ' (secretary)' : 'Secretary') : c.president) + ', Local ' + n; };
   function approve(id, n, o) {
     const st = state(), p = st.posts.find((x) => x.id === id);
     if (!p || !p.status[n] || p.status[n].state !== 'pending') return p;     // first approver decides
@@ -282,8 +282,8 @@
   function verifyContacts(n, o) {
     const st = state(), d = st.dir[n];
     const norm = (v) => v == null ? '' : String(v).trim();
-    const changes = ['president', 'backup', 'stewards', 'delegates'].filter((k) => norm(o[k]) !== norm(d[k]));
-    Object.assign(d, { president: norm(o.president), backup: norm(o.backup),
+    const changes = ['president', 'secretary', 'stewards', 'delegates'].filter((k) => norm(o[k]) !== norm(d[k]));
+    Object.assign(d, { president: norm(o.president), secretary: norm(o.secretary),
                        stewards: norm(o.stewards) === '' ? null : +o.stewards, delegates: norm(o.delegates) === '' ? null : +o.delegates,
                        verifiedAt: now(), requestedAt: null });
     record(st, (d.president || 'President') + ', Local ' + n, 'verified contacts', { local: n, detail: changes.length ? 'Updated: ' + changes.join(', ') : 'Confirmed, no changes' });

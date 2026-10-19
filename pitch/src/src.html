@@ -1580,7 +1580,7 @@ const CONTENT = {
   // Council workspace: how the council and the locals talk. Logic lives in /council-feed.js.
   console: {
     en: { eyebrow: '◆ Council console · live demo', title: 'Send it down the line',
-          lede: 'Write it once. Urgent alerts go live on every local\'s site right away and text members. Everything else waits until the local\'s president or their backup approves it.',
+          lede: 'Write it once. Urgent alerts go live on every local\'s site right away and text members. Everything else waits until the local\'s president or secretary approves it.',
           steps: ['The council sends a post', 'The local president gets an email and approves it', 'It shows up on that local\'s website, and in members\' texts and email if the local chooses'],
           regular: 'Regular', regularSub: 'Needs local approval', urgent: 'Urgent', urgentSub: 'Goes live now, members texted',
           titleL: 'Headline', bodyL: 'Message', esToggle: 'Add the Spanish version (optional)', titleEsL: 'Headline in Spanish', bodyEsL: 'Message in Spanish',
@@ -1594,7 +1594,7 @@ const CONTENT = {
           empty: 'Nothing sent yet. Write a post above and watch it travel down the line.',
           count: 'Approved by {a} of {n}', countUrgent: 'Live on {a} of {n} sites', waiting: 'Waiting: {list}',
           states: { live: 'Live', pending: 'Waiting', approved: 'Approved', pinned: 'Pinned', declined: 'Declined', removed: 'Removed', reapprove: 'Re-approval' },
-          flags: { reminded: 'reminded', backup: 'with backup', text: 'text', email: 'email' },
+          flags: { reminded: 'reminded', backup: 'with secretary', text: 'text', email: 'email' },
           win: { scheduled: 'Starts {d}', ends: 'Ends {d}', ended: 'Ended {d}', pulled: 'Pulled from all sites' },
           shared: 'Shared from Local {n}', solidarity: 'Solidarity request from Local {n}',
           reach: 'Reach', views: 'site views', texts: 'texts', taps: 'tapped', emails: 'emails', opens: 'opened', simReach: 'Simulated numbers for the demo.',
@@ -1602,14 +1602,14 @@ const CONTENT = {
           corrected: 'Correction sent. Locals that approved it will re-approve; their sites keep the approved version until then.', correctedUrgent: 'Correction sent. The urgent alert is updated on every site.',
           pulled: 'Pulled from every local site.', edited: 'Corrected {n} time(s)',
           inbox: 'Local {n} president\'s email →', site: 'Local {n} site →', portal: 'Local {n} officer portal →',
-          simNote: 'Locals without a hands-on demo approve on a timer. Local 880 never answers, so you can watch the 24-hour reminder and the 48-hour hand-off to its backup.',
+          simNote: 'Locals without a hands-on demo approve on a timer. Local 880 never answers, so you can watch the 24-hour reminder and the 48-hour hand-off to its secretary.',
           fromEmpty: 'Nothing from the locals yet. Open a local officer portal and send something up.',
           kinds: { share: 'Share with all locals', solidarity: 'Ask locals for support', issue: 'Issue for the council (private)' },
           fromLocal: 'From Local {n}', toLocals: 'Asking locals {list}', notePh: 'Note back to the local (optional)', replyPh: 'Reply to the local',
           actShare: 'Share with all locals', actSolidarity: 'Send to locals {list}', actIssue: 'Reply and mark handled', actDecline: 'Decline',
           subStates: { pending: 'Waiting for the council', routed: 'Sent out', declined: 'Declined', handled: 'Handled' },
           routed: 'Sent out. Each local still approves it for their own site.', declinedMsg: 'Declined. The local has been told.', handledMsg: 'Reply sent to the local.',
-          dirCols: ['Local', 'President', 'Backup approver', 'Stewards', 'Delegates', 'Last checked', ''],
+          dirCols: ['Local', 'President', 'Secretary', 'Stewards', 'Delegates', 'Last checked', ''],
           never: 'Never', daysAgo: '{n} days ago', today: 'Today', due: 'Check due', asked: 'Asked {d}', ask: 'Ask to verify', askedMsg: 'Email sent to the Local {n} president.',
           dirNote: 'The approval emails go to these people. Locals confirm their contacts every 90 days; the council can ask anytime.', tbc: 'to confirm',
           logFilter: 'Show', logAll: 'Everything', logCouncil: 'Council actions', download: 'Download record (CSV)', logEmpty: 'Nothing recorded yet.',
@@ -1626,7 +1626,7 @@ const CONTENT = {
                 featOn: 'Now featured.', featOff: 'Moved to the regular list.', removed: '{name} is off every site.', view: 'See it on the hub →', locals: 'Each local\'s own list:', localLink: 'Local {n} →',
                 namePh: 'Example: Corner Coffee', offerPh: 'Example: 10% off for ATU members. Show your union card.' } },
     es: { eyebrow: '◆ Consola del consejo · demo en vivo', title: 'Envíalo por toda la línea',
-          lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se envían por texto a los miembros. Todo lo demás espera a que el presidente del local o su suplente lo apruebe.',
+          lede: 'Escríbelo una vez. Las alertas urgentes se publican de inmediato en el sitio de cada local y se envían por texto a los miembros. Todo lo demás espera a que el presidente o el secretario del local lo apruebe.',
           steps: ['El consejo envía una publicación', 'El presidente del local recibe un correo y la aprueba', 'Aparece en el sitio web de ese local, y en los textos y correos de los miembros si el local lo decide'],
           regular: 'Normal', regularSub: 'Requiere aprobación del local', urgent: 'Urgente', urgentSub: 'Se publica ya, con texto a los miembros',
           titleL: 'Titular', bodyL: 'Mensaje', esToggle: 'Agregar la versión en español (opcional)', titleEsL: 'Titular en español', bodyEsL: 'Mensaje en español',
@@ -1640,7 +1640,7 @@ const CONTENT = {
           empty: 'Todavía no se ha enviado nada. Escribe una publicación arriba y mira cómo recorre la línea.',
           count: 'Aprobado por {a} de {n}', countUrgent: 'En vivo en {a} de {n} sitios', waiting: 'En espera: {list}',
           states: { live: 'En vivo', pending: 'En espera', approved: 'Aprobado', pinned: 'Fijado', declined: 'Rechazado', removed: 'Retirado', reapprove: 'Reaprobación' },
-          flags: { reminded: 'recordado', backup: 'con el suplente', text: 'texto', email: 'correo' },
+          flags: { reminded: 'recordado', backup: 'con el secretario', text: 'texto', email: 'correo' },
           win: { scheduled: 'Empieza el {d}', ends: 'Termina el {d}', ended: 'Terminó el {d}', pulled: 'Retirado de todos los sitios' },
           shared: 'Compartido desde el Local {n}', solidarity: 'Pedido de solidaridad del Local {n}',
           reach: 'Alcance', views: 'visitas al sitio', texts: 'textos', taps: 'abiertos', emails: 'correos', opens: 'abiertos', simReach: 'Cifras simuladas para la demo.',
@@ -1648,14 +1648,14 @@ const CONTENT = {
           corrected: 'Corrección enviada. Los locales que la aprobaron la volverán a aprobar; sus sitios mantienen la versión aprobada mientras tanto.', correctedUrgent: 'Corrección enviada. La alerta urgente se actualizó en todos los sitios.',
           pulled: 'Retirado de todos los sitios de los locales.', edited: 'Corregido {n} vez/veces',
           inbox: 'Correo del presidente del Local {n} →', site: 'Sitio del Local {n} →', portal: 'Portal de dirigentes del Local {n} →',
-          simNote: 'Los locales sin demo práctica aprueban con un temporizador. El Local 880 nunca responde, así puedes ver el recordatorio de 24 horas y el traspaso al suplente a las 48 horas.',
+          simNote: 'Los locales sin demo práctica aprueban con un temporizador. El Local 880 nunca responde, así puedes ver el recordatorio de 24 horas y el traspaso al secretario a las 48 horas.',
           fromEmpty: 'Todavía no llega nada de los locales. Abre un portal de dirigentes y envía algo al consejo.',
           kinds: { share: 'Compartir con todos los locales', solidarity: 'Pedir apoyo a otros locales', issue: 'Asunto para el consejo (privado)' },
           fromLocal: 'Del Local {n}', toLocals: 'Pide apoyo a los locales {list}', notePh: 'Nota para el local (opcional)', replyPh: 'Respuesta al local',
           actShare: 'Compartir con todos los locales', actSolidarity: 'Enviar a los locales {list}', actIssue: 'Responder y marcar atendido', actDecline: 'Rechazar',
           subStates: { pending: 'Esperando al consejo', routed: 'Enviado', declined: 'Rechazado', handled: 'Atendido' },
           routed: 'Enviado. Cada local todavía lo aprueba para su propio sitio.', declinedMsg: 'Rechazado. Se le avisó al local.', handledMsg: 'Respuesta enviada al local.',
-          dirCols: ['Local', 'Presidente', 'Suplente', 'Delegados sindicales', 'Delegados al consejo', 'Última revisión', ''],
+          dirCols: ['Local', 'Presidente', 'Secretario', 'Delegados sindicales', 'Delegados al consejo', 'Última revisión', ''],
           never: 'Nunca', daysAgo: 'hace {n} días', today: 'Hoy', due: 'Revisión pendiente', asked: 'Pedido el {d}', ask: 'Pedir verificación', askedMsg: 'Correo enviado al presidente del Local {n}.',
           dirNote: 'Los correos de aprobación van a estas personas. Los locales confirman sus contactos cada 90 días; el consejo puede pedirlo cuando quiera.', tbc: 'por confirmar',
           logFilter: 'Mostrar', logAll: 'Todo', logCouncil: 'Acciones del consejo', download: 'Descargar registro (CSV)', logEmpty: 'Todavía no hay nada registrado.',
@@ -2238,7 +2238,7 @@ const LOC = () => (state.lang === 'es' ? 'es-US' : 'en-US');
 const when = (ms, withTime) => new Date(ms).toLocaleString(LOC(), withTime === false ? { month: 'short', day: 'numeric', year: 'numeric' } : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 const nf = (n) => Number(n || 0).toLocaleString(LOC());
 const ACTIONS_ES = { 'sent': 'enviado', 'sent urgent': 'urgente enviado', 'approved': 'aprobado', 're-approved': 'reaprobado', 'declined': 'rechazado', 'removed': 'retirado',
-  'pulled': 'retirado de todos', 'corrected': 'corregido', 'reminded': 'recordatorio', 'passed to backup': 'pasado al suplente', 'submitted': 'enviado al consejo',
+  'pulled': 'retirado de todos', 'corrected': 'corregido', 'reminded': 'recordatorio', 'passed to secretary': 'pasado al secretario', 'submitted': 'enviado al consejo',
   'routed submission': 'reenviado por el consejo', 'declined submission': 'pedido rechazado', 'replied': 'respondido', 'asked to verify contacts': 'pidió verificar contactos', 'verified contacts': 'contactos verificados',
   'added partner': 'socio agregado', 'removed partner': 'socio quitado', 'featured partner': 'socio destacado', 'unfeatured partner': 'socio ya no destacado' };
 
@@ -2361,7 +2361,7 @@ function renderDirTab() {
     const name = (v, set) => set ? esc(v) : `<span class="cc-tbc">${esc(u.tbc)}</span>`;
     const status = c.requestedAt ? `<span class="cc-due asked">${esc(u.asked.replace('{d}', when(c.requestedAt, false)))}</span>`
       : (c.verifyDue ? `<button type="button" class="action-btn" data-cc="verify" data-n="${n}">${esc(u.ask)}</button>` : '');
-    return `<tr><td data-l="${esc(u.dirCols[0])}"><b>${n}</b> ${esc(c.city)}</td><td data-l="${esc(u.dirCols[1])}">${name(c.president, c.presidentSet)}</td><td data-l="${esc(u.dirCols[2])}">${name(c.backup, c.backupSet)}</td>
+    return `<tr><td data-l="${esc(u.dirCols[0])}"><b>${n}</b> ${esc(c.city)}</td><td data-l="${esc(u.dirCols[1])}">${name(c.president, c.presidentSet)}</td><td data-l="${esc(u.dirCols[2])}">${name(c.secretary, c.secretarySet)}</td>
       <td data-l="${esc(u.dirCols[3])}">${c.stewards == null ? `<span class="cc-tbc">${esc(u.tbc)}</span>` : c.stewards}</td><td data-l="${esc(u.dirCols[4])}">${c.delegates == null ? `<span class="cc-tbc">${esc(u.tbc)}</span>` : c.delegates}</td>
       <td data-l="${esc(u.dirCols[5])}">${esc(days(c.verifiedAt))}${c.verifyDue ? ` <span class="cc-due">${esc(u.due)}</span>` : ''}</td><td>${status} <a class="cc-mini" href="/portal/?local=${n}">${esc(u.portal.replace('{n}', n))}</a></td></tr>`;
   }).join('');

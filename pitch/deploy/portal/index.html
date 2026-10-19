@@ -163,7 +163,7 @@ select.input{appearance:auto}
   <div class="who"><span class="avatar" id="who-initials" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-role"></span></div></div>
   <div class="switches">
     <span>Local</span><nav class="seg" aria-label="Choose local" id="local-switch"></nav>
-    <span>Signed in as</span><div class="seg" role="group" aria-label="Signed in as"><button type="button" data-role="president">President</button><button type="button" data-role="backup">Backup</button></div>
+    <span>Signed in as</span><div class="seg" role="group" aria-label="Signed in as"><button type="button" data-role="president">President</button><button type="button" data-role="secretary">Secretary</button></div>
   </div>
 </header>
 <main class="portal">
@@ -191,12 +191,12 @@ select.input{appearance:auto}
   document.documentElement.style.setProperty('--accent', C().accent);
   $('#local-switch').innerHTML = CF.ALL.map((n) => `<a href="?local=${n}" data-l="${n}">${n}</a>`).join('');
   $('#inbox-link').href = '/inbox/?local=' + LOCAL;
-  const me = () => role === 'president' ? C().president : C().backup;
+  const me = () => role === 'president' ? C().president : C().secretary;
   const initials = (name) => name.replace(/\(.*\)/, '').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
   function header() {
     $('#who-name').textContent = me();
-    $('#who-role').textContent = (role === 'president' ? 'President, ' : 'Backup approver, ') + C().name;
+    $('#who-role').textContent = (role === 'president' ? 'President, ' : 'Secretary, ') + C().name;
     $('#who-initials').textContent = initials(me()) || 'VP';
     document.querySelectorAll('[data-l]').forEach((a) => a.setAttribute('aria-current', String(a.dataset.l === LOCAL)));
     document.querySelectorAll('[data-role]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
@@ -246,7 +246,7 @@ select.input{appearance:auto}
   }
   function contactsPanel() {
     const c = C();
-    if (!contactDraft) contactDraft = { president: c.presidentSet ? c.president : '', backup: c.backupSet ? c.backup : '', stewards: c.stewards == null ? '' : c.stewards, delegates: c.delegates == null ? '' : c.delegates };
+    if (!contactDraft) contactDraft = { president: c.presidentSet ? c.president : '', secretary: c.secretarySet ? c.secretary : '', stewards: c.stewards == null ? '' : c.stewards, delegates: c.delegates == null ? '' : c.delegates };
     const days = c.verifiedAt ? Math.floor((Date.now() - c.verifiedAt) / 86400000) : null;
     const banner = c.requestedAt ? `<div class="banner"><b>The council asked you to confirm your contacts</b> on ${esc(new Date(c.requestedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))}.</div>`
       : c.verifyDue ? `<div class="banner"><b>Time to check your contacts.</b> Locals confirm them every ${CF.VERIFY_DAYS} days.</div>`
@@ -257,7 +257,7 @@ select.input{appearance:auto}
       <form data-form="contacts" novalidate>
         <div class="grid2">
           <label class="field">President<input class="input" name="president" value="${esc(contactDraft.president)}" autocomplete="name" placeholder="Full name"></label>
-          <label class="field">Backup approver <small>(often the VP)</small><input class="input" name="backup" value="${esc(contactDraft.backup)}" placeholder="Full name"></label>
+          <label class="field">Secretary <small>(backup approver)</small><input class="input" name="secretary" value="${esc(contactDraft.secretary)}" placeholder="Full name"></label>
           <label class="field">Number of stewards<input class="input" name="stewards" type="number" min="0" inputmode="numeric" value="${esc(contactDraft.stewards)}"></label>
           <label class="field">Delegates to the council<input class="input" name="delegates" type="number" min="0" inputmode="numeric" value="${esc(contactDraft.delegates)}"></label>
         </div>
@@ -351,7 +351,7 @@ select.input{appearance:auto}
       render(); toast(r.partner.name + ' is on your site now.' + (r.featuredFull ? ' Featured spots were full, so it went in the regular list.' : ''));
     }
     if (f === 'contacts') {
-      if (!String(contactDraft.president).trim() || !String(contactDraft.backup).trim()) { toast('Add both the president and the backup approver.'); return; }
+      if (!String(contactDraft.president).trim() || !String(contactDraft.secretary).trim()) { toast('Add both the president and the secretary.'); return; }
       CF.verifyContacts(LOCAL, contactDraft); contactDraft = null; render();
       toast('Contacts confirmed. Thank you.');
     }
