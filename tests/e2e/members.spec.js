@@ -13,6 +13,15 @@ test('the public hub has no council console', async ({ page }) => {
   await expect(page.locator('#console-link')).toHaveAttribute('href', '/console/');
 });
 
+test('the public page source contains no council console code', async ({ request }) => {
+  const pub = await (await request.get('/')).text();
+  for (const leak of ['data-form="council"', 'Send as council', 'renderConsoleForm', 'wireConsole', 'CONTENT.console', 'cc-section', 'Emergency off-switch']) {
+    expect(pub, leak).not.toContain(leak);
+  }
+  const con = await (await request.get('/console/')).text();
+  expect(con).toContain('renderConsoleForm');   // the console page still has it
+});
+
 test('the council console needs the council sign-in', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto('/console/');
